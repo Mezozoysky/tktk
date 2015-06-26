@@ -1,2 +1,2 @@
 # tktk
-triko toolkit - couple of code / third-party librsries for home game development
+triko toolkit - couple of code / third-party libraries for home game development
