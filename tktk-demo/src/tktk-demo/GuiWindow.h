@@ -24,6 +24,30 @@
        source distribution.
 */
 
-#include <string>
+#ifndef TKTK_TESTAPP_GUI_WINDOW_H
+#define TKTK_TESTAPP_GUI_WINDOW_H
 
-const std::string getTktkVersion();
+#include <SFGUI/SFGUI.hpp>
+#include <SFGUI/Window.hpp>
+
+namespace testapp
+{
+
+class GuiWindow;
+typedef std::shared_ptr<GuiWindow> GuiWindowPtr;
+
+class GuiWindow
+: public sfg::Window
+{
+
+public:
+
+  GuiWindow();
+  virtual ~GuiWindow();
+
+  virtual void onCreate() = 0;
+};
+
+} //namespace testapp
+
+#endif //TKTK_TESTAPP_GUI_WINDOW_H

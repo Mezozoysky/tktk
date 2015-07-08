@@ -41,8 +41,10 @@ endif()
 #
 if(NOT TKTK_USE_SHARED_DEPS)
     set(SFML_STATIC_LIBRARIES TRUE)
+    set(SFGUI_STATIC_LIBRARIES TRUE)
 else(NOT TKTK_USE_SHARED_DEPS)
     set(SFML_STATIC_LIBRARIES FALSE)
+    set(SFGUI_STATIC_LIBRARIES FALSE)
 endif(NOT TKTK_USE_SHARED_DEPS)
 
 
@@ -92,19 +94,26 @@ set(TKTK_DEMO_NAME tktk-demo)
 #
 set(TKTK_LINUX_LIBS "")
 if(TKTK_OS_LINUX)
-    if(NOT TKTK_BUILD_SHARED)
-        find_library(X11XCB_LIB X11-xcb)
-        find_library(XCB_LIB xcb)
-        find_library(PTHREAD_LIB pthread)
+    find_library(PTHREAD_LIBRARY pthread)
+    if(TKTK_BUILD_SHARED)
         set(TKTK_LINUX_LIBS ${TKTK_LINUX_LIBS}
-            ${X11XCB_LIB}
             ${XCB_IMAGE_LIBRARY}
             ${XCB_RANDR_LIBRARY}
-            ${XCB_LIB}
+            ${X11_XCB_LIBRARY}
+            ${LIBXCB_LIBRARIES}
             ${UDEV_LIBRARIES}
-            ${PTHREAD_LIB}
+            ${PTHREAD_LIBRARY}
         )
-    endif(NOT TKTK_BUILD_SHARED)
+    else(TKTK_BUILD_SHARED)
+        set(TKTK_LINUX_LIBS ${TKTK_LINUX_LIBS}
+            ${XCB_IMAGE_LIBRARY}
+            ${XCB_RANDR_LIBRARY}
+            ${X11_XCB_LIBRARY}
+            ${LIBXCB_LIBRARIES}
+            ${UDEV_LIBRARIES}
+            ${PTHREAD_LIBRARY}
+        )
+    endif(TKTK_BUILD_SHARED)
 endif(TKTK_OS_LINUX)
 
 set(TKTK_OSX_LIBS "")
@@ -126,6 +135,13 @@ endif()
 set(TKTK_DEP_LIBS "")
 set(TKTK_DEMO_DEP_LIBS "")
 
+find_package(SFGUI REQUIRED)
+if(SFGUI_FOUND)
+    include_directories(${SFGUI_INCLUDE_DIR})
+else(SFGUI_FOUND)
+    message(FATAL_ERROR "-- ${CMAKE_PROJECT_NAME} -- No SFGUI found!")
+endif(SFGUI_FOUND)
+
 find_package(SFML 2.2 COMPONENTS audio network graphics window system  REQUIRED)
 if(SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})
@@ -145,6 +161,7 @@ if(TKTK_USE_SHARED_DEPS)
         #nothing
     )
     set(TKTK_DEMO_DEP_LIBS ${TKTK_DEMO_DEP_LIBS}
+        ${SFGUI_LIBRARY}
         ${SFML_LIBRARIES}
         ${OPENGL_LIBRARIES}
     )
@@ -153,7 +170,9 @@ else(TKTK_USE_SHARED_DEPS)
         #nothing
     )
     set(TKTK_DEMO_DEP_LIBS ${TKTK_DEMO_DEP_LIBS}
+        ${SFGUI_LIBRARY}
         ${SFML_LIBRARIES}
+        ${FREETYPE_LIBRARY}
         ${JPEG_LIBRARY}
         ${OPENGL_LIBRARIES}
     )
@@ -181,10 +200,13 @@ set(SOURCES "")
 # === tktk group ===
 # ==================
 set(GROUP_HEADERS
-  include/${TKTK_CORE_NAME}/tktk.h
+    include/${TKTK_CORE_NAME}/phase.h
+    include/${TKTK_CORE_NAME}/phase/IPhase.h
+    include/${TKTK_CORE_NAME}/phase/IPhaseManager.h
+    include/${TKTK_CORE_NAME}/phase/PhaseManager.h
 )
 set(GROUP_SOURCES
-  src/${TKTK_CORE_NAME}/tktk.cpp
+    src/${TKTK_CORE_NAME}/phase/PhaseManager.cpp
 )
 source_group("tktk" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(HEADERS ${HEADERS} ${GROUP_HEADERS})
@@ -199,14 +221,12 @@ if(TKTK_BUILD_SHARED)
         ${SOURCES}
     )
 else(TKTK_BUILD_SHARED) #static
-    # message(FATAL_ERROR "STATIC LIB NOT IMPLEMENTED")
     add_library(${TKTK_CORE_NAME} STATIC
         ${HEADERS}
         ${SOURCES}
     )
 endif(TKTK_BUILD_SHARED)
 
-message("** TKTK_DEP_LIBS: ${TKTK_DEP_LIBS}")
 target_link_libraries(${TKTK_CORE_NAME} ${TKTK_DEP_LIBS})
 
 
@@ -220,8 +240,22 @@ set(SOURCES "")
 # ==== tktk-demo group ====
 # =========================
 set(GROUP_HEADERS
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/App.h
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/GuiWindow.h
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/ThemeSettingsWindow.h
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/SfguiWidgetSetWindow.h
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/EntryExampleWindow.h
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/RangeExampleWindow.h
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/DesktopExampleWindow.h
 )
 set(GROUP_SOURCES
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/App.cpp
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/GuiWindow.cpp
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/ThemeSettingsWindow.cpp
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/SfguiWidgetSetWindow.cpp
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/EntryExampleWindow.cpp
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/RangeExampleWindow.cpp
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/DesktopExampleWindow.cpp
     ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/main.cpp
 )
 source_group("tktk-demo" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})

@@ -24,12 +24,33 @@
        source distribution.
 */
 
-#include "App.h"
+#ifndef TKTK_TESTAPP_SFGUI_WIDGET_SET_WINDOW_H
+#define TKTK_TESTAPP_SFGUI_WIDGET_SET_WINDOW_H
 
-int main( int argc, char* argv[] )
+#include <memory>
+#include "GuiWindow.h"
+
+//using namespace tktk;
+
+namespace testapp
 {
-    testapp::App app;
-    app.run();
 
-    return 0;
-}
+class SfguiWidgetSetWindow;
+typedef std::shared_ptr<SfguiWidgetSetWindow> SfguiWidgetSetWindowPtr;
+
+class SfguiWidgetSetWindow
+: public GuiWindow
+{
+
+public:
+
+  SfguiWidgetSetWindow();
+  virtual ~SfguiWidgetSetWindow();
+
+  virtual void onCreate() override;
+
+};
+
+} //namespace testapp
+
+#endif //TKTK_TESTAPP_SFGUI_WIDGET_SET_WINDOW_H

@@ -24,12 +24,38 @@
        source distribution.
 */
 
-#include "App.h"
+#ifndef TKTK_TESTAPP_DESKTOP_EXAMPLE_WINDOW_H
+#define TKTK_TESTAPP_DESKTOP_EXAMPLE_WINDOW_H
 
-int main( int argc, char* argv[] )
+#include "GuiWindow.h"
+
+//using namespace tktk;
+
+namespace testapp
 {
-    testapp::App app;
-    app.run();
 
-    return 0;
-}
+class DesktopExampleWindow;
+typedef std::shared_ptr<DesktopExampleWindow> DesktopExampleWindowPtr;
+
+class DesktopExampleWindow
+: public GuiWindow
+{
+
+public:
+
+  DesktopExampleWindow();
+  virtual ~DesktopExampleWindow();
+
+  virtual void onCreate() override;
+
+private:
+
+  unsigned int mCount;
+  void onCreateWindowClick();
+  void onDestroyWindowClick();
+  void onFrontClick();
+};
+
+} //namespace testapp
+
+#endif //TKTK_TESTAPP_DESKTOP_EXAMPLE_WINDOW_H

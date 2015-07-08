@@ -24,9 +24,29 @@
        source distribution.
 */
 
-#include <tktk/tktk.h>
+#ifndef TKTK_PHASE_I_PHASE_H
+#define TKTK_PHASE_I_PHASE_H
 
-const std::string getTktkVersion()
+#include <memory>
+#include <string>
+
+namespace tktk
 {
-    return "0.0.1-a0";
-}
+
+class IPhase;
+typedef std::shared_ptr<IPhase> IPhasePtr;
+
+class IPhase
+{
+public:
+  virtual ~IPhase()
+  {
+  }
+
+  virtual const std::string& getName() const = 0; // Return the name.
+  virtual void setName( const std::string& name ) = 0; // Set name.
+};
+
+} //namespace tktk
+
+#endif //TKTK_PHASE_I_PHASE_H

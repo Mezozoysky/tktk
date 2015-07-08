@@ -24,12 +24,46 @@
        source distribution.
 */
 
-#include "App.h"
+#include "EntryExampleWindow.h"
+#include <SFGUI/Box.hpp>
+#include <SFGUI/Button.hpp>
 
-int main( int argc, char* argv[] )
+namespace testapp
 {
-    testapp::App app;
-    app.run();
 
-    return 0;
+EntryExampleWindow::EntryExampleWindow()
+: GuiWindow()
+{
 }
+
+EntryExampleWindow::~EntryExampleWindow()
+{
+}
+
+void EntryExampleWindow::onCreate()
+{
+  auto box = sfg::Box::Create( sfg::Box::Orientation::HORIZONTAL );
+
+  auto button = sfg::Button::Create();
+  button->SetLabel( "Set" );
+  button->GetSignal( sfg::Widget::OnLeftClick ).Connect( std::bind( &EntryExampleWindow::onSetButtonClick, this ) );
+  mLabel = sfg::Label::Create();
+  mLabel->SetText( "no text yet" );
+  mEntry = sfg::Entry::Create();
+  mEntry->SetRequisition( sf::Vector2f( 80.0f, 0.0f ) );
+
+  box->Pack( mEntry );
+  box->Pack( button );
+  box->Pack( mLabel );
+
+  box->SetSpacing( 8.0f );
+
+  Add( box );
+}
+
+void EntryExampleWindow::onSetButtonClick()
+{
+    mLabel->SetText( mEntry->GetText() );
+}
+
+} //namespace testapp

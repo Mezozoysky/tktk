@@ -24,12 +24,15 @@
        source distribution.
 */
 
-#include "App.h"
+#ifndef TKTK_PHASE_H
+#define TKTK_PHASE_H
 
-int main( int argc, char* argv[] )
+#include <tktk/phase/IPhase.h>
+#include <tktk/phase/IPhaseManager.h>
+
+namespace tktk
 {
-    testapp::App app;
-    app.run();
 
-    return 0;
-}
+} //namespace tktk
+
+#endif //TKTK_PHASE_H

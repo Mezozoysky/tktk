@@ -24,12 +24,18 @@
        source distribution.
 */
 
-#include "App.h"
+#include "GuiWindow.h"
 
-int main( int argc, char* argv[] )
+namespace testapp
 {
-    testapp::App app;
-    app.run();
 
-    return 0;
+GuiWindow::GuiWindow()
+: sfg::Window( sfg::Window::Style::TOPLEVEL )
+{
 }
+
+GuiWindow::~GuiWindow()
+{
+}
+
+} //namespace testapp

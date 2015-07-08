@@ -24,12 +24,51 @@
        source distribution.
 */
 
-#include "App.h"
+#include "ThemeSettingsWindow.h"
+#include <SFGUI/Label.hpp>
+#include <SFGUI/Button.hpp>
+#include <SFGUI/Box.hpp>
 
-int main( int argc, char* argv[] )
+namespace testapp
 {
-    testapp::App app;
-    app.run();
 
-    return 0;
+ThemeSettingsWindow::ThemeSettingsWindow()
+: GuiWindow()
+, mOnReloadTheme( nullptr )
+{
 }
+
+ThemeSettingsWindow::~ThemeSettingsWindow()
+{
+}
+
+void ThemeSettingsWindow::onCreate()
+{
+  SetTitle( L"Theme Settings" );
+
+  auto label = sfg::Label::Create( "SFGUI-TKTK Theme" );
+  auto button = sfg::Button::Create( "Reload theme" );
+  button->GetSignal( sfg::Widget::OnLeftClick ).Connect( std::bind( &ThemeSettingsWindow::onReloadButtonClick, this ) );
+
+  auto box = sfg::Box::Create( sfg::Box::Orientation::VERTICAL, 5.0f );
+  box->Pack( label );
+  box->Pack( button, false );
+
+  Add( box );
+}
+
+void ThemeSettingsWindow::setOnReloadTheme( std::function<void()> handler )
+{
+  mOnReloadTheme = handler;
+}
+
+void ThemeSettingsWindow::onReloadButtonClick()
+{
+  if ( mOnReloadTheme == nullptr )
+  {
+    return;
+  }
+  mOnReloadTheme();
+}
+
+} //namespace testapp

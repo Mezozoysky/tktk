@@ -24,12 +24,43 @@
        source distribution.
 */
 
-#include "App.h"
+#ifndef TKTK_TESTAPP_THEME_SETTINGS_WINDOW_H
+#define TKTK_TESTAPP_THEME_SETTINGS_WINDOW_H
 
-int main( int argc, char* argv[] )
+#include <memory>
+// #include <tktk/log/loggingDefs.h>
+#include "GuiWindow.h"
+
+// using namespace tktk;
+
+namespace testapp
 {
-    testapp::App app;
-    app.run();
 
-    return 0;
-}
+class ThemeSettingsWindow;
+typedef std::shared_ptr<ThemeSettingsWindow> ThemeSettingsWindowPtr;
+
+class ThemeSettingsWindow
+: public GuiWindow
+{
+
+public:
+
+  ThemeSettingsWindow();
+  virtual ~ThemeSettingsWindow();
+
+  virtual void onCreate() override;
+
+  virtual void setOnReloadTheme( std::function<void()> handler );
+
+protected:
+
+  virtual void onReloadButtonClick();
+
+private:
+  // log::Logger mLogger;
+  std::function<void()> mOnReloadTheme;
+};
+
+} //namespace testapp
+
+#endif //TKTK_TESTAPP_THEME_SETTINGS_WINDOW_H

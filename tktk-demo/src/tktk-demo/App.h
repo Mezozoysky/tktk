@@ -24,12 +24,41 @@
        source distribution.
 */
 
-#include "App.h"
+#ifndef TKTK_TESTAPP_APP_H
+#define TKTK_TESTAPP_APP_H
 
-int main( int argc, char* argv[] )
+#include <tktk/phase.h>
+// #include <tktk/log/loggingDefs.h>
+#include <SFML/Graphics.hpp>
+#include <SFGUI/SFGUI.hpp>
+#include <SFGUI/Desktop.hpp>
+
+using namespace tktk;
+
+namespace testapp
 {
-    testapp::App app;
-    app.run();
 
-    return 0;
-}
+class App
+{
+
+public:
+  App();
+  virtual ~App();
+
+  virtual void run();
+
+  virtual void onReloadTheme();
+
+private:
+  // log::Logger mLogger;
+  phase::IPhaseManagerPtr mPhaseManager;
+  sf::RenderWindow mAppWindow;
+  sfg::SFGUI mGui;
+  sfg::Desktop mGuiDesktop;
+
+  std::string mAssetsPath;
+};
+
+} //namespace testapp
+
+#endif //TKTK_TESTAPP_APP_H
