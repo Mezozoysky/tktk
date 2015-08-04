@@ -24,7 +24,7 @@
        source distribution.
 */
 
-#include "EntryExampleWindow.h"
+#include "EntryExampleWindow.hpp"
 #include <SFGUI/Box.hpp>
 #include <SFGUI/Button.hpp>
 

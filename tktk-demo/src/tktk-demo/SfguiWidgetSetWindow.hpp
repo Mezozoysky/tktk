@@ -24,42 +24,33 @@
        source distribution.
 */
 
-#ifndef TKTK_TESTAPP_ENTRY_EXAMPLE_WINDOW_H
-#define TKTK_TESTAPP_ENTRY_EXAMPLE_WINDOW_H
+#ifndef TKTK_TESTAPP_SFGUI_WIDGET_SET_WINDOW_HPP
+#define TKTK_TESTAPP_SFGUI_WIDGET_SET_WINDOW_HPP
 
-#include "GuiWindow.h"
-#include <SFGUI/Label.hpp>
-#include <SFGUI/Entry.hpp>
+#include <memory>
+#include "GuiWindow.hpp"
 
 //using namespace tktk;
 
 namespace testapp
 {
 
-    class EntryExampleWindow;
-    typedef std::shared_ptr<EntryExampleWindow> EntryExampleWindowPtr;
+class SfguiWidgetSetWindow;
+typedef std::shared_ptr<SfguiWidgetSetWindow> SfguiWidgetSetWindowPtr;
 
-    class EntryExampleWindow
-    : public GuiWindow
-    {
+class SfguiWidgetSetWindow
+: public GuiWindow
+{
 
-    public:
+public:
 
-        EntryExampleWindow();
-        virtual ~EntryExampleWindow();
+  SfguiWidgetSetWindow();
+  virtual ~SfguiWidgetSetWindow();
 
-        virtual void onCreate() override;
+  virtual void onCreate() override;
 
-    private:
-
-        virtual void onSetButtonClick();
-
-    private:
-
-        sfg::Label::Ptr mLabel;
-        sfg::Entry::Ptr mEntry;
-    };
+};
 
 } //namespace testapp
 
-#endif //TKTK_TESTAPP_ENTRY_EXAMPLE_WINDOW_H
+#endif //TKTK_TESTAPP_SFGUI_WIDGET_SET_WINDOW_HPP

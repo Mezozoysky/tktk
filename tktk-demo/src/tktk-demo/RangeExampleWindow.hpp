@@ -24,29 +24,43 @@
        source distribution.
 */
 
-#ifndef TKTK_PHASE_I_PHASE_H
-#define TKTK_PHASE_I_PHASE_H
+#ifndef TKTK_TESTAPP_RANGE_EXAMPLE_WINDOW_HPP
+#define TKTK_TESTAPP_RANGE_EXAMPLE_WINDOW_HPP
 
-#include <memory>
-#include <string>
+#include "GuiWindow.hpp"
+#include <SFGUI/Label.hpp>
+#include <SFGUI/Adjustment.hpp>
 
-namespace tktk
+
+//using namespace tktk;
+
+namespace testapp
 {
 
-class IPhase;
-typedef std::shared_ptr<IPhase> IPhasePtr;
+class RangeExampleWindow;
+typedef std::shared_ptr<RangeExampleWindow> RangeExampleWindowPtr;
 
-class IPhase
+class RangeExampleWindow
+: public GuiWindow
 {
+
 public:
-  virtual ~IPhase()
-  {
-  }
 
-  virtual const std::string& getName() const = 0; // Return the name.
-  virtual void setName( const std::string& name ) = 0; // Set name.
+  RangeExampleWindow();
+  virtual ~RangeExampleWindow();
+
+  virtual void onCreate() override;
+
+private:
+
+  virtual void onAdjustmentChanged();
+
+private:
+
+  sfg::Label::Ptr mLabel;
+  sfg::Adjustment::Ptr mAdjustment;
 };
 
-} //namespace tktk
+} //namespace testapp
 
-#endif //TKTK_PHASE_I_PHASE_H
+#endif //TKTK_TESTAPP_RANGE_EXAMPLE_WINDOW_HPP

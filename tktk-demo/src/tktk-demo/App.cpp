@@ -26,12 +26,12 @@
 
 // #include <tktk/log/loggingDefs.h>
 
-#include "App.h"
-#include <tktk/phase/PhaseManager.h>
-#include "ThemeSettingsWindow.h"
-#include "SfguiWidgetSetWindow.h"
-#include "EntryExampleWindow.h"
-#include "RangeExampleWindow.h"
+#include "App.hpp"
+#include <tktk/phase/PhaseManager.hpp>
+#include "ThemeSettingsWindow.hpp"
+#include "SfguiWidgetSetWindow.hpp"
+#include "EntryExampleWindow.hpp"
+#include "RangeExampleWindow.hpp"
 
 using namespace tktk;
 

@@ -24,7 +24,7 @@
        source distribution.
 */
 
-#include "SfguiWidgetSetWindow.h"
+#include "SfguiWidgetSetWindow.hpp"
 #include <SFGUI/Box.hpp>
 #include <SFGUI/Button.hpp>
 #include <SFGUI/Label.hpp>

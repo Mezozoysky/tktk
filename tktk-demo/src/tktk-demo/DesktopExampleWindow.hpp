@@ -24,43 +24,38 @@
        source distribution.
 */
 
-#ifndef TKTK_TESTAPP_RANGE_EXAMPLE_WINDOW_H
-#define TKTK_TESTAPP_RANGE_EXAMPLE_WINDOW_H
+#ifndef TKTK_TESTAPP_DESKTOP_EXAMPLE_WINDOW_HPP
+#define TKTK_TESTAPP_DESKTOP_EXAMPLE_WINDOW_HPP
 
-#include "GuiWindow.h"
-#include <SFGUI/Label.hpp>
-#include <SFGUI/Adjustment.hpp>
-
+#include "GuiWindow.hpp"
 
 //using namespace tktk;
 
 namespace testapp
 {
 
-class RangeExampleWindow;
-typedef std::shared_ptr<RangeExampleWindow> RangeExampleWindowPtr;
+class DesktopExampleWindow;
+typedef std::shared_ptr<DesktopExampleWindow> DesktopExampleWindowPtr;
 
-class RangeExampleWindow
+class DesktopExampleWindow
 : public GuiWindow
 {
 
 public:
 
-  RangeExampleWindow();
-  virtual ~RangeExampleWindow();
+  DesktopExampleWindow();
+  virtual ~DesktopExampleWindow();
 
   virtual void onCreate() override;
 
 private:
 
-  virtual void onAdjustmentChanged();
-
-private:
-
-  sfg::Label::Ptr mLabel;
-  sfg::Adjustment::Ptr mAdjustment;
+  unsigned int mCount;
+  void onCreateWindowClick();
+  void onDestroyWindowClick();
+  void onFrontClick();
 };
 
 } //namespace testapp
 
-#endif //TKTK_TESTAPP_RANGE_EXAMPLE_WINDOW_H
+#endif //TKTK_TESTAPP_DESKTOP_EXAMPLE_WINDOW_HPP

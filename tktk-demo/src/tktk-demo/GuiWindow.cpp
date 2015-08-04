@@ -24,7 +24,7 @@
        source distribution.
 */
 
-#include "GuiWindow.h"
+#include "GuiWindow.hpp"
 
 namespace testapp
 {

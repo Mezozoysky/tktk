@@ -24,41 +24,43 @@
        source distribution.
 */
 
-#ifndef TKTK_TESTAPP_APP_H
-#define TKTK_TESTAPP_APP_H
+#ifndef TKTK_TESTAPP_THEME_SETTINGS_WINDOW_HPP
+#define TKTK_TESTAPP_THEME_SETTINGS_WINDOW_HPP
 
-#include <tktk/phase.h>
+#include <memory>
 // #include <tktk/log/loggingDefs.h>
-#include <SFML/Graphics.hpp>
-#include <SFGUI/SFGUI.hpp>
-#include <SFGUI/Desktop.hpp>
+#include "GuiWindow.hpp"
 
-using namespace tktk;
+// using namespace tktk;
 
 namespace testapp
 {
 
-class App
+class ThemeSettingsWindow;
+typedef std::shared_ptr<ThemeSettingsWindow> ThemeSettingsWindowPtr;
+
+class ThemeSettingsWindow
+: public GuiWindow
 {
 
 public:
-  App();
-  virtual ~App();
 
-  virtual void run();
+  ThemeSettingsWindow();
+  virtual ~ThemeSettingsWindow();
 
-  virtual void onReloadTheme();
+  virtual void onCreate() override;
+
+  virtual void setOnReloadTheme( std::function<void()> handler );
+
+protected:
+
+  virtual void onReloadButtonClick();
 
 private:
   // log::Logger mLogger;
-  phase::IPhaseManagerPtr mPhaseManager;
-  sf::RenderWindow mAppWindow;
-  sfg::SFGUI mGui;
-  sfg::Desktop mGuiDesktop;
-
-  std::string mAssetsPath;
+  std::function<void()> mOnReloadTheme;
 };
 
 } //namespace testapp
 
-#endif //TKTK_TESTAPP_APP_H
+#endif //TKTK_TESTAPP_THEME_SETTINGS_WINDOW_HPP

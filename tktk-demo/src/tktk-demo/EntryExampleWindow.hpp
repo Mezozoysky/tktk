@@ -24,38 +24,42 @@
        source distribution.
 */
 
-#ifndef TKTK_TESTAPP_DESKTOP_EXAMPLE_WINDOW_H
-#define TKTK_TESTAPP_DESKTOP_EXAMPLE_WINDOW_H
+#ifndef TKTK_TESTAPP_ENTRY_EXAMPLE_WINDOW_HPP
+#define TKTK_TESTAPP_ENTRY_EXAMPLE_WINDOW_HPP
 
-#include "GuiWindow.h"
+#include "GuiWindow.hpp"
+#include <SFGUI/Label.hpp>
+#include <SFGUI/Entry.hpp>
 
 //using namespace tktk;
 
 namespace testapp
 {
 
-class DesktopExampleWindow;
-typedef std::shared_ptr<DesktopExampleWindow> DesktopExampleWindowPtr;
+    class EntryExampleWindow;
+    typedef std::shared_ptr<EntryExampleWindow> EntryExampleWindowPtr;
 
-class DesktopExampleWindow
-: public GuiWindow
-{
+    class EntryExampleWindow
+    : public GuiWindow
+    {
 
-public:
+    public:
 
-  DesktopExampleWindow();
-  virtual ~DesktopExampleWindow();
+        EntryExampleWindow();
+        virtual ~EntryExampleWindow();
 
-  virtual void onCreate() override;
+        virtual void onCreate() override;
 
-private:
+    private:
 
-  unsigned int mCount;
-  void onCreateWindowClick();
-  void onDestroyWindowClick();
-  void onFrontClick();
-};
+        virtual void onSetButtonClick();
+
+    private:
+
+        sfg::Label::Ptr mLabel;
+        sfg::Entry::Ptr mEntry;
+    };
 
 } //namespace testapp
 
-#endif //TKTK_TESTAPP_DESKTOP_EXAMPLE_WINDOW_H
+#endif //TKTK_TESTAPP_ENTRY_EXAMPLE_WINDOW_HPP

@@ -200,10 +200,9 @@ set(SOURCES "")
 # === tktk group ===
 # ==================
 set(GROUP_HEADERS
-    include/${TKTK_CORE_NAME}/phase.h
-    include/${TKTK_CORE_NAME}/phase/IPhase.h
-    include/${TKTK_CORE_NAME}/phase/IPhaseManager.h
-    include/${TKTK_CORE_NAME}/phase/PhaseManager.h
+    include/${TKTK_CORE_NAME}/phase.hpp
+    include/${TKTK_CORE_NAME}/phase/IPhase.hpp
+    include/${TKTK_CORE_NAME}/phase/PhaseManager.hpp
 )
 set(GROUP_SOURCES
     src/${TKTK_CORE_NAME}/phase/PhaseManager.cpp
@@ -240,13 +239,13 @@ set(SOURCES "")
 # ==== tktk-demo group ====
 # =========================
 set(GROUP_HEADERS
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/App.h
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/GuiWindow.h
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/ThemeSettingsWindow.h
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/SfguiWidgetSetWindow.h
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/EntryExampleWindow.h
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/RangeExampleWindow.h
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/DesktopExampleWindow.h
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/App.hpp
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/GuiWindow.hpp
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/ThemeSettingsWindow.hpp
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/SfguiWidgetSetWindow.hpp
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/EntryExampleWindow.hpp
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/RangeExampleWindow.hpp
+    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/DesktopExampleWindow.hpp
 )
 set(GROUP_SOURCES
     ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/App.cpp

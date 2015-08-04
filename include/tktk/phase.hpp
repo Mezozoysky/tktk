@@ -24,15 +24,15 @@
        source distribution.
 */
 
-#ifndef TKTK_PHASE_H
-#define TKTK_PHASE_H
+#ifndef TKTK_PHASE_HPP
+#define TKTK_PHASE_HPP
 
-#include <tktk/phase/IPhase.h>
-#include <tktk/phase/IPhaseManager.h>
+#include <tktk/phase/IPhase.hpp>
+#include <tktk/phase/PhaseManager.hpp>
 
 namespace tktk
 {
 
 } //namespace tktk
 
-#endif //TKTK_PHASE_H
+#endif //TKTK_PHASE_HPP

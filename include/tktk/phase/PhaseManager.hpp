@@ -24,16 +24,19 @@
        source distribution.
 */
 
-#ifndef TKTK_PHASE_PHASE_MANAGER_H
-#define TKTK_PHASE_PHASE_MANAGER_H
+#ifndef TKTK_PHASE_PHASE_MANAGER_HPP
+#define TKTK_PHASE_PHASE_MANAGER_HPP
 
+#include <tktk/phase/IPhase.hpp>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <stack>
+#include <type_traits>
+#include <cassert>
 
 // #include <tktk/log/loggingDefs.h>
-#include <tktk/phase/IPhaseManager.h>
+
 
 namespace tktk
 {
@@ -41,10 +44,9 @@ namespace phase
 {
 
 class PhaseManager;
-typedef std::shared_ptr<IPhaseManager> PhaseManagerPtr;
+typedef std::shared_ptr<PhaseManager> PhaseManagerPtr;
 
 class PhaseManager
-: public IPhaseManager
 {
 public:
   using PhaseMapT = std::unordered_map<std::string, IPhasePtr>;
@@ -52,19 +54,34 @@ public:
   PhaseManager();
   virtual ~PhaseManager();
 
-  virtual void registerPhase( IPhasePtr phase ) override; // Register the new phase with the manager.
+  template< typename T, typename... TArgs >
+  T& createPhase( TArgs&&... args ) // Creates the new phase with the manager.
+  {
+      static_assert(
+          std::is_base_of< IPhase, T >::value
+          , "Incompatible type for phase object instantiation. Must be derived from IPhase."
+      );
 
-  virtual void switchPhase( const std::string& phaseName ) override; // Replace the top phase with another registered one specified by name.
+      T* phase{ new T( std::forward< TArgs >( args )._Bool... ) };
+      std::unique_ptr< IPhase > phaseUPtr{ phase };
 
-  virtual void pushPhase( const std::string& phaseName ) override; // Pause the top phase, make another registered one the top and activate it.
-  virtual void popPhase() override; // Deactivate the top phase, pop it, resume top phase.
+      auto pair( mPhases.emplace( phase->getName(), std::move( phaseUPtr ) ) );
+      assert( pair.second == true );
 
-  virtual void clearPhases() override; //Deactivate and unregister all the phases.
+      return ( *phase );
+  }
 
-  virtual void update() override; //Update current phase.
+  virtual void switchPhase( const std::string& phaseName ); // Replace the top phase with another registered one specified by name.
 
-  virtual const std::string& getStartPhase() const override; // Return the name of the starting phase.
-  virtual void setStartPhase( const std::string& phaseName ) override; // Set the name of starting phase.
+  virtual void pushPhase( const std::string& phaseName ); // Pause the top phase, make another registered one the top and activate it.
+  virtual void popPhase(); // Deactivate the top phase, pop it, resume top phase.
+
+  virtual void clearPhases(); //Deactivate and unregister all the phases.
+
+  virtual void update(); //Update current phase.
+
+  virtual const std::string& getStartPhase() const; // Return the name of the starting phase.
+  virtual void setStartPhase( const std::string& phaseName ); // Set the name of starting phase.
 
 protected:
   // log::Logger mLogger;
@@ -77,4 +94,4 @@ protected:
 } //namespace phase
 } //namespace tktk
 
-#endif //TKTK_PHASE_PHASE_MANAGER_H
+#endif //TKTK_PHASE_PHASE_MANAGER_HPP

@@ -24,43 +24,29 @@
        source distribution.
 */
 
-#ifndef TKTK_TESTAPP_THEME_SETTINGS_WINDOW_H
-#define TKTK_TESTAPP_THEME_SETTINGS_WINDOW_H
+#ifndef TKTK_PHASE_I_PHASE_HPP
+#define TKTK_PHASE_I_PHASE_HPP
 
 #include <memory>
-// #include <tktk/log/loggingDefs.h>
-#include "GuiWindow.h"
+#include <string>
 
-// using namespace tktk;
-
-namespace testapp
+namespace tktk
 {
 
-class ThemeSettingsWindow;
-typedef std::shared_ptr<ThemeSettingsWindow> ThemeSettingsWindowPtr;
+class IPhase;
+typedef std::shared_ptr<IPhase> IPhasePtr;
 
-class ThemeSettingsWindow
-: public GuiWindow
+class IPhase
 {
-
 public:
+  virtual ~IPhase()
+  {
+  }
 
-  ThemeSettingsWindow();
-  virtual ~ThemeSettingsWindow();
-
-  virtual void onCreate() override;
-
-  virtual void setOnReloadTheme( std::function<void()> handler );
-
-protected:
-
-  virtual void onReloadButtonClick();
-
-private:
-  // log::Logger mLogger;
-  std::function<void()> mOnReloadTheme;
+  virtual const std::string& getName() const = 0; // Return the name.
+  virtual void setName( const std::string& name ) = 0; // Set name.
 };
 
-} //namespace testapp
+} //namespace tktk
 
-#endif //TKTK_TESTAPP_THEME_SETTINGS_WINDOW_H
+#endif //TKTK_PHASE_I_PHASE_HPP

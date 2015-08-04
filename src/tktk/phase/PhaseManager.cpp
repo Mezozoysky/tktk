@@ -24,7 +24,7 @@
        source distribution.
 */
 
-#include <tktk/phase/PhaseManager.h>
+#include <tktk/phase/PhaseManager.hpp>
 
 namespace tktk
 {
@@ -45,6 +45,7 @@ PhaseManager::~PhaseManager()
   // BOOST_LOG_TRIVIAL(trace) << "PhaseManager dtor()";
 }
 
+/*
 void PhaseManager::registerPhase( IPhasePtr phase )
 {
 //  BOOST_LOG_TRIVIAL(trace) << "PhaseManager registerPhase()";
@@ -54,6 +55,7 @@ void PhaseManager::registerPhase( IPhasePtr phase )
   //   mPhases[ phase->getName() ] = phase;
   // }
 }
+*/
 
 void PhaseManager::switchPhase( const std::string& phaseName )
 {

@@ -24,7 +24,7 @@
        source distribution.
 */
 
-#include "RangeExampleWindow.h"
+#include "RangeExampleWindow.hpp"
 #include <SFGUI/Box.hpp>
 #include <SFGUI/Scale.hpp>
 #include <SFGUI/Scrollbar.hpp>

@@ -24,33 +24,41 @@
        source distribution.
 */
 
-#ifndef TKTK_TESTAPP_SFGUI_WIDGET_SET_WINDOW_H
-#define TKTK_TESTAPP_SFGUI_WIDGET_SET_WINDOW_H
+#ifndef TKTK_TESTAPP_APP_HPP
+#define TKTK_TESTAPP_APP_HPP
 
-#include <memory>
-#include "GuiWindow.h"
+#include <tktk/phase.hpp>
+// #include <tktk/log/loggingDefs.h>
+#include <SFML/Graphics.hpp>
+#include <SFGUI/SFGUI.hpp>
+#include <SFGUI/Desktop.hpp>
 
-//using namespace tktk;
+using namespace tktk;
 
 namespace testapp
 {
 
-class SfguiWidgetSetWindow;
-typedef std::shared_ptr<SfguiWidgetSetWindow> SfguiWidgetSetWindowPtr;
-
-class SfguiWidgetSetWindow
-: public GuiWindow
+class App
 {
 
 public:
+  App();
+  virtual ~App();
 
-  SfguiWidgetSetWindow();
-  virtual ~SfguiWidgetSetWindow();
+  virtual void run();
 
-  virtual void onCreate() override;
+  virtual void onReloadTheme();
 
+private:
+  // log::Logger mLogger;
+  phase::PhaseManagerPtr mPhaseManager;
+  sf::RenderWindow mAppWindow;
+  sfg::SFGUI mGui;
+  sfg::Desktop mGuiDesktop;
+
+  std::string mAssetsPath;
 };
 
 } //namespace testapp
 
-#endif //TKTK_TESTAPP_SFGUI_WIDGET_SET_WINDOW_H
+#endif //TKTK_TESTAPP_APP_HPP

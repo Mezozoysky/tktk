@@ -24,7 +24,7 @@
        source distribution.
 */
 
-#include "ThemeSettingsWindow.h"
+#include "ThemeSettingsWindow.hpp"
 #include <SFGUI/Label.hpp>
 #include <SFGUI/Button.hpp>
 #include <SFGUI/Box.hpp>
