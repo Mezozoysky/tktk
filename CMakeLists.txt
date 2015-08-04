@@ -196,9 +196,27 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 set(HEADERS "")
 set(SOURCES "")
 
-# ==================
-# === tktk group ===
-# ==================
+# ==========================
+# === tktk/scene2d group ===
+# ==========================
+set(GROUP_HEADERS
+    include/${TKTK_CORE_NAME}/scene2d/Node.hpp
+    include/${TKTK_CORE_NAME}/scene2d/Scene.hpp
+    include/${TKTK_CORE_NAME}/scene2d/SceneObject.hpp
+    include/${TKTK_CORE_NAME}/scene2d/IComponent.hpp
+)
+set(GROUP_SOURCES
+    src/${TKTK_CORE_NAME}/scene2d/Node.cpp
+#    src/${TKTK_CORE_NAME}/scene2d/Scene.cpp
+#    src/${TKTK_CORE_NAME}/scene2d/SceneObject.cpp
+)
+source_group("tktk\\scene2d" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
+set(HEADERS ${HEADERS} ${GROUP_HEADERS})
+set(SOURCES ${SOURCES} ${GROUP_SOURCES})
+
+# ========================
+# === tktk/phase group ===
+# ========================
 set(GROUP_HEADERS
     include/${TKTK_CORE_NAME}/phase.hpp
     include/${TKTK_CORE_NAME}/phase/IPhase.hpp
@@ -207,7 +225,7 @@ set(GROUP_HEADERS
 set(GROUP_SOURCES
     src/${TKTK_CORE_NAME}/phase/PhaseManager.cpp
 )
-source_group("tktk" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
+source_group("tktk\\phase" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(HEADERS ${HEADERS} ${GROUP_HEADERS})
 set(SOURCES ${SOURCES} ${GROUP_SOURCES})
 
