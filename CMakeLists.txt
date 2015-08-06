@@ -21,32 +21,24 @@ project(tktk C CXX)
 # Other options
 #
 macro_set_option(TKTK_BUILD_SHARED FALSE BOOL "TRUE to build TKTK as shared libraries, FALSE to build as static")
-macro_set_option(TKTK_USE_SHARED_DEPS FALSE BOOL "TRUE to use shared SFML, etc (with FindSFML, etc modules)")
 
-macro_set_option(TKTK_BUILD_DEMO FALSE BOOL "TRUE to build TKTK as shared libraries, FALSE to build as static")
+macro_set_option(TKTK_BUILD_DEMO FALSE BOOL "TRUE to build TKTK demo application")
+macro_set_option(TKTK_BUILD_SCENE2D_DEMO FALSE BOOL "TRUE to build TKTK scene2d demo application")
 
 #
 # Shared/static lib settings
 #
-if(NOT TKTK_BUILD_SHARED)
+if(NOT TKTK_BUILD_SHARED) #static!
     message("-- ${CMAKE_PROJECT_NAME} -- Library build type: static")
-    add_definitions(-DTKTK_STATIC)
-else()
-    message("-- ${CMAKE_PROJECT_NAME} -- Library build type: shared")
-    add_definitions(-DTKTK_SHARED)
-endif()
-
-#
-# Shared/static deps settings
-#
-if(NOT TKTK_USE_SHARED_DEPS)
     set(SFML_STATIC_LIBRARIES TRUE)
     set(SFGUI_STATIC_LIBRARIES TRUE)
-else(NOT TKTK_USE_SHARED_DEPS)
+    add_definitions(-DTKTK_STATIC)
+else() #shared!
+    message("-- ${CMAKE_PROJECT_NAME} -- Library build type: shared")
     set(SFML_STATIC_LIBRARIES FALSE)
     set(SFGUI_STATIC_LIBRARIES FALSE)
-endif(NOT TKTK_USE_SHARED_DEPS)
-
+    add_definitions(-DTKTK_SHARED)
+endif()
 
 #
 # OS definitions
@@ -86,17 +78,18 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 #
 # Targets/names
 #
-set(TKTK_CORE_NAME tktk)
-set(TKTK_DEMO_NAME tktk-demo)
+set(TKTK_LIB_SCENE2D tktk-scene2d)
+set(TKTK_LIB_PHASE tktk-phase)
+set(TKTK_APP_DEMO tktk-demo)
 
 #
 # OS-specific libs
 #
-set(TKTK_LINUX_LIBS "")
+set(TKTK_APP_LINUX_LIBS "")
 if(TKTK_OS_LINUX)
     find_library(PTHREAD_LIBRARY pthread)
     if(TKTK_BUILD_SHARED)
-        set(TKTK_LINUX_LIBS ${TKTK_LINUX_LIBS}
+        set(TKTK_APP_LINUX_LIBS ${TKTK_APP_LINUX_LIBS}
             ${XCB_IMAGE_LIBRARY}
             ${XCB_RANDR_LIBRARY}
             ${X11_XCB_LIBRARY}
@@ -105,7 +98,7 @@ if(TKTK_OS_LINUX)
             ${PTHREAD_LIBRARY}
         )
     else(TKTK_BUILD_SHARED)
-        set(TKTK_LINUX_LIBS ${TKTK_LINUX_LIBS}
+        set(TKTK_APP_LINUX_LIBS ${TKTK_APP_LINUX_LIBS}
             ${XCB_IMAGE_LIBRARY}
             ${XCB_RANDR_LIBRARY}
             ${X11_XCB_LIBRARY}
@@ -116,37 +109,42 @@ if(TKTK_OS_LINUX)
     endif(TKTK_BUILD_SHARED)
 endif(TKTK_OS_LINUX)
 
-set(TKTK_OSX_LIBS "")
-if(${TKTK_OS_OSX})
+set(TKTK_APP_OSX_LIBS "")
+if(${TKTK_APP_OS_OSX})
   find_library(CF_LIB NAMES CoreFoundation)
   find_library(CARBON_LIB Carbon)
   find_library(COCOA_LIB Cocoa)
   find_library(IOKIT_LIB IOKit)
-  set(TKTK_OSX_LIBS ${CF_LIB} ${CARBON_LIB} ${COCOA_LIB} ${IOKIT_LIB})
+  set(TKTK_APP_OSX_LIBS ${CF_LIB} ${CARBON_LIB} ${COCOA_LIB} ${IOKIT_LIB})
 endif()
 
-set(TKTK_WINDOWS_LIBS "")
+set(TKTK_APP_WINDOWS_LIBS "")
 if(${TKTK_OS_WINDOWS})
 endif()
 
 #
 # Packages & dependencies
 #
-set(TKTK_DEP_LIBS "")
-set(TKTK_DEMO_DEP_LIBS "")
+set(TKTK_APP_DEMO_DEPS "")
+set(TKTK_LIB_SCENE2D_DEPS "")
+set(TKTK_LIB_PHASE_DEPS "")
 
 find_package(SFGUI REQUIRED)
 if(SFGUI_FOUND)
     include_directories(${SFGUI_INCLUDE_DIR})
 else(SFGUI_FOUND)
-    message(FATAL_ERROR "-- ${CMAKE_PROJECT_NAME} -- No SFGUI found!")
+    if(TKTK_BUILD_DEMO)
+        message(FATAL_ERROR "-- ${CMAKE_PROJECT_NAME} -- No SFGUI found!")
+    endif(TKTK_BUILD_DEMO)
 endif(SFGUI_FOUND)
 
 find_package(SFML 2.2 COMPONENTS audio network graphics window system  REQUIRED)
 if(SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})
 else(SFML_FOUND)
-    message(FATAL_ERROR "-- ${CMAKE_PROJECT_NAME} -- No SFML found!")
+    if(TKTK_BUILD_DEMO OR TKTK_BUILD_SCENE2D_DEMO)
+        message(FATAL_ERROR "-- ${CMAKE_PROJECT_NAME} -- No SFML found!")
+    endif(TKTK_BUILD_DEMO OR TKTK_BUILD_SCENE2D_DEMO)
 endif(SFML_FOUND)
 
 find_package(OpenGL)
@@ -157,19 +155,13 @@ else(OPENGL_FOUND)
 endif(OPENGL_FOUND)
 
 if(TKTK_USE_SHARED_DEPS)
-    set(TKTK_DEP_LIBS ${TKTK_DEP_LIBS}
-        #nothing
-    )
-    set(TKTK_DEMO_DEP_LIBS ${TKTK_DEMO_DEP_LIBS}
+    set(TKTK_APP_DEMO_DEPS ${TKTK_APP_DEMO_DEPS}
         ${SFGUI_LIBRARY}
         ${SFML_LIBRARIES}
         ${OPENGL_LIBRARIES}
     )
 else(TKTK_USE_SHARED_DEPS)
-    set(TKTK_DEP_LIBS ${TKTK_DEP_LIBS}
-        #nothing
-    )
-    set(TKTK_DEMO_DEP_LIBS ${TKTK_DEMO_DEP_LIBS}
+    set(TKTK_APP_DEMO_DEPS ${TKTK_APP_DEMO_DEPS}
         ${SFGUI_LIBRARY}
         ${SFML_LIBRARIES}
         ${FREETYPE_LIBRARY}
@@ -193,99 +185,112 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 
 
-set(HEADERS "")
-set(SOURCES "")
-
+set(TKTK_LIB_SCENE2D_HEADERS "")
+set(TKTK_LIB_SCENE2D_SOURCES "")
 # ==========================
 # === tktk/scene2d group ===
 # ==========================
 set(GROUP_HEADERS
-    include/${TKTK_CORE_NAME}/scene2d/Node.hpp
-    include/${TKTK_CORE_NAME}/scene2d/Scene.hpp
-    include/${TKTK_CORE_NAME}/scene2d/SceneObject.hpp
-    include/${TKTK_CORE_NAME}/scene2d/IComponent.hpp
+    include/tktk/scene2d/Node.hpp
+    include/tktk/scene2d/Scene.hpp
+    include/tktk/scene2d/SceneObject.hpp
+    include/tktk/scene2d/ComponentBase.hpp
 )
 set(GROUP_SOURCES
-    src/${TKTK_CORE_NAME}/scene2d/Node.cpp
-#    src/${TKTK_CORE_NAME}/scene2d/Scene.cpp
-#    src/${TKTK_CORE_NAME}/scene2d/SceneObject.cpp
+    src/tktk/scene2d/Node.cpp
+#    src/tktk/scene2d/Scene.cpp
+#    src/tktk/scene2d/SceneObject.cpp
+    src/tktk/scene2d/ComponentBase.cpp
 )
 source_group("tktk\\scene2d" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
-set(HEADERS ${HEADERS} ${GROUP_HEADERS})
-set(SOURCES ${SOURCES} ${GROUP_SOURCES})
+set(TKTK_LIB_SCENE2D_HEADERS ${TKTK_LIB_SCENE2D_HEADERS} ${GROUP_HEADERS})
+set(TKTK_LIB_SCENE2D_SOURCES ${TKTK_LIB_SCENE2D_SOURCES} ${GROUP_SOURCES})
 
+
+set(TKTK_LIB_PHASE_HEADERS "")
+set(TKTK_LIB_PHASE_SOURCES "")
 # ========================
 # === tktk/phase group ===
 # ========================
 set(GROUP_HEADERS
-    include/${TKTK_CORE_NAME}/phase.hpp
-    include/${TKTK_CORE_NAME}/phase/IPhase.hpp
-    include/${TKTK_CORE_NAME}/phase/PhaseManager.hpp
+    include/tktk/phase.hpp
+    include/tktk/phase/IPhase.hpp
+    include/tktk/phase/PhaseManager.hpp
 )
 set(GROUP_SOURCES
-    src/${TKTK_CORE_NAME}/phase/PhaseManager.cpp
+    src/tktk/phase/PhaseManager.cpp
 )
 source_group("tktk\\phase" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
-set(HEADERS ${HEADERS} ${GROUP_HEADERS})
-set(SOURCES ${SOURCES} ${GROUP_SOURCES})
+set(TKTK_LIB_PHASE_HEADERS ${TKTK_LIB_PHASE_HEADERS} ${GROUP_HEADERS})
+set(TKTK_LIB_PHASE_SOURCES ${TKTK_LIB_PHASE_SOURCES} ${GROUP_SOURCES})
 
 #
 # Build the library!
 #
 if(TKTK_BUILD_SHARED)
-    add_library(${TKTK_CORE_NAME} SHARED
-        ${HEADERS}
-        ${SOURCES}
+    add_library(${TKTK_LIB_SCENE2D} SHARED
+        ${TKTK_LIB_SCENE2D_HEADERS}
+        ${TKTK_LIB_SCENE2D_SOURCES}
+    )
+    add_library(${TKTK_LIB_PHASE} SHARED
+        ${TKTK_LIB_PHASE_HEADERS}
+        ${TKTK_LIB_PHASE_SOURCES}
     )
 else(TKTK_BUILD_SHARED) #static
-    add_library(${TKTK_CORE_NAME} STATIC
-        ${HEADERS}
-        ${SOURCES}
+    add_library(${TKTK_LIB_SCENE2D} STATIC
+        ${TKTK_LIB_SCENE2D_HEADERS}
+        ${TKTK_LIB_SCENE2D_SOURCES}
+    )
+    add_library(${TKTK_LIB_PHASE} STATIC
+        ${TKTK_LIB_PHASE_HEADERS}
+        ${TKTK_LIB_PHASE_SOURCES}
     )
 endif(TKTK_BUILD_SHARED)
 
-target_link_libraries(${TKTK_CORE_NAME} ${TKTK_DEP_LIBS})
+target_link_libraries(${TKTK_LIB_SCENE2D} ${TKTK_LIB_SCENE2D_DEPS})
+target_link_libraries(${TKTK_LIB_PHASE} ${TKTK_LIB_PHASE_DEPS})
 
 
 #
 # Build demo app
 #
-set(HEADERS "")
-set(SOURCES "")
+set(TKTK_APP_DEMO_HEADERS "")
+set(TKTK_APP_DEMO_SOURCES "")
 
 # =========================
 # ==== tktk-demo group ====
 # =========================
 set(GROUP_HEADERS
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/App.hpp
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/GuiWindow.hpp
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/ThemeSettingsWindow.hpp
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/SfguiWidgetSetWindow.hpp
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/EntryExampleWindow.hpp
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/RangeExampleWindow.hpp
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/DesktopExampleWindow.hpp
+    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/App.hpp
+    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/GuiWindow.hpp
+    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/ThemeSettingsWindow.hpp
+    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/SfguiWidgetSetWindow.hpp
+    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/EntryExampleWindow.hpp
+    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/RangeExampleWindow.hpp
+    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/DesktopExampleWindow.hpp
 )
 set(GROUP_SOURCES
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/App.cpp
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/GuiWindow.cpp
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/ThemeSettingsWindow.cpp
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/SfguiWidgetSetWindow.cpp
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/EntryExampleWindow.cpp
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/RangeExampleWindow.cpp
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/DesktopExampleWindow.cpp
-    ${TKTK_DEMO_NAME}/src/${TKTK_DEMO_NAME}/main.cpp
+    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/App.cpp
+    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/GuiWindow.cpp
+    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/ThemeSettingsWindow.cpp
+    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/SfguiWidgetSetWindow.cpp
+    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/EntryExampleWindow.cpp
+    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/RangeExampleWindow.cpp
+    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/DesktopExampleWindow.cpp
+    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/main.cpp
 )
 source_group("tktk-demo" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
-set(HEADERS ${HEADERS} ${GROUP_HEADERS})
-set(SOURCES ${SOURCES} ${GROUP_SOURCES})
+set(TKTK_APP_DEMO_HEADERS ${TKTK_APP_DEMO_HEADERS} ${GROUP_HEADERS})
+set(TKTK_APP_DEMO_SOURCES ${TKTK_APP_DEMO_SOURCES} ${GROUP_SOURCES})
 
 
-add_executable(${TKTK_DEMO_NAME} WIN32 #MACOSX_BUNDLE
-    ${HEADERS}
-    ${SOURCES}
+add_executable(${TKTK_APP_DEMO} WIN32 #MACOSX_BUNDLE
+    ${TKTK_APP_DEMO_HEADERS}
+    ${TKTK_APP_DEMO_SOURCES}
 )
-set_target_properties(${TKTK_DEMO_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(${TKTK_APP_DEMO_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(${TKTK_DEMO_NAME} ${TKTK_CORE_NAME})
-target_link_libraries(${TKTK_DEMO_NAME} ${TKTK_DEMO_DEP_LIBS})
-target_link_libraries(${TKTK_DEMO_NAME} ${TKTK_LINUX_LIBS} ${TKTK_OSX_LIBS} ${TKTK_WINDOWS_LIBS})
+target_link_libraries(${TKTK_APP_DEMO} ${TKTK_LIB_SCENE2D})
+target_link_libraries(${TKTK_APP_DEMO} ${TKTK_LIB_PHASE})
+target_link_libraries(${TKTK_APP_DEMO} ${TKTK_APP_DEMO_DEPS})
+target_link_libraries(${TKTK_APP_DEMO} ${TKTK_APP_LINUX_LIBS} ${TKTK_APP_OSX_LIBS} ${TKTK_APP_WINDOWS_LIBS})

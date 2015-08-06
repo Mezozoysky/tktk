@@ -24,25 +24,22 @@
        source distribution.
 */
 
-#ifndef TKTK_SCENE2D_I_COMPONENT_HPP
-#define TKTK_SCENE2D_I_COMPONENT_HPP
-
+#include <tktk/scene2d/ComponentBase.hpp>
 
 namespace tktk
 {
 namespace scene2d
 {
 
-class IComponent
+void ComponentBase::setSceneObject( SceneObject* sco ) noexcept
 {
-public:
+    mSCO = sco;
+}
 
-    virtual ~IComponent()
-    {
-    }
-};
+SceneObject& ComponentBase::getSceneObject() const noexcept
+{
+    return ( *mSCO );
+}
 
 } //namespace scene2d
 } //namespace tktk
-
-#endif /* end of include guard: TKTK_SCENE2D_I_COMPONENT_HPP */
