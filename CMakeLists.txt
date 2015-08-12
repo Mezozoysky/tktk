@@ -31,12 +31,10 @@ macro_set_option(TKTK_BUILD_SCENE2D_DEMO FALSE BOOL "TRUE to build TKTK scene2d 
 if(NOT TKTK_BUILD_SHARED) #static!
     message("-- ${CMAKE_PROJECT_NAME} -- Library build type: static")
     set(SFML_STATIC_LIBRARIES TRUE)
-    set(SFGUI_STATIC_LIBRARIES TRUE)
     add_definitions(-DTKTK_STATIC)
 else() #shared!
     message("-- ${CMAKE_PROJECT_NAME} -- Library build type: shared")
     set(SFML_STATIC_LIBRARIES FALSE)
-    set(SFGUI_STATIC_LIBRARIES FALSE)
     add_definitions(-DTKTK_SHARED)
 endif()
 
@@ -129,15 +127,6 @@ set(TKTK_APP_DEMO_DEPS "")
 set(TKTK_LIB_SCENE2D_DEPS "")
 set(TKTK_LIB_PHASE_DEPS "")
 
-find_package(SFGUI REQUIRED)
-if(SFGUI_FOUND)
-    include_directories(${SFGUI_INCLUDE_DIR})
-else(SFGUI_FOUND)
-    if(TKTK_BUILD_DEMO)
-        message(FATAL_ERROR "-- ${CMAKE_PROJECT_NAME} -- No SFGUI found!")
-    endif(TKTK_BUILD_DEMO)
-endif(SFGUI_FOUND)
-
 find_package(SFML 2.2 COMPONENTS audio network graphics window system  REQUIRED)
 if(SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})
@@ -156,13 +145,11 @@ endif(OPENGL_FOUND)
 
 if(TKTK_USE_SHARED_DEPS)
     set(TKTK_APP_DEMO_DEPS ${TKTK_APP_DEMO_DEPS}
-        ${SFGUI_LIBRARY}
         ${SFML_LIBRARIES}
         ${OPENGL_LIBRARIES}
     )
 else(TKTK_USE_SHARED_DEPS)
     set(TKTK_APP_DEMO_DEPS ${TKTK_APP_DEMO_DEPS}
-        ${SFGUI_LIBRARY}
         ${SFML_LIBRARIES}
         ${FREETYPE_LIBRARY}
         ${JPEG_LIBRARY}
@@ -261,22 +248,8 @@ set(TKTK_APP_DEMO_SOURCES "")
 # ==== tktk-demo group ====
 # =========================
 set(GROUP_HEADERS
-    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/App.hpp
-    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/GuiWindow.hpp
-    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/ThemeSettingsWindow.hpp
-    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/SfguiWidgetSetWindow.hpp
-    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/EntryExampleWindow.hpp
-    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/RangeExampleWindow.hpp
-    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/DesktopExampleWindow.hpp
 )
 set(GROUP_SOURCES
-    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/App.cpp
-    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/GuiWindow.cpp
-    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/ThemeSettingsWindow.cpp
-    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/SfguiWidgetSetWindow.cpp
-    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/EntryExampleWindow.cpp
-    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/RangeExampleWindow.cpp
-    ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/DesktopExampleWindow.cpp
     ${TKTK_APP_DEMO}/src/${TKTK_APP_DEMO}/main.cpp
 )
 source_group("tktk-demo" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})

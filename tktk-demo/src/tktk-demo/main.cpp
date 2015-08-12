@@ -24,12 +24,7 @@
        source distribution.
 */
 
-#include "App.hpp"
-
 int main( int argc, char* argv[] )
 {
-    testapp::App app;
-    app.run();
-
     return 0;
 }
