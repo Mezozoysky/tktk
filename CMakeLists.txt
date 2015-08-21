@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 2.8.4)
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 
 macro(macro_set_option var default type docstring)
     if(NOT DEFINED ${var})
@@ -76,6 +75,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 #
 # Targets/names
 #
+set(TKTK_LIB_ECS tktk-ecs)
 set(TKTK_LIB_SCENE2D tktk-scene2d)
 set(TKTK_LIB_PHASE tktk-phase)
 set(TKTK_APP_DEMO tktk-demo)
@@ -123,9 +123,10 @@ endif()
 #
 # Packages & dependencies
 #
-set(TKTK_APP_DEMO_DEPS "")
+set(TKTK_LIB_ECS_DEPS "")
 set(TKTK_LIB_SCENE2D_DEPS "")
 set(TKTK_LIB_PHASE_DEPS "")
+set(TKTK_APP_DEMO_DEPS "")
 
 find_package(SFML 2.2 COMPONENTS audio network graphics window system  REQUIRED)
 if(SFML_FOUND)
@@ -172,6 +173,32 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 
 
+set(TKTK_LIB_ECS_HEADERS "")
+set(TKTK_LIB_ECS_SOURCES "")
+# ==========================
+# === tktk/ecs group ===
+# ==========================
+set(GROUP_HEADERS
+    include/tktk/ecs/Entity.hpp
+    include/tktk/ecs/EntityManager.hpp
+    include/tktk/ecs/ComponentBase.hpp
+    include/tktk/ecs/ProcessorBase.hpp
+    include/tktk/ecs/Processor.hpp
+    include/tktk/ecs/SystemBase.hpp
+)
+set(GROUP_SOURCES
+    src/tktk/ecs/Entity.cpp
+    src/tktk/ecs/EntityManager.cpp
+    src/tktk/ecs/ComponentBase.cpp
+    src/tktk/ecs/ProcessorBase.cpp
+    src/tktk/ecs/Processor.cpp
+    src/tktk/ecs/SystemBase.cpp
+)
+source_group("tktk\\ecs" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
+set(TKTK_LIB_ECS_HEADERS ${TKTK_LIB_ECS_HEADERS} ${GROUP_HEADERS})
+set(TKTK_LIB_ECS_SOURCES ${TKTK_LIB_ECS_SOURCES} ${GROUP_SOURCES})
+
+
 set(TKTK_LIB_SCENE2D_HEADERS "")
 set(TKTK_LIB_SCENE2D_SOURCES "")
 # ==========================
@@ -200,7 +227,6 @@ set(TKTK_LIB_PHASE_SOURCES "")
 # === tktk/phase group ===
 # ========================
 set(GROUP_HEADERS
-    include/tktk/phase.hpp
     include/tktk/phase/IPhase.hpp
     include/tktk/phase/PhaseManager.hpp
 )
@@ -215,6 +241,10 @@ set(TKTK_LIB_PHASE_SOURCES ${TKTK_LIB_PHASE_SOURCES} ${GROUP_SOURCES})
 # Build the library!
 #
 if(TKTK_BUILD_SHARED)
+    add_library(${TKTK_LIB_ECS} SHARED
+        ${TKTK_LIB_ECS_HEADERS}
+        ${TKTK_LIB_ECS_SOURCES}
+    )
     add_library(${TKTK_LIB_SCENE2D} SHARED
         ${TKTK_LIB_SCENE2D_HEADERS}
         ${TKTK_LIB_SCENE2D_SOURCES}
@@ -224,6 +254,10 @@ if(TKTK_BUILD_SHARED)
         ${TKTK_LIB_PHASE_SOURCES}
     )
 else(TKTK_BUILD_SHARED) #static
+    add_library(${TKTK_LIB_ECS} STATIC
+        ${TKTK_LIB_ECS_HEADERS}
+        ${TKTK_LIB_ECS_SOURCES}
+    )
     add_library(${TKTK_LIB_SCENE2D} STATIC
         ${TKTK_LIB_SCENE2D_HEADERS}
         ${TKTK_LIB_SCENE2D_SOURCES}
@@ -234,6 +268,7 @@ else(TKTK_BUILD_SHARED) #static
     )
 endif(TKTK_BUILD_SHARED)
 
+target_link_libraries(${TKTK_LIB_ECS} ${TKTK_LIB_ECS_DEPS})
 target_link_libraries(${TKTK_LIB_SCENE2D} ${TKTK_LIB_SCENE2D_DEPS})
 target_link_libraries(${TKTK_LIB_PHASE} ${TKTK_LIB_PHASE_DEPS})
 
