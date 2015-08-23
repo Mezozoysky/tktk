@@ -24,7 +24,7 @@
         source distribution.
 */
 
-#include <tktk/ecs/SystemBase.hpp>
+#include <tktk/ecs/System.hpp>
 #include <tktk/ecs/EntityManager.hpp>
 
 namespace tktk
@@ -32,24 +32,24 @@ namespace tktk
 namespace ecs
 {
 
-SystemBase::SystemBase()
+System::System()
 : mIsRunning{ false }
 , mEntityManager{ new EntityManager() }
 {
 
 }
 
-SystemBase::~SystemBase()
+System::~System()
 {
 
 }
 
-EntityManager* SystemBase::getEntityManager() const noexcept
+EntityManager* System::getEntityManager() const noexcept
 {
     return ( mEntityManager.get() );
 }
 
-void SystemBase::update ( float deltaTime )
+void System::update ( float deltaTime )
 {
     for ( auto& processor: mProcessors )
     {

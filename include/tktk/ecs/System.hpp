@@ -24,8 +24,8 @@
         source distribution.
 */
 
-#ifndef TKTK_ECS_ENTITY_HPP
-#define TKTK_ECS_ENTITY_HPP
+#ifndef TKTK_ECS_SYSTEM_HPP
+#define TKTK_ECS_SYSTEM_HPP
 
 #include <type_traits>
 #include <memory>
@@ -38,15 +38,14 @@ namespace tktk
 namespace ecs
 {
 
-class SystemBase
+class System
 {
 public:
 
-    SystemBase();
-    virtual ~SystemBase();
+    System();
+    virtual ~System();
 
     virtual void update( float deltaTime );
-    virtual void run() = 0;
 
     EntityManager* getEntityManager() const noexcept;
 
@@ -57,7 +56,7 @@ public:
 //             std::is_base_of< ProcessorBase, T >::value
 //             , "T should extend tktk::ecs::ProcessorBase"
 //         );
-// 
+//
 //         auto it(
 //             std::find_if(
 //                 mProcessors.begin()
@@ -76,7 +75,7 @@ public:
         );
 
         T* processor{ new T( std::forward< TArgs >( args )... ) };
-        
+
         std::unique_ptr< T > uPtr{ processor };
         mProcessors.emplace_back( std::move( uPtr ) );
 
@@ -93,4 +92,4 @@ private:
 } //namespace ecs
 } //namespace tktk
 
-#endif /* end of include guard: TKTK_ECS_ENTITY_HPP */
+#endif /* end of include guard: TKTK_ECS_SYSTEM_HPP */
