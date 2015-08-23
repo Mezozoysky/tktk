@@ -79,6 +79,7 @@ set(TKTK_LIB_ECS tktk-ecs)
 set(TKTK_LIB_SCENE2D tktk-scene2d)
 set(TKTK_LIB_PHASE tktk-phase)
 set(TKTK_APP_DEMO tktk-demo)
+set(ARCANOID arcanoid)
 
 #
 # OS-specific libs
@@ -184,7 +185,7 @@ set(GROUP_HEADERS
     include/tktk/ecs/ComponentBase.hpp
     include/tktk/ecs/ProcessorBase.hpp
     include/tktk/ecs/Processor.hpp
-    include/tktk/ecs/SystemBase.hpp
+    include/tktk/ecs/System.hpp
 )
 set(GROUP_SOURCES
     src/tktk/ecs/Entity.cpp
@@ -192,7 +193,7 @@ set(GROUP_SOURCES
     src/tktk/ecs/ComponentBase.cpp
     src/tktk/ecs/ProcessorBase.cpp
     src/tktk/ecs/Processor.cpp
-    src/tktk/ecs/SystemBase.cpp
+    src/tktk/ecs/System.cpp
 )
 source_group("tktk\\ecs" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(TKTK_LIB_ECS_HEADERS ${TKTK_LIB_ECS_HEADERS} ${GROUP_HEADERS})
@@ -302,3 +303,34 @@ target_link_libraries(${TKTK_APP_DEMO} ${TKTK_LIB_SCENE2D})
 target_link_libraries(${TKTK_APP_DEMO} ${TKTK_LIB_PHASE})
 target_link_libraries(${TKTK_APP_DEMO} ${TKTK_APP_DEMO_DEPS})
 target_link_libraries(${TKTK_APP_DEMO} ${TKTK_APP_LINUX_LIBS} ${TKTK_APP_OSX_LIBS} ${TKTK_APP_WINDOWS_LIBS})
+
+#
+# Build arcanoid
+#
+set(ARCANOID_HEADERS "")
+set(ARCANOID_SOURCES "")
+
+# ========================
+# ==== arcanoid group ====
+# ========================
+set(GROUP_HEADERS
+    src/${ARCANOID}/Game.hpp
+)
+set(GROUP_SOURCES
+    src/${ARCANOID}/Game.cpp
+    src/${ARCANOID}/main.cpp
+)
+source_group("arcanoid" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
+set(ARCANOID_HEADERS ${ARCANOID_HEADERS} ${GROUP_HEADERS})
+set(ARCANOID_SOURCES ${ARCANOID_SOURCES} ${GROUP_SOURCES})
+
+
+add_executable(${ARCANOID} WIN32 #MACOSX_BUNDLE
+    ${ARCANOID_HEADERS}
+    ${ARCANOID_SOURCES}
+)
+set_target_properties(${ARCANOID_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+
+target_link_libraries(${ARCANOID} ${TKTK_LIB_ECS})
+target_link_libraries(${ARCANOID} ${TKTK_APP_DEMO_DEPS})
+target_link_libraries(${ARCANOID} ${TKTK_APP_LINUX_LIBS} ${TKTK_APP_OSX_LIBS} ${TKTK_APP_WINDOWS_LIBS})
