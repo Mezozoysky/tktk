@@ -324,6 +324,19 @@ source_group("arcanoid" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(ARCANOID_HEADERS ${ARCANOID_HEADERS} ${GROUP_HEADERS})
 set(ARCANOID_SOURCES ${ARCANOID_SOURCES} ${GROUP_SOURCES})
 
+# =============================
+# ==== arcanoid/comp group ====
+# =============================
+set(GROUP_HEADERS
+    src/${ARCANOID}/comp/Transform.hpp
+)
+set(GROUP_SOURCES
+    src/${ARCANOID}/comp/Transform.cpp
+)
+source_group("arcanoid\\comp" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
+set(ARCANOID_HEADERS ${ARCANOID_HEADERS} ${GROUP_HEADERS})
+set(ARCANOID_SOURCES ${ARCANOID_SOURCES} ${GROUP_SOURCES})
+
 
 add_executable(${ARCANOID} WIN32 #MACOSX_BUNDLE
     ${ARCANOID_HEADERS}
