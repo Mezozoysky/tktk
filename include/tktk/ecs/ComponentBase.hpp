@@ -45,7 +45,7 @@ private: \
 #define DECLARE_UNIQUE_COMP_TYPE \
 public: \
     static const ::tktk::ecs::UniqueCompType uniqueCompType; \
-    inline virtual const ::tktk::ecs::uniqueCompType& getUniqueCompType() const noexcept override final \
+    inline virtual const ::tktk::ecs::UniqueCompType& getUniqueCompType() const noexcept override final \
     { \
         return ( uniqueCompType ); \
     } \
@@ -59,7 +59,7 @@ PROMISE_UNIQUE_COMP_TYPE
 
 public:
 
-    ComponentBase( Entity* owner );
+    explicit ComponentBase( Entity* owner );
     virtual ~ComponentBase();
 
     Entity* getEntity() const noexcept;
