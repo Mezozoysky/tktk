@@ -27,6 +27,7 @@
 #ifndef TKTK_ECS_PROCESSOR_HPP
 #define TKTK_ECS_PROCESSOR_HPP
 
+#include <tktk/ecs/ProcessorBase.hpp>
 #include <vector>
 
 namespace tktk
@@ -36,7 +37,7 @@ namespace ecs
 
 class Entity;
 
-template< typename PT, CT >
+template< typename PT, typename CT >
 class Processor
 : public ProcessorBase
 {
@@ -48,7 +49,7 @@ public:
     {
     }
 
-    virtual ~ProcessorBase()
+    virtual ~Processor()
     {
     }
 
