@@ -64,9 +64,9 @@ TransformProcessor::~TransformProcessor()
 
 void TransformProcessor::update( float deltaTime )
 {
-    std::cout << "Delta time: " << std::to_string( deltaTime ) << "; Updating: " << std::endl;
+//     std::cout << "Delta time: " << std::to_string( deltaTime ) << "; Updating: " << std::endl;
     for ( const auto& comp:  mComponents )
     {
-        std::cout << std::to_string( comp.position().x ) << ", " << std::to_string( comp.position().y ) << std::endl;
+//         std::cout << std::to_string( comp.position().x ) << ", " << std::to_string( comp.position().y ) << std::endl;
     }
 }

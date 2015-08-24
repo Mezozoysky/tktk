@@ -25,6 +25,8 @@
 */
 
 #include "Game.hpp"
+#include "comp/Transform.hpp"
+#include <iostream>
 
 using namespace tktk;
 
@@ -40,19 +42,36 @@ Game::~Game()
 
 void Game::run()
 {
-    // Limit the framerate to 60 frames per second (this step is optional)
+    auto transformProc( mECS.addProcessor<TransformProcessor>() );
+    auto e1( mECS.getEntityManager()->createEntity() );
+
+    auto tf1( transformProc->addComponent( e1 ) );
+    tf1->position() = sf::Vector2f( 100.0f, 75.0f );
+
     mWindow.setFramerateLimit(60);
 
+    sf::Clock clock;
     mIsRunning = true;
     while ( mIsRunning && mWindow.isOpen() )
     {
         sf::Event event;
         while ( mWindow.pollEvent( event ) )
         {
-            // Request for closing the window
-            if ( event.type == sf::Event::Closed )
+            switch (event.type)
             {
-                mIsRunning = false;
+                case sf::Event::Closed:
+                {
+                    mIsRunning = false;
+                    break;
+                }
+                case sf::Event::KeyPressed:
+                {
+                    std::cout << "\tKey is pressed!" << std::endl;
+                }
+                default:
+                {
+                    break;
+                }
             }
         }
 
@@ -62,8 +81,12 @@ void Game::run()
         }
 
         mWindow.clear();
-        mECS.update( 0.001f );
+        float secondsElapsed{ clock.restart().asSeconds() };
+        mECS.update( secondsElapsed );
         mWindow.display();
+
+//         std::cout << "FPS: " << std::to_string( 1.0f / secondsElapsed ) << std::endl;
+        std::cout.flush();
     }
 
     mWindow.close();
