@@ -80,10 +80,10 @@ void EntityHandle::invalidate() noexcept
     mManager = nullptr;
 }
 
-Entity EntityHandle::getEntity() const noexcept
-{
-    return ( mEntity );
-}
+// Entity EntityHandle::getEntity() const noexcept
+// {
+//     return ( mEntity );
+// }
 
 void EntityHandle::destroyEntity() noexcept
 {

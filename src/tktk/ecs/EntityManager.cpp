@@ -27,6 +27,7 @@
 #include <tktk/ecs/EntityManager.hpp>
 #include <tktk/ecs/Entity.hpp>
 
+#include <iostream>
 
 namespace tktk
 {
@@ -49,6 +50,7 @@ EntityHandle EntityManager::createEntity() noexcept
     mEntityVersions[ index ] = version;
 
     EntityHandle handle{ { index, version}, this };
+    std::cout << "Entity created: " << handle.getEntity().id << " [ " << index << ", " << version << " ];" << std::endl;
     return ( handle );
 }
 

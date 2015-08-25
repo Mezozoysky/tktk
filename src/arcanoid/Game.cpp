@@ -44,6 +44,8 @@ void Game::run()
 {
     auto transformProc( mECS.addProcessor<TransformProcessor>() );
     auto e1( mECS.getEntityManager()->createEntity() );
+    auto e2( mECS.getEntityManager()->createEntity() );
+    auto e3( mECS.getEntityManager()->createEntity() );
 
 //     auto tf1( transformProc->addComponent( e1 ) );
 //     tf1->position() = sf::Vector2f( 100.0f, 75.0f );

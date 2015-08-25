@@ -40,12 +40,12 @@ class EntityManager;
 struct Entity
 {
     Entity();
-    Entity( std::uint32_t index, std::uint32_t version );
+    Entity( uint32_t index, uint32_t version );
 
     uint32_t index() const noexcept;
     uint32_t version() const noexcept;
 
-    std::uint64_t id{ 0 };
+    uint64_t id{ 0 };
 };
 
 struct EntityHandle
@@ -57,7 +57,10 @@ struct EntityHandle
     inline bool isValid() const noexcept;
     void invalidate() noexcept;
 
-    inline Entity getEntity() const noexcept;
+    inline Entity getEntity() const noexcept
+    {
+        return ( mEntity );
+    }
     void destroyEntity() noexcept;
 
 private:
