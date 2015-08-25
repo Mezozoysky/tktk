@@ -41,11 +41,34 @@ EntityManager::~EntityManager()
 {
 }
 
-Entity* EntityManager::createEntity()
+EntityHandle EntityManager::createEntity() noexcept
 {
-    mEntities.emplace_back();
-    return ( &( mEntities.back() ) );
+    std::uint32_t index{ mNextEntityIndex++ };
+    mEntityVersions.resize( mNextEntityIndex );
+    std::uint32_t version{ 1 };
+    mEntityVersions[ index ] = version;
+
+    EntityHandle handle{ { index, version}, this };
+    return ( handle );
 }
+
+void EntityManager::destroyEntity ( Entity entity ) noexcept
+{
+    if ( !isEntityValid( entity ) )
+    {
+        return;
+    }
+
+    std::uint32_t index{ entity.index() };
+    mEntityVersions[ index ]++;
+    //TODO: mark index as free here!
+}
+
+bool EntityManager::isEntityValid( Entity entity ) const noexcept
+{
+    return ( entity.index() < mEntityVersions.size() && mEntityVersions[ entity.index() ] == entity.version() );
+}
+
 
 } //namespace ecs
 } //namespace tktk

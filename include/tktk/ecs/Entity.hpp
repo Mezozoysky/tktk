@@ -35,9 +35,35 @@ namespace tktk
 namespace ecs
 {
 
+class EntityManager;
+
 struct Entity
 {
-    std::uint64_t id; //Just for future use
+    Entity();
+    Entity( std::uint32_t index, std::uint32_t version );
+
+    uint32_t index() const noexcept;
+    uint32_t version() const noexcept;
+
+    std::uint64_t id{ 0 };
+};
+
+struct EntityHandle
+{
+    static const Entity ENTITY_INVALID;
+
+    EntityHandle( Entity entity, EntityManager* mgr );
+
+    inline bool isValid() const noexcept;
+    void invalidate() noexcept;
+
+    inline Entity getEntity() const noexcept;
+    void destroyEntity() noexcept;
+
+private:
+
+    Entity mEntity { ENTITY_INVALID };
+    EntityManager* mManager;
 };
 
 } //namespace ecs

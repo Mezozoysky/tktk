@@ -25,11 +25,75 @@
 */
 
 #include <tktk/ecs/Entity.hpp>
+#include <tktk/ecs/EntityManager.hpp>
 
 namespace tktk
 {
 namespace ecs
 {
+
+//
+// Entity
+//
+
+Entity::Entity()
+: id{ 0 }
+{
+}
+
+Entity::Entity ( uint32_t index, uint32_t version )
+: id{ uint64_t( index ) | uint64_t( version ) << 32UL }
+{
+
+}
+
+uint32_t Entity::index() const noexcept
+{
+    return ( id & 0xffffffffUL );
+}
+
+uint32_t Entity::version() const noexcept
+{
+    return ( id >> 32UL );
+}
+
+//
+// EntityHandle
+//
+
+const Entity EntityHandle::ENTITY_INVALID{};
+
+EntityHandle::EntityHandle( Entity entity, EntityManager* mgr )
+: mEntity( entity )
+, mManager( mgr )
+{
+}
+
+bool EntityHandle::isValid() const noexcept
+{
+    return ( mManager && mManager->isEntityValid( mEntity ) );
+}
+
+void EntityHandle::invalidate() noexcept
+{
+    mEntity = ENTITY_INVALID;
+    mManager = nullptr;
+}
+
+Entity EntityHandle::getEntity() const noexcept
+{
+    return ( mEntity );
+}
+
+void EntityHandle::destroyEntity() noexcept
+{
+    if ( isValid() )
+    {
+        mManager->destroyEntity( mEntity );
+        invalidate();
+    }
+}
+
 
 
 } //namespace ecs

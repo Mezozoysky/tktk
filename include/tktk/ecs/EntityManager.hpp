@@ -27,6 +27,8 @@
 #ifndef TKTK_ECS_ENTITY_MANAGER_HPP
 #define TKTK_ECS_ENTITY_MANAGER_HPP
 
+#include <tktk/ecs/Entity.hpp>
+#include <cstdint>
 #include <vector>
 
 
@@ -44,11 +46,18 @@ public:
     EntityManager();
     virtual ~EntityManager();
 
-    Entity* createEntity();
+    EntityHandle createEntity() noexcept;
+    void destroyEntity( Entity entity ) noexcept;
+
+    bool isEntityValid( Entity entity ) const noexcept;
 
 private:
 
-    std::vector< Entity > mEntities;
+
+private:
+
+    std::vector< std::uint32_t > mEntityVersions;
+    std::uint32_t mNextEntityIndex{ 0 };
 };
 
 } //namespace ecs
