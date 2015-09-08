@@ -80,11 +80,6 @@ void EntityHandle::invalidate() noexcept
     mManager = nullptr;
 }
 
-// Entity EntityHandle::getEntity() const noexcept
-// {
-//     return ( mEntity );
-// }
-
 void EntityHandle::destroyEntity() noexcept
 {
     if ( isValid() )

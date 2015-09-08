@@ -61,6 +61,7 @@ struct EntityHandle
     {
         return ( mEntity );
     }
+
     void destroyEntity() noexcept;
 
 private:
