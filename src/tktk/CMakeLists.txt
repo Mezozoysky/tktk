@@ -1,8 +1,24 @@
+set(TKTK_LIB_UTIL_HEADERS "")
+set(TKTK_LIB_UTIL_SOURCES "")
+#========================
+# === tktk/util group ===
+# =======================
+set(GROUP_HEADERS
+    ${CMAKE_SOURCE_DIR}/include/tktk/util/TypeMap.hpp
+)
+set(GROUP_SOURCES
+    ${CMAKE_SOURCE_DIR}/src/tktk/util/TypeMap.cpp
+)
+source_group("tktk\\util" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
+set(TKTK_LIB_UTIL_HEADERS ${TKTK_LIB_UTIL_HEADERS} ${GROUP_HEADERS})
+set(TKTK_LIB_UTIL_SOURCES ${TKTK_LIB_UTIL_SOURCES} ${GROUP_SOURCES})
+
+
 set(TKTK_LIB_ECS_HEADERS "")
 set(TKTK_LIB_ECS_SOURCES "")
-# ==========================
+# ======================
 # === tktk/ecs group ===
-# ==========================
+# ======================
 set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Entity.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/EntityManager.hpp
@@ -63,33 +79,21 @@ set(TKTK_LIB_PHASE_HEADERS ${TKTK_LIB_PHASE_HEADERS} ${GROUP_HEADERS})
 set(TKTK_LIB_PHASE_SOURCES ${TKTK_LIB_PHASE_SOURCES} ${GROUP_SOURCES})
 
 #
-# Build shared libraries!
-#
-add_library(tktk-ecs SHARED
-    ${TKTK_LIB_ECS_HEADERS}
-    ${TKTK_LIB_ECS_SOURCES}
-)
-add_library(tktk-scene2d SHARED
-    ${TKTK_LIB_SCENE2D_HEADERS}
-    ${TKTK_LIB_SCENE2D_SOURCES}
-)
-add_library(tktk-phase SHARED
-    ${TKTK_LIB_PHASE_HEADERS}
-    ${TKTK_LIB_PHASE_SOURCES}
-)
-
-#
 # Build static libraries!
 #
-add_library(tktk-ecs-s STATIC
+add_library(tktk-util STATIC
+    ${TKTK_LIB_UTIL_HEADERS}
+    ${TKTK_LIB_UTIL_SOURCES}
+)
+add_library(tktk-ecs STATIC
     ${TKTK_LIB_ECS_HEADERS}
     ${TKTK_LIB_ECS_SOURCES}
 )
-add_library(tktk-scene2d-s STATIC
+add_library(tktk-scene2d STATIC
     ${TKTK_LIB_SCENE2D_HEADERS}
     ${TKTK_LIB_SCENE2D_SOURCES}
 )
-add_library(tktk-phase-s STATIC
+add_library(tktk-phase STATIC
     ${TKTK_LIB_PHASE_HEADERS}
     ${TKTK_LIB_PHASE_SOURCES}
 )
