@@ -18,12 +18,10 @@ endif(TKTK_OS_LINUX)
 
 if(TKTK_OS_OSX)
     find_library(CORE_LIB NAMES CoreFoundation)
-    # find_library(CARBON_LIB Carbon)
     find_library(COCOA_LIB Cocoa)
     find_library(IOKIT_LIB IOKit)
     set(TKTK_OS_SPECIFIC_LIBS ${TKTK_OS_SPECIFIC_LIBS}
         ${CORE_LIB}
-        # ${CARBON_LIB}
         ${COCOA_LIB}
         ${IOKIT_LIB}
     )

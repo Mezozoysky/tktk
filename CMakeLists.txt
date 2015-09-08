@@ -10,13 +10,6 @@ set(CMAKE_MACOSX_RPATH 1)
 
 project(tktk C CXX)
 
-#
-# Other options
-#
-# macro_set_option(TKTK_BUILD_SHARED FALSE BOOL "TRUE to build TKTK as shared libraries, FALSE to build as static")
-#
-# macro_set_option(TKTK_BUILD_DEMO FALSE BOOL "TRUE to build TKTK demo application")
-# macro_set_option(TKTK_BUILD_SCENE2D_DEMO FALSE BOOL "TRUE to build TKTK scene2d demo application")
 option(TKTK_BUILD_ECS "Build tktk-ecs library" ON)
 option(TKTK_BUILD_PHASE "Build tktk-phase library" ON)
 option(TKTK_BUILD_SCENE2D "Build tktk-scene2d library" ON)
@@ -46,11 +39,11 @@ message("-- ${CMAKE_PROJECT_NAME} -- Compiler name: ${CMAKE_CXX_COMPILER_ID}")
 message("-- ${CMAKE_PROJECT_NAME} -- Compiler version: ${CMAKE_CXX_COMPILER_VERSION}")
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  set(CMAKE_CXX_FLAGS "-std=c++11")
+    set(CMAKE_CXX_FLAGS "-std=c++11")
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  set(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++")
+    set(CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++")
 else()
-  #TODO: investigate what to do on windows
+    #TODO: investigate what to do on windows
 endif()
 
 
