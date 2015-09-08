@@ -84,7 +84,6 @@ public:
 
 private:
 
-    bool mIsRunning;
     std::vector< std::unique_ptr< ProcessorBase > > mProcessors;
     std::unique_ptr<EntityManager> mEntityManager;
 };

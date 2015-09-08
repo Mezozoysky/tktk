@@ -35,7 +35,7 @@ namespace tktk
 namespace ecs
 {
 
-class Entity;
+struct Entity;
 
 template< typename PT, typename CT >
 class Processor

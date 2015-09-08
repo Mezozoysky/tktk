@@ -34,7 +34,7 @@ namespace tktk
 namespace ecs
 {
 
-class Entity;  //TODO: Use template instead
+struct Entity;  //TODO: Use template instead
 using UniqueCompType = std::string;
 
 #define PROMISE_UNIQUE_COMP_TYPE \

@@ -34,7 +34,7 @@ namespace tktk
 namespace ecs
 {
 
-class Entity;
+struct Entity;
 
 class ProcessorBase
 {

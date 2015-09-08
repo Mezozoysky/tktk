@@ -33,8 +33,7 @@ namespace ecs
 {
 
 System::System()
-: mIsRunning{ false }
-, mEntityManager{ new EntityManager() }
+: mEntityManager{ new EntityManager() }
 {
 
 }
