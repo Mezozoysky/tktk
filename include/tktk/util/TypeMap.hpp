@@ -36,17 +36,17 @@ namespace tktk
 namespace util
 {
 
-template < typename ValueType >
+template < typename ValueTypeT >
 class TypeMap
 {
 
 private:
-    using MapImpl = std::unordered_map< uint32_t, ValueType >;
+    using MapImpl = std::unordered_map< uint32_t, ValueTypeT >;
 
 public:
     using Iterator = typename MapImpl::iterator;
     using ConstIterator = typename MapImpl::const_iterator;
-    using ValueType = typename ValueType;
+    using ValueType = typename MapImpl::value_type;
 
 inline ConstIterator begin() const noexcept
 {
@@ -79,7 +79,7 @@ ConstIterator find() const noexcept
 }
 
 template < typename TypeKey >
-void insert( VT&& value ) noexcept
+void insert( ValueType&& value ) noexcept
 {
 	mMap[ getUniqueTypeId< TypeKey >() ] = std::forward< ValueType >( value );
 }
