@@ -48,58 +48,60 @@ public:
     using ConstIterator = typename MapImpl::const_iterator;
     using ValueType = typename MapImpl::value_type;
 
-inline ConstIterator begin() const noexcept
-{
-	return ( mMap.begin() );
-}
-inline ConstIterator end() const noexcept
-{
-	return ( mMap.end() );
-}
+    inline ConstIterator begin() const noexcept
+    {
+        return ( mMap.begin() );
+    }
 
-inline Iterator begin() noexcept
-{
-	return ( mMap.begin() );
-}
-inline Iterator end() noexcept
-{
-	return ( mMap.end() );
-}
+    inline ConstIterator end() const noexcept
+    {
+        return ( mMap.end() );
+    }
 
-template < typename TypeKey >
-Iterator find() noexcept
-{
-	return ( mMap.find( getUniqueTypeId< TypeKey >() ) );
-}
+    inline Iterator begin() noexcept
+    {
+        return ( mMap.begin() );
+    }
 
-template < typename TypeKey >
-ConstIterator find() const noexcept
-{
-	return ( mMap.find( getUniqueTypeId< TypeKey >() ) );
-}
+    inline Iterator end() noexcept
+    {
+        return ( mMap.end() );
+    }
 
-template < typename TypeKey >
-void insert( ValueType&& value ) noexcept
-{
-	mMap[ getUniqueTypeId< TypeKey >() ] = std::forward< ValueType >( value );
-}
+    template < typename TypeKey >
+    Iterator find() noexcept
+    {
+        return ( mMap.find( getUniqueTypeId< TypeKey >() ) );
+    }
 
-private:
+    template < typename TypeKey >
+    ConstIterator find() const noexcept
+    {
+        return ( mMap.find( getUniqueTypeId< TypeKey >() ) );
+    }
 
-template< typename TypeKey >
-inline static int getUniqueTypeId() noexcept
-{
-	static const int id = mNextTypeId++;
-	return id;
-}
+    template < typename TypeKey >
+    void insert( ValueTypeT&& value ) noexcept
+    {
+        mMap[ getUniqueTypeId< TypeKey >() ] = std::forward< ValueTypeT >( value );
+    }
 
 private:
-static std::atomic_int mNextTypeId;
-MapImpl mMap;
+
+    template< typename TypeKey >
+    inline static int getUniqueTypeId() noexcept
+    {
+        static const int id = mNextTypeId++;
+        return id;
+    }
+
+private:
+    static std::atomic_int mNextTypeId;
+    MapImpl mMap;
 };
 
-template< typename ValueType >
-std::atomic_int TypeMap< ValueType >::mNextTypeId{ 0 };
+template< typename ValueTypeT >
+std::atomic_int TypeMap< ValueTypeT >::mNextTypeId{ 0 };
 
 
 } //namespace util

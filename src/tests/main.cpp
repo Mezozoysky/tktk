@@ -27,7 +27,17 @@
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 
+#include <tktk/util/TypeMap.hpp>
+#include <string>
+
+using namespace tktk;
+
 TEST_CASE( "TypeMap is correct", "[typemap]" )
 {
-    REQUIRE( 0 != 1 );
+    using Value = std::string;
+
+    util::TypeMap< Value > typeMap;
+    typeMap.insert< int >( "integer type" );
+
+    REQUIRE( typeMap.find< int >()->second == "integer type" );
 }
