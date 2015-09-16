@@ -47,13 +47,38 @@ TEST_CASE( "MemoryPool correctness", "[mempool]" )
 {
     using Value = std::string;
 
-    util::MemoryPool< Value, 10 > pool;
+    util::MemoryPool< Value, 2 > pool;
 
-    CHECK( pool.getCapacity() == 10 );
+    CHECK( pool.getCapacity() == 0 );
     CHECK( pool.getSize() == 0 );
 
-    int index = pool.createElement( "zero" );
-    CHECK( pool.getSize() == 1 );
-    CHECK( pool[ 0 ] == "zero" );
+    std::size_t index{ pool.createElement( "zero" ) };
 
+    CHECK( pool.getCapacity() == 2 );
+    CHECK( pool.getSize() == 1 );
+    CHECK( pool[ index ] == "zero" );
+
+    index = pool.createElement( "one" );
+
+    CHECK( pool.getCapacity() == 2 );
+    CHECK( pool.getSize() == 2 );
+    CHECK( pool[ index ] == "one" );
+
+    index = pool.createElement( "two" );
+
+    CHECK( pool.getCapacity() == 4 );
+    CHECK( pool.getSize() == 3 );
+    CHECK( pool[ index ] == "two" );
+
+    index = pool.createElement( "three" );
+
+    CHECK( pool.getCapacity() == 4 );
+    CHECK( pool.getSize() == 4 );
+    CHECK( pool[ index ] == "three" );
+
+    index = pool.createElement( "four" );
+
+    CHECK( pool.getCapacity() == 6 );
+    CHECK( pool.getSize() == 5 );
+    CHECK( pool[ index ] == "four" );
 }

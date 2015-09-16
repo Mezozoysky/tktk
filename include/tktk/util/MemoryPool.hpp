@@ -32,6 +32,7 @@
 #include <cassert>
 #include <type_traits>
 
+
 namespace tktk
 {
 namespace util
@@ -58,11 +59,9 @@ public:
         AlignedType data[ chunkSizeV ];
     };
     
-    explicit MemoryPool()
+    explicit MemoryPool() noexcept
     : mChunkSize{ chunkSizeV }
     {
-        mChunks.emplace_back();
-        mCapacity += mChunkSize;
     }
     
     virtual ~MemoryPool()
@@ -79,12 +78,15 @@ public:
     template< typename... Args >
     std::size_t createElement( Args&&... args )
     {
-        if ( mSize >= chunkSizeV )
+        if ( mSize >= mCapacity )
         {
-            throw std::bad_alloc{};
+            addChunk();
         }
 
-        new( mChunks[ 0 ].data + mSize ) ValueTypeT( std::forward< Args >( args )... );
+        std::size_t chunkIndex{ mSize / mChunkSize };
+        std::size_t elementIndex{ mSize % mChunkSize };
+
+        new( mChunks[ chunkIndex ].data + elementIndex ) ValueTypeT( std::forward< Args >( args )... );
 
         return ( mSize++ );
     }
@@ -111,6 +113,13 @@ public:
     std::size_t getCapacity() const noexcept
     {
         return ( mCapacity );
+    }
+
+private:
+    void addChunk()
+    {
+        mChunks.emplace_back();
+        mCapacity += mChunkSize;
     }
 
 private:
