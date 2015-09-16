@@ -28,16 +28,32 @@
 #include <catch.hpp>
 
 #include <tktk/util/TypeMap.hpp>
+#include <tktk/util/MemoryPool.hpp>
 #include <string>
 
 using namespace tktk;
 
-TEST_CASE( "TypeMap is correct", "[typemap]" )
+TEST_CASE( "TypeMap correctness", "[typemap]" )
 {
     using Value = std::string;
 
     util::TypeMap< Value > typeMap;
     typeMap.insert< int >( "integer type" );
 
-    REQUIRE( typeMap.find< int >()->second == "integer type" );
+    CHECK( typeMap.find< int >()->second == "integer type" );
+}
+
+TEST_CASE( "MemoryPool correctness", "[mempool]" )
+{
+    using Value = std::string;
+
+    util::MemoryPool< Value, 10 > pool;
+
+    CHECK( pool.getCapacity() == 10 );
+    CHECK( pool.getSize() == 0 );
+
+    int index = pool.createElement( "zero" );
+    CHECK( pool.getSize() == 1 );
+    CHECK( pool[ 0 ] == "zero" );
+
 }

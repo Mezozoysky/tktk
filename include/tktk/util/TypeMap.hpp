@@ -41,7 +41,7 @@ class TypeMap
 {
 
 private:
-    using MapImpl = std::unordered_map< uint32_t, ValueTypeT >;
+    using MapImpl = std::unordered_map< std::uint32_t, ValueTypeT >;
 
 public:
     using Iterator = typename MapImpl::iterator;

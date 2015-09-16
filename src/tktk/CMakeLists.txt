@@ -5,9 +5,11 @@ set(TKTK_LIB_UTIL_SOURCES "")
 # =======================
 set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/include/tktk/util/TypeMap.hpp
+    ${CMAKE_SOURCE_DIR}/include/tktk/util/MemoryPool.hpp
 )
 set(GROUP_SOURCES
     ${CMAKE_SOURCE_DIR}/src/tktk/util/TypeMap.cpp
+    ${CMAKE_SOURCE_DIR}/src/tktk/util/MemoryPool.cpp
 )
 source_group("tktk\\util" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(TKTK_LIB_UTIL_HEADERS ${TKTK_LIB_UTIL_HEADERS} ${GROUP_HEADERS})
