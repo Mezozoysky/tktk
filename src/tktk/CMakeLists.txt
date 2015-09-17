@@ -6,10 +6,9 @@ set(TKTK_LIB_UTIL_SOURCES "")
 set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/include/tktk/util/TypeMap.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/util/MemoryPool.hpp
+    ${CMAKE_SOURCE_DIR}/include/tktk/util/Signal.hpp
 )
 set(GROUP_SOURCES
-    ${CMAKE_SOURCE_DIR}/src/tktk/util/TypeMap.cpp
-    ${CMAKE_SOURCE_DIR}/src/tktk/util/MemoryPool.cpp
 )
 source_group("tktk\\util" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(TKTK_LIB_UTIL_HEADERS ${TKTK_LIB_UTIL_HEADERS} ${GROUP_HEADERS})
@@ -87,10 +86,13 @@ add_library(tktk-util STATIC
     ${TKTK_LIB_UTIL_HEADERS}
     ${TKTK_LIB_UTIL_SOURCES}
 )
+set_target_properties(tktk-util PROPERTIES LINKER_LANGUAGE CXX)
+
 add_library(tktk-ecs STATIC
     ${TKTK_LIB_ECS_HEADERS}
     ${TKTK_LIB_ECS_SOURCES}
 )
+
 add_library(tktk-scene2d STATIC
     ${TKTK_LIB_SCENE2D_HEADERS}
     ${TKTK_LIB_SCENE2D_SOURCES}

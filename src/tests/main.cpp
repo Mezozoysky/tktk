@@ -29,7 +29,9 @@
 
 #include <tktk/util/TypeMap.hpp>
 #include <tktk/util/MemoryPool.hpp>
+#include <tktk/util/Signal.hpp>
 #include <string>
+#include <iostream>
 
 using namespace tktk;
 
@@ -90,4 +92,34 @@ TEST_CASE( "MemoryPool correctness", "[mempool]" )
 
     index = pool.createElement( "super nova" );
     CHECK( index == 3 );
+}
+
+
+TEST_CASE( "Signal correctness", "[signal]" )
+{
+    struct Observer
+    {
+        void onSignal1( int i )
+        {
+            std::cout << "onSignal1 executes; parameters:: i: " << i << std::endl;
+            sig1Sum += i;
+        }
+
+        int sig1Sum{ 0 };
+    };
+
+    util::Signal< int > sig1{};
+    Observer oer{};
+
+    auto connection( sig1.connect( std::bind( &Observer::onSignal1, &oer, std::placeholders::_1 ) ) );
+
+    sig1( 8 );
+    sig1( 22 );
+
+    CHECK( oer.sig1Sum == 30 );
+
+    sig1.disconnect( connection );
+    sig1( 5 );
+
+    CHECK( oer.sig1Sum == 30 );
 }
