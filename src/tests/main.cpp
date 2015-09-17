@@ -81,4 +81,13 @@ TEST_CASE( "MemoryPool correctness", "[mempool]" )
     CHECK( pool.getCapacity() == 6 );
     CHECK( pool.getSize() == 5 );
     CHECK( pool[ index ] == "four" );
+
+    pool.destroyElement( 1 );
+    pool.destroyElement( 3 );
+
+    index = pool.createElement( "nova" );
+    CHECK( index == 1 );
+
+    index = pool.createElement( "super nova" );
+    CHECK( index == 3 );
 }

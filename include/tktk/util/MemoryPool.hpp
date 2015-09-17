@@ -31,7 +31,7 @@
 #include <vector>
 #include <cassert>
 #include <type_traits>
-
+#include <functional>
 
 namespace tktk
 {
@@ -43,6 +43,15 @@ class MemoryPoolBase
 public:
     MemoryPoolBase() = default;
     virtual ~MemoryPoolBase() = default;
+
+    virtual std::size_t getSize() const noexcept = 0;
+    virtual std::size_t getCapacity() const noexcept = 0;
+    virtual std::size_t getChunksNumber() const noexcept = 0;
+    virtual std::size_t getChunkCapacity() const noexcept = 0;
+    virtual std::size_t getDeadSize() const noexcept = 0;
+
+    virtual void clear() noexcept = 0;
+    virtual void reserve( std::size_t cap ) noexcept = 0;
 };
 
 
@@ -66,33 +75,50 @@ public:
     
     virtual ~MemoryPool()
     {
-        if ( !mChunks.empty() )
-        {
-            for ( std::size_t i = 0; i < mSize; ++i )
-            {
-                reinterpret_cast< const ValueTypeT* >( mChunks[ 0 ].data + i )->~ValueTypeT();
-            }
-        }
+        clear();
     }
 
     template< typename... Args >
     std::size_t createElement( Args&&... args )
     {
-        if ( mSize >= mCapacity )
+        std::size_t index;
+
+        if ( mDeadIndices.empty() )
         {
-            addChunk();
+            index = mElementsPresence.size();
+
+            if ( index == mCapacity )
+            {
+                addChunk();
+            }
+
+            mElementsPresence.push_back( 1 );
+        }
+        else
+        {
+            index = mDeadIndices.back();
+            mDeadIndices.pop_back();
+            mElementsPresence[ index ] = 1;
         }
 
-        std::size_t chunkIndex{ mSize / mChunkSize };
-        std::size_t elementIndex{ mSize % mChunkSize };
-
+        std::size_t chunkIndex{ index / mChunkSize };
+        std::size_t elementIndex{ index % mChunkSize };
         new( mChunks[ chunkIndex ].data + elementIndex ) ValueTypeT( std::forward< Args >( args )... );
 
-        return ( mSize++ );
+        return ( index );
     }
     
     void destroyElement( std::size_t index )
     {
+        assert( index < mElementsPresence.size() );
+
+        std::size_t chunkIndex{ index / mChunkSize };
+        std::size_t elementIndex{ index % mChunkSize };
+        reinterpret_cast< const ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex )->~ValueTypeT();
+        mElementsPresence[ index ] = 0;
+
+        auto it = std::lower_bound( mDeadIndices.begin(), mDeadIndices.end(), index, std::greater< std::size_t >() );
+        mDeadIndices.insert( it, index );
     }
     
     const ValueTypeT& operator[]( std::size_t index ) const
@@ -105,29 +131,72 @@ public:
         return ( *reinterpret_cast< ValueTypeT* >( mChunks[ 0 ].data + index ) );
     }
     
-    std::size_t getSize() const noexcept
+    virtual std::size_t getSize() const noexcept final
     {
-        return ( mSize );
+        return ( mElementsPresence.size() );
     }
     
-    std::size_t getCapacity() const noexcept
+    virtual std::size_t getCapacity() const noexcept final
     {
         return ( mCapacity );
     }
 
+    virtual std::size_t getChunksNumber() const noexcept final
+    {
+        return ( mChunks.size() );
+    }
+
+    virtual std::size_t getChunkCapacity() const noexcept final
+    {
+        return ( mChunkSize );
+    }
+
+    virtual std::size_t getDeadSize() const noexcept final
+    {
+        return ( mDeadIndices.size() );
+    }
+
+    virtual void clear() noexcept final
+    {
+        for ( std::size_t i = 0; i < mElementsPresence.size(); ++i )
+        {
+            if ( mElementsPresence[ i ] )
+            {
+                destroyElement( i );
+            }
+        }
+
+        while ( !mChunks.empty() )
+        {
+            mChunks.pop_back();
+        }
+    }
+
+    virtual void reserve( std::size_t cap ) noexcept final
+    {
+        while ( mCapacity < cap )
+        {
+            addChunk();
+        }
+    }
+
 private:
+
     void addChunk()
     {
         mChunks.emplace_back();
         mCapacity += mChunkSize;
+        mElementsPresence.reserve( mCapacity );
     }
 
 private:
     std::size_t mElementSize{ sizeof( ValueTypeT ) };
     std::size_t mChunkSize;
-    std::vector< Chunk > mChunks;
-    std::size_t mSize{ 0 };
     std::size_t mCapacity{ 0 };
+
+    std::vector< Chunk > mChunks;
+    std::vector< std::uint8_t > mElementsPresence;
+    std::vector< std::size_t > mDeadIndices;
 };
 
 
