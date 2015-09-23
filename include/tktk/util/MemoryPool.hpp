@@ -123,12 +123,30 @@ public:
     
     const ValueTypeT& operator[]( std::size_t index ) const
     {
-        return ( *reinterpret_cast< const ValueTypeT* >( mChunks[ 0 ].data + index ) );
+        std::size_t chunkIndex{ index / mChunkSize };
+        std::size_t elementIndex{ index % mChunkSize };
+        return ( *reinterpret_cast< const ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex ) );
     }
 
     ValueTypeT& operator[]( std::size_t index )
     {
-        return ( *reinterpret_cast< ValueTypeT* >( mChunks[ 0 ].data + index ) );
+        std::size_t chunkIndex{ index / mChunkSize };
+        std::size_t elementIndex{ index % mChunkSize };
+        return ( *reinterpret_cast< ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex ) );
+    }
+
+    const ValueTypeT* getPtr( std::size_t index ) const
+    {
+        std::size_t chunkIndex{ index / mChunkSize };
+        std::size_t elementIndex{ index % mChunkSize };
+        return ( reinterpret_cast< ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex ) );
+    }
+
+    ValueTypeT* getPtr( std::size_t index )
+    {
+        std::size_t chunkIndex{ index / mChunkSize };
+        std::size_t elementIndex{ index % mChunkSize };
+        return ( reinterpret_cast< ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex ) );
     }
     
     virtual std::size_t getSize() const noexcept final
