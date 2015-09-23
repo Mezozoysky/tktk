@@ -81,9 +81,9 @@ public:
     }
 
     template < typename TypeKey >
-    void insert( ValueTypeT&& value ) noexcept
+    void insert( const ValueTypeT& value ) noexcept
     {
-        mMap[ getUniqueTypeId< TypeKey >() ] = std::forward< ValueTypeT >( value );
+        mMap[ getUniqueTypeId< TypeKey >() ] = value;
     }
 
 private:
