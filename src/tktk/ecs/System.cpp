@@ -32,30 +32,6 @@ namespace tktk
 namespace ecs
 {
 
-System::System()
-: mEntityManager{ new EntityManager() }
-{
-
-}
-
-System::~System()
-{
-
-}
-
-EntityManager* System::getEntityManager() const noexcept
-{
-    return ( mEntityManager.get() );
-}
-
-void System::update ( float deltaTime )
-{
-    for ( auto& processor: mProcessors )
-    {
-        processor->update( deltaTime );
-    }
-}
-
 
 } //namespace ecs
 } //namespace tktk

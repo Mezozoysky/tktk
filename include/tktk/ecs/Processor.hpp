@@ -27,8 +27,12 @@
 #ifndef TKTK_ECS_PROCESSOR_HPP
 #define TKTK_ECS_PROCESSOR_HPP
 
-#include <tktk/ecs/ProcessorBase.hpp>
-#include <vector>
+#include <tktk/ecs/Processor.hpp>
+#include <tktk/util/MemoryPool.hpp>
+#include <tktk/ecs/Component.hpp>
+#include <tktk/ecs/EventProxy.hpp>
+#include <tktk/ecs/EntityManager.hpp>
+#include <memory>
 
 namespace tktk
 {
@@ -37,32 +41,74 @@ namespace ecs
 
 struct Entity;
 
-template< typename PT, typename CT >
+
+class ProcessorBase
+: public std::enable_shared_from_this< ProcessorBase >
+{
+    ProcessorBase( const ProcessorBase& ) = delete;
+    ProcessorBase& operator= ( const ProcessorBase& ) = delete;
+
+public:
+
+    ProcessorBase() = default;
+    virtual ~ProcessorBase() = default;
+
+    virtual void setup( EventProxy& eventProxy, EntityManager& entityManager ) = 0;
+    virtual void onUpdate( float deltaTime ) = 0;
+//    virtual void onFixedUpdate( float deltaTime ) = 0;
+
+//    virtual void isComponentValid( std::size_t index ) const noexcept = 0;
+//    virtual void
+};
+
+
+template< typename ProcT, typename CompT >
 class Processor
 : public ProcessorBase
 {
 
 public:
 
+    using CompType = CompT;
+    using Type = ProcT;
+    using HandleType = ComponentHandle< Type >;
+
     Processor()
     : ProcessorBase()
     {
     }
 
-    virtual ~Processor()
+    virtual ~Processor() noexcept
     {
     }
 
-    CT* addComponent( Entity* owner )
+    virtual void setup( EventProxy& eventProxy, EntityManager& entityManager ) override
     {
-        mComponents.emplace_back( owner );
-        CT* comp{ &( mComponents.back() ) };
-        return ( comp );
+        eventProxy.updateSignal.connect( std::bind( &ProcessorBase::onUpdate, this, std::placeholders::_1 ) );
+    }
+
+    template< typename... Args >
+    ComponentHandle< Type > addComponent( Args&&... args )
+    {
+        std::size_t index{ mComponents.createElement( std::forward< Args >( args )... ) };
+        std::weak_ptr< Type > wPtr = std::static_pointer_cast< Type >( shared_from_this() );
+        HandleType handle{ index, wPtr };
+        return ( handle );
+    }
+
+    inline const CompType* getPtr( std::size_t index ) const noexcept
+    {
+        return ( mComponents.getPtr( index ) );
+    }
+
+    inline CompType* getPtr( std::size_t index ) noexcept
+    {
+        return ( mComponents.getPtr( index ) );
     }
 
 protected:
 
-    std::vector< CT > mComponents;
+    util::MemoryPool< CompT > mComponents;
 };
 
 } //namespace ecs

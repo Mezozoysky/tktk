@@ -23,16 +23,16 @@ set(TKTK_LIB_ECS_SOURCES "")
 set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Entity.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/EntityManager.hpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/ecs/ComponentBase.hpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/ecs/ProcessorBase.hpp
+    ${CMAKE_SOURCE_DIR}/include/tktk/ecs/EventProxy.hpp
+    ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Component.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Processor.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/System.hpp
 )
 set(GROUP_SOURCES
     ${CMAKE_SOURCE_DIR}/src/tktk/ecs/Entity.cpp
     ${CMAKE_SOURCE_DIR}/src/tktk/ecs/EntityManager.cpp
-    ${CMAKE_SOURCE_DIR}/src/tktk/ecs/ComponentBase.cpp
-    ${CMAKE_SOURCE_DIR}/src/tktk/ecs/ProcessorBase.cpp
+    ${CMAKE_SOURCE_DIR}/src/tktk/ecs/EventProxy.cpp
+    ${CMAKE_SOURCE_DIR}/src/tktk/ecs/Component.cpp
     ${CMAKE_SOURCE_DIR}/src/tktk/ecs/Processor.cpp
     ${CMAKE_SOURCE_DIR}/src/tktk/ecs/System.cpp
 )
@@ -82,11 +82,11 @@ set(TKTK_LIB_PHASE_SOURCES ${TKTK_LIB_PHASE_SOURCES} ${GROUP_SOURCES})
 #
 # Build static libraries!
 #
-add_library(tktk-util STATIC
-    ${TKTK_LIB_UTIL_HEADERS}
-    ${TKTK_LIB_UTIL_SOURCES}
-)
-set_target_properties(tktk-util PROPERTIES LINKER_LANGUAGE CXX)
+#add_library(tktk-util STATIC
+#    ${TKTK_LIB_UTIL_HEADERS}
+#    ${TKTK_LIB_UTIL_SOURCES}
+#)
+#set_target_properties(tktk-util PROPERTIES LINKER_LANGUAGE CXX)
 
 add_library(tktk-ecs STATIC
     ${TKTK_LIB_ECS_HEADERS}

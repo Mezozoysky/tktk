@@ -24,43 +24,13 @@
         source distribution.
 */
 
-#ifndef TKTK_ECS_PROCESSOR_BASE_HPP
-#define TKTK_ECS_PROCESSOR_BASE_HPP
-
-#include <vector>
+#include <tktk/ecs/Component.hpp>
 
 namespace tktk
 {
 namespace ecs
 {
 
-struct Entity;
-
-class ProcessorBase
-{
-    ProcessorBase( const ProcessorBase& ) = delete;
-    ProcessorBase& operator= ( const ProcessorBase& ) = delete;
-
-public:
-
-    ProcessorBase();
-    virtual ~ProcessorBase();
-
-    virtual void update( float deltaTime ) = 0;
-
-//     T* addComponent( Entity* owner )
-//     {
-//         mComponents.emplace_back( owner );
-//         T* comp{ &( mComponents.back() ) };
-//         return ( comp );
-//     }
-
-// protected:
-// 
-//     std::vector< T > mComponents;
-};
 
 } //namespace ecs
 } //namespace tktk
-
-#endif /* end of include guard: TKTK_ECS_PROCESSOR_BASE_HPP */

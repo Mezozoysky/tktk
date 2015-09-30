@@ -30,62 +30,90 @@
 #include <type_traits>
 #include <memory>
 #include <algorithm>
-#include <tktk/ecs/ProcessorBase.hpp>
+#include <tktk/ecs/Processor.hpp>
 #include <tktk/ecs/EntityManager.hpp>
+#include <tktk/ecs/EventProxy.hpp>
+#include <tktk/util/TypeMap.hpp>
 
 namespace tktk
 {
 namespace ecs
 {
 
+template< typename EventProxyT = EventProxy, typename EntityManagerT = EntityManager >
 class System
 {
 public:
 
-    System();
-    virtual ~System();
-
-    virtual void update( float deltaTime );
-
-    EntityManager* getEntityManager() const noexcept;
-
-//     template< typename T >
-//     T* getProcessor()
-//     {
-//         static_assert(
-//             std::is_base_of< ProcessorBase, T >::value
-//             , "T should extend tktk::ecs::ProcessorBase"
-//         );
-//
-//         auto it(
-//             std::find_if(
-//                 mProcessors.begin()
-//                 , mProcessors.end()
-//                 , []( std::unique_ptr< ProcessorBase >& processor ) { return ( T::uniqueSystemType == system->getUniqueSystemType() ); }
-//             )
-//         );
-//     }
-
-    template< typename T, typename... TArgs >
-    T* addProcessor( TArgs&&... args )
+    System() noexcept
     {
         static_assert(
-            std::is_base_of< ProcessorBase, T >::value
-            , "T should extend tktk::ecs::ProcessorBase"
+                      std::is_base_of< EventProxy, EventProxyT >::value
+                      , "EventProxyT should extend tktk::ecs::EventProxy"
+        );
+        static_assert(
+                      std::is_base_of< EntityManager, EntityManagerT >::value
+                      , "EntityManagerT should extend tktk::ecs::EntityManager"
+        );
+    }
+
+    virtual ~System() = default;
+
+    virtual void setup() noexcept
+    {
+        auto it = mProcessors.begin();
+        while ( it != mProcessors.end() )
+        {
+            it->second->setup( eventProxy, entityManager );
+            ++it;
+        }
+    }
+
+    virtual void update( float deltaTime ) noexcept
+    {
+        eventProxy.updateSignal( deltaTime );
+    }
+
+    template< typename T, typename... TArgs >
+    std::shared_ptr< T > registerProcessor( TArgs&&... args )
+    {
+        static_assert(
+                      std::is_base_of< ProcessorBase, T >::value
+                      , "T should extend tktk::ecs::ProcessorBase"
         );
 
-        T* processor{ new T( std::forward< TArgs >( args )... ) };
-
-        std::unique_ptr< T > uPtr{ processor };
-        mProcessors.emplace_back( std::move( uPtr ) );
+        auto processor = std::make_shared< T >( std::forward< TArgs >( args )... );
+        mProcessors.insert< T >( processor );
 
         return ( processor );
     }
 
-private:
+    template< typename T >
+    std::shared_ptr< T > getProcessor()
+    {
+        static_assert(
+                      std::is_base_of< ProcessorBase, T >::value
+                      , "T should extend tktk::ecs::ProcessorBase"
+        );
 
-    std::vector< std::unique_ptr< ProcessorBase > > mProcessors;
-    std::unique_ptr<EntityManager> mEntityManager;
+        std::shared_ptr< T > processor;
+
+        auto it = mProcessors.find< T >();
+        if ( it != mProcessors.end() )
+        {
+            processor = std::static_pointer_cast< T >( it->second );
+        }
+
+        return ( processor );
+    }
+
+public:
+    EntityManagerT entityManager;
+    EventProxyT eventProxy;
+
+private:
+    util::TypeMap< std::shared_ptr< ProcessorBase > > mProcessors;
+
 };
 
 } //namespace ecs
