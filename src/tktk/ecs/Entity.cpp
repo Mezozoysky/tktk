@@ -89,7 +89,5 @@ void EntityHandle::destroyEntity() noexcept
     }
 }
 
-
-
 } //namespace ecs
 } //namespace tktk

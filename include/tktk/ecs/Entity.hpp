@@ -64,6 +64,7 @@ struct EntityHandle
 
     void destroyEntity() noexcept;
 
+
 private:
 
     Entity mEntity { ENTITY_INVALID };
