@@ -31,8 +31,6 @@
 #include <tktk/util/MemoryPool.hpp>
 #include <tktk/util/Signal.hpp>
 #include <tktk/ecs/System.hpp>
-//#include <tktk/ecs/Component.hpp>
-//#include <tktk/ecs/Processor.hpp>
 #include <string>
 #include <iostream>
 
