@@ -30,6 +30,9 @@
 #include <tktk/util/TypeMap.hpp>
 #include <tktk/util/MemoryPool.hpp>
 #include <tktk/util/Signal.hpp>
+#include <tktk/ecs/System.hpp>
+//#include <tktk/ecs/Component.hpp>
+//#include <tktk/ecs/Processor.hpp>
 #include <string>
 #include <iostream>
 
@@ -122,4 +125,92 @@ TEST_CASE( "Signal correctness", "[signal]" )
     sig1( 5 );
 
     CHECK( oer.sig1Sum == 30 );
+}
+
+TEST_CASE( "ECS correctness", "[tktk-ecs]" )
+{
+    class Comp
+    : public ecs::Component< Comp >
+    {
+    public:
+        Comp( const ecs::EntityHandle& ownerHandle )
+        : BasalType{ ownerHandle }
+        {
+        }
+
+    public:
+        std::string name{ "noname" };
+    };
+
+    class Proc
+    : public ecs::Processor< Proc, Comp >
+    {
+    public:
+        virtual void onUpdate( float deltaTime ) override
+        {
+            std::cout << "Proc::onUpdate: " << deltaTime << std::endl;
+            for ( int i{ 0 }; i < mComponents.getSize(); ++i )
+            {
+                std::cout << mComponents[ i ].name << std::endl;
+            }
+        }
+
+    };
+
+    class Comp2
+    : public ecs::Component< Comp2 >
+    {
+    public:
+        Comp2( const ecs::EntityHandle& ownerHandle )
+        : BasalType{ ownerHandle }
+        {
+        }
+
+    public:
+        std::size_t number{ 0 };
+    };
+
+    class Proc2
+    : public ecs::Processor< Proc2, Comp2 >
+    {
+    public:
+        virtual void onUpdate( float deltaTime )
+        {
+            std::cout << "Proc2::onUpdate: " << deltaTime << std::endl;
+            for ( int i{ 0 }; i < mComponents.getSize(); ++i )
+            {
+                std::cout << mComponents[ i ].number << std::endl;
+            }
+        }
+
+    };
+
+
+    ecs::System<> ecs;
+
+    ecs.registerProcessor< Proc >();
+    ecs.registerProcessor< Proc2 >();
+
+    ecs.setup();
+
+    std::shared_ptr< Proc > proc{ ecs.getProcessor< Proc >() };
+    auto proc2( ecs.getProcessor< Proc2 >() );
+
+    ecs::EntityHandle e1{ ecs.entityManager.createEntity() };
+
+    ecs::ComponentHandle< Proc > c1{ proc->addComponent( e1 ) };
+    auto c2( proc2->addComponent( e1 ) );
+
+    float timeStep{ 0.05f };
+    float time{ 0.0f };
+    while ( time < 1.0f )
+    {
+        if ( time > 0.5f && time < 0.6f )
+        {
+            c1->name = "somename";
+            c2->number = 8;
+        }
+        ecs.update( timeStep );
+        time += timeStep;
+    }
 }
