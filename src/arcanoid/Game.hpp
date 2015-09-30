@@ -45,7 +45,7 @@ public:
 private:
 
     bool mIsRunning;
-    ecs::System mECS;
+    ecs::System<> mECS;
     sf::RenderWindow mWindow;
 };
 

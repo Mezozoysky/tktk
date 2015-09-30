@@ -29,10 +29,8 @@
 
 using namespace tktk;
 
-INITIALIZE_UNIQUE_COMP_TYPE(Transform)
-
-Transform::Transform( ecs::Entity* owner )
-: ecs::ComponentBase( owner )
+Transform::Transform( const ecs::EntityHandle& ownerHandle )
+: BasalType( ownerHandle )
 {
 }
 
@@ -40,33 +38,12 @@ Transform::~Transform()
 {
 }
 
-sf::Vector2f& Transform::position() noexcept
+void TransformProcessor::onUpdate( float deltaTime )
 {
-    return ( mPosition );
-}
-
-const sf::Vector2f& Transform::position() const noexcept
-{
-    return ( mPosition );
-}
-
-
-TransformProcessor::TransformProcessor()
-: ecs::Processor<TransformProcessor, Transform>()
-{
-
-}
-
-TransformProcessor::~TransformProcessor()
-{
-
-}
-
-void TransformProcessor::update( float deltaTime )
-{
-//     std::cout << "Delta time: " << std::to_string( deltaTime ) << "; Updating: " << std::endl;
-    for ( const auto& comp:  mComponents )
+     std::cout << "Delta time: " << std::to_string( deltaTime ) << "; Updating: " << std::endl;
+    for ( int i{ 0 }; i < mComponents.getSize(); ++i )
     {
-//         std::cout << std::to_string( comp.position().x ) << ", " << std::to_string( comp.position().y ) << std::endl;
+        auto comp = mComponents[ i ];
+         std::cout << std::to_string( comp.position.x ) << ", " << std::to_string( comp.position.y ) << std::endl;
     }
 }

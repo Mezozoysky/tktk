@@ -27,29 +27,20 @@
 #ifndef ARCANOID_COMP_TRANSFORM_HPP
 #define ARCANOID_COMP_TRANSFORM_HPP
 
-#include <tktk/ecs/ComponentBase.hpp>
+#include <tktk/ecs/Component.hpp>
 #include <tktk/ecs/Processor.hpp>
 
 #include <SFML/System.hpp>
 
 using namespace tktk;
 
-class Transform
-: public ecs::ComponentBase
+struct Transform
+: public ecs::Component< Transform >
 {
-DECLARE_UNIQUE_COMP_TYPE
-
-public:
-
-    explicit Transform( ecs::Entity* owner );
+    explicit Transform( const ecs::EntityHandle& ownerHandle );
     virtual ~Transform();
 
-    sf::Vector2f& position() noexcept;
-    const sf::Vector2f& position() const noexcept;
-
-private:
-
-    sf::Vector2f mPosition{ 0.0f, 0.0f };
+    sf::Vector2f position{ 0.0f, 0.0f };
 };
 
 
@@ -58,10 +49,7 @@ class TransformProcessor
 {
 public:
 
-    TransformProcessor();
-    virtual ~TransformProcessor();
-
-    virtual void update( float deltaTime );
+    virtual void onUpdate( float deltaTime ) override;
 };
 
 #endif /* end of include guard: ARCANOID_COMP_TRANSFORM_HPP */
