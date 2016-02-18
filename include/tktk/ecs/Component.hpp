@@ -28,7 +28,7 @@
 #define TKTK_ECS_COMPONENT_HPP
 
 #include <tktk/ecs/Entity.hpp>
-//#include <tktk/ecs/Processor.hpp>
+#include <memory>
 #include <string>
 
 namespace tktk

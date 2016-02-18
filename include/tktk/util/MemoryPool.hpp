@@ -32,6 +32,7 @@
 #include <cassert>
 #include <type_traits>
 #include <functional>
+#include <algorithm>
 
 namespace tktk
 {
