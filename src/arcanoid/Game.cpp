@@ -32,8 +32,9 @@ using namespace tktk;
 
 Game::Game()
 : mIsRunning{ false }
+, mWindow{ nullptr }
+, mRenderer{ nullptr }
 {
-    mWindow.create( { 640, 480 }, "tktk Arcanoid" );
 }
 
 Game::~Game()
@@ -42,55 +43,69 @@ Game::~Game()
 
 void Game::run()
 {
-    auto transformProc( mECS.registerProcessor< TransformProcessor >() ); //TODO: move to separate setup method
-    mECS.setup(); //TODO: move to separate setup method
-    auto e1( mECS.entityManager.createEntity() );
-    auto e2( mECS.entityManager.createEntity() );
-    auto e3( mECS.entityManager.createEntity() );
-
-    auto tf1( transformProc->addComponent( e1 ) );
-    tf1->position = sf::Vector2f( 100.0f, 75.0f );
-
-    mWindow.setFramerateLimit(60);
-
-    sf::Clock clock;
-    mIsRunning = true;
-    while ( mIsRunning && mWindow.isOpen() )
+    if ( setup() )
     {
-        sf::Event event;
-        while ( mWindow.pollEvent( event ) )
+        auto e1( mECS.entityManager.createEntity() );
+        auto e2( mECS.entityManager.createEntity() );
+        auto e3( mECS.entityManager.createEntity() );
+
+        auto transformProc( mECS.getProcessor<TransformProcessor>() );
+        auto tf1( transformProc->addComponent( e1 ) );
+        tf1->position = Transform::Vector2f( 100.0f, 75.0f );
+
+        mIsRunning = true;
+        SDL_Event event;
+        while ( mIsRunning )
         {
-            switch (event.type)
+            while ( SDL_PollEvent( &event ) )
             {
-                case sf::Event::Closed:
+                if ( event.type == SDL_QUIT )
                 {
                     mIsRunning = false;
-                    break;
-                }
-                case sf::Event::KeyPressed:
-                {
-                    std::cout << "\tKey is pressed!" << std::endl;
-                }
-                default:
-                {
-                    break;
                 }
             }
+
+            mECS.update( 1 /*secondsElapsed*/ );
+            SDL_RenderClear( mRenderer );
+            SDL_RenderPresent( mRenderer );
+            //std::cout << "FPS: " << std::to_string( 1.0f / secondsElapsed ) << std::endl;
         }
+    }
+    cleanup();
+}
 
-        if ( sf::Keyboard::isKeyPressed( sf::Keyboard::Key::Escape ) )
-        {
-            mIsRunning = false;
-        }
-
-        mWindow.clear();
-        float secondsElapsed{ clock.restart().asSeconds() };
-        mECS.update( secondsElapsed );
-        mWindow.display();
-
-//         std::cout << "FPS: " << std::to_string( 1.0f / secondsElapsed ) << std::endl;
-        std::cout.flush();
+bool Game::setup()
+{
+    if ( SDL_Init( SDL_INIT_VIDEO ) != 0 )
+    {
+        std::cout << "SDL_Init ERROR: " << SDL_GetError() << std::endl;
+        return ( false );
     }
 
-    mWindow.close();
+    mWindow = SDL_CreateWindow( "Hello!", 100, 100, 1024, 768, SDL_WINDOW_SHOWN );
+    if ( mWindow == nullptr )
+    {
+        std::cout << "SDL_CreateWindow ERROR: " << SDL_GetError() << std::endl;
+        return ( false );
+    }
+
+    mRenderer = SDL_CreateRenderer( mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+    if ( mRenderer == nullptr )
+    {
+        std::cout << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
+        return ( false );
+    }
+
+    auto transformProc( mECS.registerProcessor< TransformProcessor >() );
+    mECS.setup();
+
+    return ( true );
 }
+
+void Game::cleanup()
+{
+    SDL_DestroyRenderer( mRenderer );
+    SDL_DestroyWindow( mWindow );
+    SDL_Quit();
+}
+

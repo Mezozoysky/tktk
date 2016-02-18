@@ -29,7 +29,7 @@
 
 #include <memory>
 #include <tktk/ecs/System.hpp>
-#include <SFML/Graphics.hpp>
+#include <SDL.h>
 
 using namespace tktk;
 
@@ -41,12 +41,18 @@ public:
     virtual ~Game();
 
     void run();
+    bool setup();
+    void cleanup();
 
 private:
 
     bool mIsRunning;
+
+    SDL_Window* mWindow;
+    SDL_Renderer* mRenderer;
+
     ecs::System<> mECS;
-    sf::RenderWindow mWindow;
+
 };
 
 #endif /* end of include guard: ARCANOID_GAME_HPP */

@@ -29,19 +29,20 @@ endif(TKTK_OS_OSX)
 
 if(TKTK_OS_WINDOWS)
     set(TKTK_OS_SPECIFIC_LIBS ${TKTK_OS_SPECIFIC_LIBS}
-        #TODO: investion what to do on windows.
+        #TODO: investigation what to do on windows.
     )
 endif(TKTK_OS_WINDOWS)
 
 #
 # Packages & dependencies
 #
-find_package(SFML 2.2 COMPONENTS audio network graphics window system  REQUIRED)
-if(SFML_FOUND)
-    include_directories(${SFML_INCLUDE_DIR})
-else(SFML_FOUND)
-    message(FATAL_ERROR "-- ${CMAKE_PROJECT_NAME} -- No SFML found!")
-endif(SFML_FOUND)
+
+find_package(SDL2 REQUIRED)
+if(SDL2_FOUND)
+    include_directories(${SDL2_INCLUDE_DIR})
+else(SDL2_FOUND)
+    message(FATAL_ERROR "-- ${CMAKE_PROJECT_NAME} -- No SDL2 found!")
+endif(SDL2_FOUND)
 
 find_package(OpenGL)
 if(OPENGL_FOUND)
@@ -50,16 +51,6 @@ else(OPENGL_FOUND)
     message(FATAL_ERROR "-- ${CMAKE_PROJECT_NAME} -- No OpenGL found!")
 endif(OPENGL_FOUND)
 
-# set(TKTK_APP_DEMO_DEPS ${TKTK_APP_DEMO_DEPS}
-#     ${SFML_LIBRARIES}
-#     ${OPENGL_LIBRARIES}
-# )
-# set(TKTK_APP_DEMO_DEPS ${TKTK_APP_DEMO_DEPS}
-#     ${SFML_LIBRARIES}
-#     ${FREETYPE_LIBRARY}
-#     ${JPEG_LIBRARY}
-#     ${OPENGL_LIBRARIES}
-# )
 
 #
 # Build arcanoid
@@ -102,6 +93,6 @@ add_executable(arcanoid WIN32 MACOSX_BUNDLE
 set_target_properties(arcanoid PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(arcanoid tktk-ecs)
-target_link_libraries(arcanoid ${SFML_LIBRARIES})
+target_link_libraries(arcanoid ${SDL2_LIBRARY})
 target_link_libraries(arcanoid ${OPENGL_LIBRARIES})
 target_link_libraries(arcanoid ${TKTK_OS_SPECIFIC_LIBS})

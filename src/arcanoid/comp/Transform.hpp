@@ -30,17 +30,31 @@
 #include <tktk/ecs/Component.hpp>
 #include <tktk/ecs/Processor.hpp>
 
-#include <SFML/System.hpp>
 
 using namespace tktk;
 
 struct Transform
 : public ecs::Component< Transform >
 {
+    struct Vector2f
+    {
+        float x{ 0.0f };
+        float y{ 0.0f };
+
+        Vector2f()
+        {
+        }
+
+        Vector2f( float ax, float ay )
+        : x{ ax }
+        , y{ ay }
+        {
+        }
+    };
     explicit Transform( const ecs::EntityHandle& ownerHandle );
     virtual ~Transform();
 
-    sf::Vector2f position{ 0.0f, 0.0f };
+    Vector2f position{};
 };
 
 
