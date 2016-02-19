@@ -74,9 +74,13 @@ void Game::run()
         auto e1( mECS.createEntity() );
         auto e2( mECS.createEntity() );
         auto e3( mECS.createEntity() );
-//
+
+        mECS.addComponent< Transform >( e1, Transform::Vector2f( 100.0f, 75.0f ) );
 //         e1.addComponent< Transform >( Transform::Vector2f( 100.0f, 75.0f ) );
-//
+
+        mECS.addComponent< Transform >( e2 );
+//         mECS.getComponent< Transform >( e2 )->position = Transform::Vector2f( 15.0f, 100.0f );
+        
 //         e2.addComponent< Transform >();
 //         e2.getComponent< Transform >().position = Transform::Vector2f( 15.0f, 100.0f );
 //

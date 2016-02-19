@@ -44,13 +44,13 @@ struct Transform
         {
         }
 
-        Vector2f( float ax, float ay )
-        : x{ ax }
-        , y{ ay }
+        Vector2f( float x, float y )
+        : x{ x }
+        , y{ y }
         {
         }
     };
-    explicit Transform( const ecs::EntityHandle& ownerHandle );
+    explicit Transform( const ecs::EntityHandle& ownerHandle, Vector2f position = Vector2f{} );
     virtual ~Transform();
 
     Vector2f position{};
@@ -58,7 +58,7 @@ struct Transform
 
 
 class TransformProcessor
-: public ecs::Processor<TransformProcessor, Transform>
+: public ecs::Processor< Transform >
 {
 public:
 

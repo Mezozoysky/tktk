@@ -29,6 +29,8 @@
 
 #include <memory>
 #include <tktk/ecs/System.hpp>
+#include <cassert>
+#include <utility>
 
 using namespace tktk;
 
@@ -44,6 +46,17 @@ public:
     virtual ~ECS() = default;
 
     ecs::EntityHandle createEntity() noexcept;
+
+    template< typename T, typename... TArgs >
+    T* addComponent( TArgs&&... args )
+    {
+        auto processor( getProcessorForCompType< T >() );
+        assert( processor && "Processor for given component type is not registered." );
+
+        T* comp = processor->addComponent( std::forward< TArgs >( args )... );
+
+        return ( comp );
+    }
 };
 
 #endif /* end of include guard: ARCANOID_ECS_HPP */

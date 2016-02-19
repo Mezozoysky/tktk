@@ -61,7 +61,7 @@ public:
 };
 
 
-template< typename ProcT, typename CompT >
+template< typename CompT >
 class Processor
 : public ProcessorBase
 {
@@ -69,8 +69,6 @@ class Processor
 public:
 
     using CompType = CompT;
-    using Type = ProcT;
-    using HandleType = ComponentHandle< Type >;
 
     Processor()
     : ProcessorBase()
@@ -87,23 +85,21 @@ public:
     }
 
     template< typename... Args >
-    ComponentHandle< Type > addComponent( Args&&... args )
+    CompType* addComponent( Args&&... args )
     {
         std::size_t index{ mComponents.createElement( std::forward< Args >( args )... ) };
-        std::weak_ptr< Type > wPtr = std::static_pointer_cast< Type >( shared_from_this() );
-        HandleType handle{ index, wPtr };
-        return ( handle );
-    }
-
-    inline const CompType* getPtr( std::size_t index ) const noexcept
-    {
         return ( mComponents.getPtr( index ) );
     }
 
-    inline CompType* getPtr( std::size_t index ) noexcept
-    {
-        return ( mComponents.getPtr( index ) );
-    }
+//     inline const CompType* getPtr( std::size_t index ) const noexcept
+//     {
+//         return ( mComponents.getPtr( index ) );
+//     }
+// 
+//     inline CompType* getPtr( std::size_t index ) noexcept
+//     {
+//         return ( mComponents.getPtr( index ) );
+//     }
 
 protected:
 

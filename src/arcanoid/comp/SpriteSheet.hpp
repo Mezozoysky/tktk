@@ -43,7 +43,7 @@ struct SpriteSheet
 
 
 class SpriteSheetProcessor
-: public ecs::Processor<SpriteSheetProcessor, SpriteSheet>
+: public ecs::Processor< SpriteSheet >
 {
 public:
     virtual void onUpdate( float deltaTime ) override;

@@ -29,9 +29,10 @@
 
 using namespace tktk;
 
-Transform::Transform( const ecs::EntityHandle& ownerHandle )
+Transform::Transform( const ecs::EntityHandle& ownerHandle, Vector2f position )
 : BasalType( ownerHandle )
 {
+    this->position = position;
 }
 
 Transform::~Transform()

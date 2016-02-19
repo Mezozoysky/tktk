@@ -29,12 +29,12 @@
 
 #include <cstdint>
 
-
 namespace tktk
 {
 namespace ecs
 {
 
+//Forward declarations
 class EntityManager;
 
 struct Entity
@@ -63,7 +63,6 @@ struct EntityHandle
     }
 
     void destroyEntity() noexcept;
-
 
 private:
 

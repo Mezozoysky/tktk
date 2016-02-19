@@ -82,34 +82,6 @@ private:
     Entity mOwner;
 };
 
-template< typename ProcT >
-struct ComponentHandle
-{
-    using ProcType = typename ProcT::Type;
-    using CompType = typename ProcT::CompType;
-
-    ComponentHandle( std::size_t index, std::weak_ptr< ProcType > processor )
-    : mIndex{ index }
-    , mProcessor{ processor }
-    {
-    }
-
-    inline CompType* operator ->()
-    {
-//        isValid();
-        auto proc = mProcessor.lock();
-        if ( !proc )
-        {
-            return ( nullptr );
-        }
-        return ( proc->getPtr( mIndex ) );
-    }
-
-private:
-    std::size_t mIndex;
-    std::weak_ptr< ProcType > mProcessor;
-};
-
 } //namespace ecs
 } //namespace tktk
 

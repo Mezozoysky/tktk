@@ -63,7 +63,6 @@ void EntityManager::destroyEntity ( Entity entity ) noexcept
 
     std::uint32_t index{ entity.index() };
     mEntityVersions[ index ]++;
-    //TODO: mark index as free here!
 }
 
 bool EntityManager::isEntityValid( Entity entity ) const noexcept

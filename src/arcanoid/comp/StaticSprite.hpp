@@ -43,7 +43,7 @@ struct StaticSprite
 
 
 class StaticSpriteProcessor
-: public ecs::Processor<StaticSpriteProcessor, StaticSprite>
+: public ecs::Processor< StaticSprite >
 {
 public:
     virtual void onUpdate( float deltaTime ) override;

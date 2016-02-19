@@ -141,7 +141,7 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     };
 
     class Proc
-    : public ecs::Processor< Proc, Comp >
+    : public ecs::Processor< Comp >
     {
     public:
         virtual void onUpdate( float deltaTime ) override
@@ -169,7 +169,7 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     };
 
     class Proc2
-    : public ecs::Processor< Proc2, Comp2 >
+    : public ecs::Processor< Comp2 >
     {
     public:
         virtual void onUpdate( float deltaTime )
@@ -196,7 +196,7 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
 
     ecs::EntityHandle e1{ ecs.getEntityManager().createEntity() };
 
-    ecs::ComponentHandle< Proc > c1{ proc->addComponent( e1 ) };
+    Comp* c1( proc->addComponent( e1 ) );
     auto c2( proc2->addComponent( e1 ) );
 
     float timeStep{ 0.05f };

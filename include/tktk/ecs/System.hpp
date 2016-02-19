@@ -83,7 +83,7 @@ public:
         );
 
         auto processor = std::make_shared< T >( std::forward< TArgs >( args )... );
-        mProcessors.insert< T >( processor );
+        mProcessors.insert< typename T::CompType >( processor );
 
         return ( processor );
     }
@@ -98,10 +98,29 @@ public:
 
         std::shared_ptr< T > processor;
 
-        auto it = mProcessors.find< T >();
+        auto it = mProcessors.find< typename T::CompType >();
         if ( it != mProcessors.end() )
         {
             processor = std::static_pointer_cast< T >( it->second );
+        }
+
+        return ( processor );
+    }
+
+    template< typename T >
+    std::shared_ptr< Processor< T > > getProcessorForCompType()
+    {
+        static_assert(
+            std::is_base_of< ComponentBase, T >::value
+            , "T should extend tktk::ecs::ComponentBase"
+        );
+
+        std::shared_ptr< Processor< T > > processor;
+
+        auto it = mProcessors.find< T >();
+        if ( it != mProcessors.end() )
+        {
+            processor = std::static_pointer_cast< Processor< T > >( it->second );
         }
 
         return ( processor );
