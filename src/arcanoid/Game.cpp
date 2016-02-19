@@ -26,7 +26,10 @@
 
 #include "Game.hpp"
 #include "comp/Transform.hpp"
+#include "comp/StaticSprite.hpp"
+#include "comp/SpriteSheet.hpp"
 #include <iostream>
+#include <type_traits>
 
 using namespace tktk;
 
@@ -49,9 +52,49 @@ void Game::run()
         auto e2( mECS.entityManager.createEntity() );
         auto e3( mECS.entityManager.createEntity() );
 
-        auto transformProc( mECS.getProcessor<TransformProcessor>() );
-        auto tf1( transformProc->addComponent( e1 ) );
+        auto tfProc( mECS.getProcessor<TransformProcessor>() );
+        auto tf1( tfProc->addComponent( e1 ) );
         tf1->position = Transform::Vector2f( 100.0f, 75.0f );
+        auto tf2( tfProc->addComponent( e2 ) );
+        tf2->position = Transform::Vector2f( 15.0f, 100.0f );
+        auto tf3( tfProc->addComponent( e3 ) );
+        tf3->position = Transform::Vector2f( 60.0f, 40.0f );
+
+        auto spriteProc( mECS.getProcessor<StaticSpriteProcessor>() );
+        auto sprite1( spriteProc->addComponent( e1 ) );
+        sprite1->texture = "texture0.png";
+        sprite1->centered = true;
+
+        auto sheetProc( mECS.getProcessor< SpriteSheetProcessor >() );
+        auto sheet1( sheetProc->addComponent( e1 ) );
+        sheet1->texture = "sheet_texture0.png";
+        sheet1->centered = true;
+
+
+//         static_assert(
+//                         !std::is_same<StaticSprite::Type, SpriteSheet::Type>::value
+//                         , "!!!!!! types are the same!"
+//         );
+//
+//         static_assert(
+//                         !std::is_same<StaticSprite::BasalType, SpriteSheet::BasalType>::value
+//                         , "!!!!!! basal types are the same!"
+//         );
+//
+//         static_assert(
+//             !std::is_same<StaticSprite::Type, Renderer>::value
+//             , "!!!!!! Static sprite type is Renderer !"
+//         );
+//
+//         static_assert(
+//             !std::is_same<SpriteSheet::BasalType, Renderer::BasalType>::value
+//             , "!!!!!! Sprite sheet basal type is Renderer basal type !"
+//         );
+//
+//         static_assert(
+//             !std::is_same< SpriteSheet::BasalType, ecs::Component< Renderer > >::value
+//             , "!!!!!! Sprite sheet basal type is Component< Renderer > !"
+//         );
 
         mIsRunning = true;
         SDL_Event event;
@@ -97,6 +140,8 @@ bool Game::setup()
     }
 
     auto transformProc( mECS.registerProcessor< TransformProcessor >() );
+    auto staticSpriteProc( mECS.registerProcessor< StaticSpriteProcessor >() );
+    auto spriteSheetProc( mECS.registerProcessor< SpriteSheetProcessor >() );
     mECS.setup();
 
     return ( true );

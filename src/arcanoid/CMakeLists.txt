@@ -62,6 +62,7 @@ set(ARCANOID_SOURCES "")
 # ==== arcanoid group ====
 # ========================
 set(GROUP_HEADERS
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/ECS.hpp
     ${CMAKE_SOURCE_DIR}/src/arcanoid/Game.hpp
 )
 set(GROUP_SOURCES
@@ -77,9 +78,15 @@ set(ARCANOID_SOURCES ${ARCANOID_SOURCES} ${GROUP_SOURCES})
 # =============================
 set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/src/arcanoid/comp/Transform.hpp
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/comp/Renderer.hpp
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/comp/StaticSprite.hpp
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/comp/SpriteSheet.hpp
 )
 set(GROUP_SOURCES
     ${CMAKE_SOURCE_DIR}/src/arcanoid/comp/Transform.cpp
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/comp/Renderer.cpp
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/comp/StaticSprite.cpp
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/comp/SpriteSheet.cpp
 )
 source_group("arcanoid\\comp" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(ARCANOID_HEADERS ${ARCANOID_HEADERS} ${GROUP_HEADERS})

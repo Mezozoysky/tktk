@@ -28,7 +28,7 @@
 #define ARCANOID_GAME_HPP
 
 #include <memory>
-#include <tktk/ecs/System.hpp>
+#include "ECS.hpp"
 #include <SDL.h>
 
 using namespace tktk;
@@ -51,8 +51,7 @@ private:
     SDL_Window* mWindow;
     SDL_Renderer* mRenderer;
 
-    ecs::System<> mECS;
-
+    ECS mECS;
 };
 
 #endif /* end of include guard: ARCANOID_GAME_HPP */
