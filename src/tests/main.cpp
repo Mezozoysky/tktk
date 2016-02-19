@@ -194,7 +194,7 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     std::shared_ptr< Proc > proc{ ecs.getProcessor< Proc >() };
     auto proc2( ecs.getProcessor< Proc2 >() );
 
-    ecs::EntityHandle e1{ ecs.entityManager.createEntity() };
+    ecs::EntityHandle e1{ ecs.getEntityManager().createEntity() };
 
     ecs::ComponentHandle< Proc > c1{ proc->addComponent( e1 ) };
     auto c2( proc2->addComponent( e1 ) );

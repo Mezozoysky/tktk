@@ -48,32 +48,32 @@ void Game::run()
 {
     if ( setup() )
     {
-        auto e1( mECS.entityManager.createEntity() );
-        auto e2( mECS.entityManager.createEntity() );
-        auto e3( mECS.entityManager.createEntity() );
-
-        auto tfProc( mECS.getProcessor<TransformProcessor>() );
-        auto tf1( tfProc->addComponent( e1 ) );
-        tf1->position = Transform::Vector2f( 100.0f, 75.0f );
-        auto tf2( tfProc->addComponent( e2 ) );
-        tf2->position = Transform::Vector2f( 15.0f, 100.0f );
-        auto tf3( tfProc->addComponent( e3 ) );
-        tf3->position = Transform::Vector2f( 60.0f, 40.0f );
-
-        auto spriteProc( mECS.getProcessor<StaticSpriteProcessor>() );
-        auto sprite1( spriteProc->addComponent( e1 ) );
-        sprite1->texture = "texture0.png";
-        sprite1->centered = true;
-
-        auto sheetProc( mECS.getProcessor< SpriteSheetProcessor >() );
-        auto sheet1( sheetProc->addComponent( e1 ) );
-        sheet1->texture = "sheet_texture0.png";
-        sheet1->centered = true;
+//         auto e1( mECS.entityManager.createEntity() );
+//         auto e2( mECS.entityManager.createEntity() );
+//         auto e3( mECS.entityManager.createEntity() );
+// 
+//         auto tfProc( mECS.getProcessor<TransformProcessor>() );
+//         auto tf1( tfProc->addComponent( e1 ) );
+//         tf1->position = Transform::Vector2f( 100.0f, 75.0f );
+//         auto tf2( tfProc->addComponent( e2 ) );
+//         tf2->position = Transform::Vector2f( 15.0f, 100.0f );
+//         auto tf3( tfProc->addComponent( e3 ) );
+//         tf3->position = Transform::Vector2f( 60.0f, 40.0f );
+// 
+//         auto spriteProc( mECS.getProcessor<StaticSpriteProcessor>() );
+//         auto sprite1( spriteProc->addComponent( e1 ) );
+//         sprite1->texture = "texture0.png";
+//         sprite1->centered = true;
+// 
+//         auto sheetProc( mECS.getProcessor< SpriteSheetProcessor >() );
+//         auto sheet1( sheetProc->addComponent( e1 ) );
+//         sheet1->texture = "sheet_texture0.png";
+//         sheet1->centered = true;
 
         //How should it look
-//         auto e1( mECS.createEntity() );
-//         auto e2( mECS.createEntity() );
-//         auto e3( mECS.createEntity() );
+        auto e1( mECS.createEntity() );
+        auto e2( mECS.createEntity() );
+        auto e3( mECS.createEntity() );
 //
 //         e1.addComponent< Transform >( Transform::Vector2f( 100.0f, 75.0f ) );
 //

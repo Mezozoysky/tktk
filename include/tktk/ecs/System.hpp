@@ -64,14 +64,14 @@ public:
         auto it = mProcessors.begin();
         while ( it != mProcessors.end() )
         {
-            it->second->setup( eventProxy, entityManager );
+            it->second->setup( mEventProxy, mEntityManager );
             ++it;
         }
     }
 
     virtual void update( float deltaTime ) noexcept
     {
-        eventProxy.updateSignal( deltaTime );
+        mEventProxy.updateSignal( deltaTime );
     }
 
     template< typename T, typename... TArgs >
@@ -107,13 +107,31 @@ public:
         return ( processor );
     }
 
-public:
-    EntityManagerT entityManager;
-    EventProxyT eventProxy;
+    EntityManagerT& getEntityManager()
+    {
+        return ( mEntityManager );
+    }
+
+    const EntityManagerT& getEntityManager() const
+    {
+        return ( mEntityManager );
+    }
+
+    EventProxyT& getEventProxy()
+    {
+        return ( mEventProxy );
+    }
+
+    const EventProxyT& getEventProxy() const
+    {
+        return ( mEventProxy );
+    }
 
 private:
-    util::TypeMap< std::shared_ptr< ProcessorBase > > mProcessors;
+    EntityManagerT mEntityManager;
+    EventProxyT mEventProxy;
 
+    util::TypeMap< std::shared_ptr< ProcessorBase > > mProcessors;
 };
 
 } //namespace ecs

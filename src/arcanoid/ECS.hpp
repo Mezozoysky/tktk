@@ -43,8 +43,8 @@ public:
     }
     virtual ~ECS() = default;
 
-//     EntityHandle createEntity() noexcept;
-//     void destroyEntity( Entity entity ) noexcept;
+    ecs::EntityHandle createEntity() noexcept;
+    void destroyEntity( ecs::EntityHandle eh ) noexcept;
 
 };
 

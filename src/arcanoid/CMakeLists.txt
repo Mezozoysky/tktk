@@ -66,6 +66,7 @@ set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/src/arcanoid/Game.hpp
 )
 set(GROUP_SOURCES
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/ECS.cpp
     ${CMAKE_SOURCE_DIR}/src/arcanoid/Game.cpp
     ${CMAKE_SOURCE_DIR}/src/arcanoid/main.cpp
 )
