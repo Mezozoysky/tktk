@@ -69,6 +69,10 @@ struct Component
     {
     }
 
+    virtual ~Component()
+    {
+    }
+
     virtual const Entity& getEntity() const noexcept override final
     {
         return mOwner;
