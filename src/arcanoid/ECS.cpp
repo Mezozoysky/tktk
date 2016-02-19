@@ -32,12 +32,3 @@ ecs::EntityHandle ECS::createEntity() noexcept
 {
     return ( getEntityManager().createEntity() );
 }
-
-void ECS::destroyEntity( ecs::EntityHandle eh ) noexcept
-{
-    if ( ! eh.isValid() )
-    {
-        return;
-    }
-    getEntityManager().destroyEntity( eh.getEntity() );
-}

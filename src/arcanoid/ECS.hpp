@@ -44,8 +44,6 @@ public:
     virtual ~ECS() = default;
 
     ecs::EntityHandle createEntity() noexcept;
-    void destroyEntity( ecs::EntityHandle eh ) noexcept;
-
 };
 
 #endif /* end of include guard: ARCANOID_ECS_HPP */
