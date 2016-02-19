@@ -70,6 +70,24 @@ void Game::run()
         sheet1->texture = "sheet_texture0.png";
         sheet1->centered = true;
 
+        //How should it look
+//         auto e1( mECS.createEntity() );
+//         auto e2( mECS.createEntity() );
+//         auto e3( mECS.createEntity() );
+//
+//         e1.addComponent< Transform >( Transform::Vector2f( 100.0f, 75.0f ) );
+//
+//         e2.addComponent< Transform >();
+//         e2.getComponent< Transform >().position = Transform::Vector2f( 15.0f, 100.0f );
+//
+//         auto tf3( e3.getComponent< Transform > );
+//         tf3->position = Transform::Vector2f( 60.0f, 40.0f );
+//
+//         auto sprite1( e1.addComponent< StaticSprite >( "texture0.png", true  ) );
+//         auto sheet1( e1.addComponent< SpriteSheet >() );
+//         sheet1->texture = "sheet_texture0.png";
+//         sheet1->centered = true;
+
 
 //         static_assert(
 //                         !std::is_same<StaticSprite::Type, SpriteSheet::Type>::value
