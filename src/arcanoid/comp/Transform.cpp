@@ -40,7 +40,7 @@ Transform::~Transform()
 
 void TransformProcessor::onUpdate( float deltaTime )
 {
-     std::cout << "Delta time: " << std::to_string( deltaTime ) << "; Updating: " << std::endl;
+     std::cout << "TRANSFORM PROCESSOR Delta time: " << std::to_string( deltaTime ) << "; Updating: " << std::endl;
     for ( int i{ 0 }; i < mComponents.getSize(); ++i )
     {
         auto comp = mComponents[ i ];

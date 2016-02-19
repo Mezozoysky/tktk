@@ -30,7 +30,6 @@
 #include <tktk/ecs/Component.hpp>
 #include <tktk/ecs/Processor.hpp>
 
-
 using namespace tktk;
 
 struct Transform
