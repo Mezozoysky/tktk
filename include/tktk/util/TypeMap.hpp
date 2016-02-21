@@ -86,6 +86,23 @@ public:
         mMap[ getUniqueTypeId< TypeKey >() ] = value;
     }
 
+    template < typename TypeKey >
+    void remove()
+    {
+        ConstIterator cit = mMap.find( getUniqueTypeId< TypeKey >() );
+        if ( cit != mMap.end() )
+        {
+            mMap.erase( cit );
+        }
+    }
+
+    //TODO: create remove by iterator methods
+
+    void clear() noexcept
+    {
+        mMap.clear();
+    }
+
 private:
 
     template< typename TypeKey >
