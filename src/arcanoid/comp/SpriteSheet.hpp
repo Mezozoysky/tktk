@@ -46,7 +46,8 @@ class SpriteSheetProcessor
 : public ecs::Processor< SpriteSheet >
 {
 public:
-    virtual void onUpdate( float deltaTime ) override;
+    virtual void setup( ecs::EventProxy& eventProxy, ecs::EntityManager& entityManager ) override;
+    virtual void onUpdate( float deltaTime );
 };
 
 #endif /* end of include guard: ARCANOID_COMP_SPRITE_SHEET_HPP */

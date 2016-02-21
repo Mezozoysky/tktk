@@ -144,7 +144,12 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     : public ecs::Processor< Comp >
     {
     public:
-        virtual void onUpdate( float deltaTime ) override
+        virtual void setup( ecs::EventProxy& eventProxy, ecs::EntityManager& entityManager ) override
+        {
+            eventProxy.updateSignal.connect( std::bind( &Proc::onUpdate, this, std::placeholders::_1 ) );
+        }
+
+        virtual void onUpdate( float deltaTime )
         {
             std::cout << "Proc::onUpdate: " << deltaTime << std::endl;
             for ( int i{ 0 }; i < mComponents.getSize(); ++i )
@@ -172,6 +177,11 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     : public ecs::Processor< Comp2 >
     {
     public:
+        virtual void setup( ecs::EventProxy& eventProxy, ecs::EntityManager& entityManager ) override
+        {
+            eventProxy.updateSignal.connect( std::bind( &Proc2::onUpdate, this, std::placeholders::_1 ) );
+        }
+
         virtual void onUpdate( float deltaTime )
         {
             std::cout << "Proc2::onUpdate: " << deltaTime << std::endl;
@@ -196,7 +206,7 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
 
     ecs::EntityHandle e1{ ecs.getEntityManager().createEntity() };
 
-    Comp* c1( proc->addComponent( e1 ) );
+    ecs::ComponentHandle< Comp > c1( proc->addComponent( e1 ) );
     auto c2( proc2->addComponent( e1 ) );
 
     float timeStep{ 0.05f };

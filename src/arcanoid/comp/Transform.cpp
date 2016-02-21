@@ -39,6 +39,11 @@ Transform::~Transform()
 {
 }
 
+void TransformProcessor::setup( ecs::EventProxy& eventProxy, ecs::EntityManager& entityManager )
+{
+    eventProxy.updateSignal.connect( std::bind( &TransformProcessor::onUpdate, this, std::placeholders::_1 ) );
+}
+
 void TransformProcessor::onUpdate( float deltaTime )
 {
      std::cout << "TRANSFORM PROCESSOR Delta time: " << std::to_string( deltaTime ) << "; Updating: " << std::endl;

@@ -35,6 +35,7 @@ struct StaticSprite
 : public Renderer
 {
     explicit StaticSprite( const ecs::EntityHandle& ownerHandle );
+    explicit StaticSprite( const ecs::EntityHandle& ownerHandle, const std::string& texture, bool centered );
     virtual ~StaticSprite();
 
     std::string texture{};
@@ -46,7 +47,8 @@ class StaticSpriteProcessor
 : public ecs::Processor< StaticSprite >
 {
 public:
-    virtual void onUpdate( float deltaTime ) override;
+    virtual void setup( ecs::EventProxy& eventProxy, ecs::EntityManager& entityManager ) override;
+    virtual void onUpdate( float deltaTime );
 };
 
 #endif /* end of include guard: ARCANOID_COMP_STATIC_SPRITE_HPP */

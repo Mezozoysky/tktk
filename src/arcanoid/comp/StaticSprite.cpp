@@ -34,8 +34,20 @@ StaticSprite::StaticSprite( const ecs::EntityHandle& ownerHandle )
 {
 }
 
+StaticSprite::StaticSprite( const ecs::EntityHandle& ownerHandle, const std::string& texture, bool centered )
+: Renderer( ownerHandle )
+, texture{ texture }
+, centered{ centered }
+{
+}
+
 StaticSprite::~StaticSprite()
 {
+}
+
+void StaticSpriteProcessor::setup( ecs::EventProxy& eventProxy, ecs::EntityManager& entityManager )
+{
+    eventProxy.updateSignal.connect( std::bind( &StaticSpriteProcessor::onUpdate, this, std::placeholders::_1 ) );
 }
 
 void StaticSpriteProcessor::onUpdate( float deltaTime )

@@ -36,7 +36,9 @@ namespace tktk
 namespace ecs
 {
 
-class ProcessorBase;
+// forward declarations
+template< typename CompT >
+class Processor;
 
 struct ComponentBase
 {
@@ -80,6 +82,52 @@ struct Component
 
 private:
     Entity mOwner;
+};
+
+
+// struct ComponentHandleBase
+// {
+//     bool isValid() const noexcept;
+//     void invalidate() noexcept;
+// };
+
+template < typename T >
+struct ComponentHandle
+{
+    using CompType = T;
+
+    ComponentHandle( std::size_t index, typename std::shared_ptr< ecs::Processor< T > > processor )
+    : mIndex{ index }
+    , mProcessor{ processor }
+    {
+    }
+
+    inline bool isValid() const noexcept
+    {
+        return ( mProcessor && mProcessor->isComponentAlive( mIndex ) );
+    }
+
+    void invalidate() noexcept
+    {
+        mIndex = -1;
+        mProcessor = nullptr;
+    }
+
+    inline CompType* operator ->() const noexcept
+    {
+        return ( mProcessor->getPtr( mIndex ) );
+    }
+
+    inline std::size_t getIndex() const noexcept
+    {
+        return ( mIndex );
+    }
+
+
+private:
+
+    std::size_t mIndex{ 0 };
+    std::shared_ptr< ecs::Processor< T > > mProcessor{ nullptr }; //TODO: it should be rather raw pointer
 };
 
 } //namespace ecs

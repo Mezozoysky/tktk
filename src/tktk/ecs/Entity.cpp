@@ -80,14 +80,15 @@ void EntityHandle::invalidate() noexcept
     mManager = nullptr;
 }
 
-void EntityHandle::destroyEntity() noexcept
-{
-    if ( isValid() )
-    {
-        mManager->destroyEntity( mEntity );
-        invalidate();
-    }
-}
+// void EntityHandle::destroyEntity() noexcept
+// {
+//     if ( isValid() )
+//     {
+//         //TODO: rewrite it with ECS removeEntity(). it calls EntityManager destroyEntity internally but also does unmapping etc.
+//         mManager->destroyEntity( mEntity );
+//         invalidate();
+//     }
+// }
 
 } //namespace ecs
 } //namespace tktk

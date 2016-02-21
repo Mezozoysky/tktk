@@ -38,6 +38,11 @@ SpriteSheet::~SpriteSheet()
 {
 }
 
+void SpriteSheetProcessor::setup( ecs::EventProxy& eventProxy, ecs::EntityManager& entityManager )
+{
+    eventProxy.updateSignal.connect( std::bind( &SpriteSheetProcessor::onUpdate, this, std::placeholders::_1 ) );
+}
+
 void SpriteSheetProcessor::onUpdate( float deltaTime )
 {
     std::cout << "SPRITE SHEET PROCESSOR Delta time: " << std::to_string( deltaTime ) << "; Updating: " << std::endl;

@@ -29,6 +29,7 @@
 
 #include <memory>
 #include <tktk/ecs/System.hpp>
+#include <tktk/ecs/Component.hpp>
 #include <cassert>
 #include <utility>
 
@@ -45,18 +46,65 @@ public:
     }
     virtual ~ECS() = default;
 
-    ecs::EntityHandle createEntity() noexcept;
+    ecs::EntityHandle addEntity() noexcept;
+    void removeEntity( ecs::EntityHandle& handle ) noexcept;
 
     template< typename T, typename... TArgs >
-    T* addComponent( TArgs&&... args )
+    ecs::ComponentHandle< T > addComponent( TArgs&&... args )
     {
         auto processor( getProcessorForCompType< T >() );
         assert( processor && "Processor for given component type is not registered." );
 
-        T* comp = processor->addComponent( std::forward< TArgs >( args )... );
+        ecs::ComponentHandle< T > handle{ processor->addComponent( std::forward< TArgs >( args )... ) };
 
-        return ( comp );
+        const uint32_t index{ handle->getEntity().index() };
+        mCompByTypeMapList[ index ].insert< T >( handle.getIndex() );
+
+        return ( handle );
     }
+
+    template< typename T >
+    void removeComponent( const ecs::EntityHandle& owner )
+    {
+        // find Component index for given Entity corresponding to given component type T
+        const uint32_t index{ owner.getEntity().index() };
+        const util::TypeMap< std::size_t >& typeMap{ mCompByTypeMapList[ index ] };
+        auto it( typeMap.find< T >() );
+        if ( it == typeMap.end() )
+        {
+            return;
+        }
+        std::size_t compIndex{ it->second };
+        // remove entry of given component type T for given Entity
+        mCompByTypeMapList[ index ].remove< T >();
+
+        // destroy the Component instance
+        auto processor( getProcessorForCompType< T >() );
+        assert( processor && "Processor for given component type is not registered." );
+        processor->removeComponent( compIndex );
+    }
+
+    template< typename T >
+    ecs::ComponentHandle< T > getComponent( const ecs::EntityHandle& owner )
+    {
+        std::size_t compIndex;
+        // find the mapped Component index for given Entity and T
+        std::uint32_t index = owner.getEntity().index();
+        auto it = mCompByTypeMapList[ index ].find< T >();
+        if ( it != mCompByTypeMapList[ index ].end() )
+        {
+            compIndex = it->second;
+        }
+
+        std::shared_ptr< ecs::Processor< T > > processor = getProcessorForCompType< T >();
+        ecs::ComponentHandle< T > handle{ compIndex, processor };
+        return ( handle );
+    }
+
+private:
+
+    std::vector< util::TypeMap< std::size_t > > mCompByTypeMapList;
+
 };
 
 #endif /* end of include guard: ARCANOID_ECS_HPP */

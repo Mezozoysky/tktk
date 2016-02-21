@@ -42,7 +42,7 @@ struct Entity;
 
 
 class ProcessorBase
-: public std::enable_shared_from_this< ProcessorBase >
+// : public std::enable_shared_from_this< ProcessorBase >
 {
     ProcessorBase( const ProcessorBase& ) = delete;
     ProcessorBase& operator= ( const ProcessorBase& ) = delete;
@@ -53,10 +53,10 @@ public:
     virtual ~ProcessorBase() = default;
 
     virtual void setup( EventProxy& eventProxy, EntityManager& entityManager ) = 0;
-    virtual void onUpdate( float deltaTime ) = 0;
+//     virtual void onUpdate( float deltaTime ) = 0;
 //    virtual void onFixedUpdate( float deltaTime ) = 0;
 
-//    virtual void isComponentValid( std::size_t index ) const noexcept = 0;
+   virtual bool isComponentAlive( std::size_t index ) const noexcept = 0;
 //    virtual void
 };
 
@@ -64,6 +64,8 @@ public:
 template< typename CompT >
 class Processor
 : public ProcessorBase
+, public std::enable_shared_from_this< Processor< CompT > >
+
 {
 
 public:
@@ -79,27 +81,42 @@ public:
     {
     }
 
-    virtual void setup( EventProxy& eventProxy, EntityManager& entityManager ) override
+//     virtual void setup( EventProxy& eventProxy, EntityManager& entityManager ) override
+//     {
+//         eventProxy.updateSignal.connect( std::bind( &ProcessorBase::onUpdate, this, std::placeholders::_1 ) );
+//     }
+
+    virtual bool isComponentAlive( std::size_t index ) const noexcept
     {
-        eventProxy.updateSignal.connect( std::bind( &ProcessorBase::onUpdate, this, std::placeholders::_1 ) );
+        return ( mComponents.isAlive( index ) );
     }
 
     template< typename... Args >
-    CompType* addComponent( Args&&... args )
+    ComponentHandle< CompType > addComponent( Args&&... args )
     {
         std::size_t index{ mComponents.createElement( std::forward< Args >( args )... ) };
+        ComponentHandle< CompType > handle( index, Processor< CompType >::shared_from_this() );
+        return ( handle );
+    }
+
+    void removeComponent( ComponentHandle< CompType > handle )
+    {
+        if ( handle.isValid() )
+        {
+            mComponents.destroyElement( handle.getIndex() );
+            handle.invalidate();
+        }
+    }
+
+    inline const CompType* getPtr( std::size_t index ) const noexcept
+    {
         return ( mComponents.getPtr( index ) );
     }
 
-//     inline const CompType* getPtr( std::size_t index ) const noexcept
-//     {
-//         return ( mComponents.getPtr( index ) );
-//     }
-// 
-//     inline CompType* getPtr( std::size_t index ) noexcept
-//     {
-//         return ( mComponents.getPtr( index ) );
-//     }
+    inline CompType* getPtr( std::size_t index ) noexcept
+    {
+        return ( mComponents.getPtr( index ) );
+    }
 
 protected:
 
