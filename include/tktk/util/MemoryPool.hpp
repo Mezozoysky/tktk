@@ -53,6 +53,8 @@ public:
 
     virtual void clear() noexcept = 0;
     virtual void reserve( std::size_t cap ) noexcept = 0;
+
+    virtual bool isAlive( std::size_t index ) const noexcept = 0;
 };
 
 
@@ -68,12 +70,12 @@ public:
     {
         AlignedType data[ chunkSizeV ];
     };
-    
+
     explicit MemoryPool() noexcept
     : mChunkSize{ chunkSizeV }
     {
     }
-    
+
     virtual ~MemoryPool()
     {
         clear();
@@ -108,7 +110,7 @@ public:
 
         return ( index );
     }
-    
+
     void destroyElement( std::size_t index )
     {
         assert( index < mElementsPresence.size() );
@@ -121,7 +123,7 @@ public:
         auto it = std::lower_bound( mDeadIndices.begin(), mDeadIndices.end(), index, std::greater< std::size_t >() );
         mDeadIndices.insert( it, index );
     }
-    
+
     const ValueTypeT& operator[]( std::size_t index ) const
     {
         std::size_t chunkIndex{ index / mChunkSize };
@@ -149,12 +151,12 @@ public:
         std::size_t elementIndex{ index % mChunkSize };
         return ( reinterpret_cast< ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex ) );
     }
-    
+
     virtual std::size_t getSize() const noexcept final
     {
         return ( mElementsPresence.size() );
     }
-    
+
     virtual std::size_t getCapacity() const noexcept final
     {
         return ( mCapacity );
@@ -197,6 +199,15 @@ public:
         {
             addChunk();
         }
+    }
+
+    virtual bool isAlive( std::size_t index ) const noexcept final
+    {
+        if ( index < mElementsPresence.size() && !std::binary_search( mDeadIndices.begin(), mDeadIndices.end(), index ) )
+        {
+            return ( true );
+        }
+        return ( false );
     }
 
 private:
