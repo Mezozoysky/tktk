@@ -65,7 +65,7 @@ void EntityManager::destroyEntity ( Entity entity ) noexcept
     mEntityVersions[ index ]++;
 }
 
-bool EntityManager::isEntityValid( Entity entity ) const noexcept
+bool EntityManager::isEntityValid( const Entity& entity ) const noexcept
 {
     return ( entity.index() < mEntityVersions.size() && mEntityVersions[ entity.index() ] == entity.version() );
 }

@@ -62,12 +62,12 @@ struct EntityHandle
         return ( mEntity );
     }
 
-    void destroyEntity() noexcept;
+//     void destroyEntity() noexcept;
 
 private:
 
     Entity mEntity { ENTITY_INVALID };
-    EntityManager* mManager;
+    EntityManager* mManager{ nullptr };
 };
 
 } //namespace ecs

@@ -49,7 +49,7 @@ public:
     EntityHandle createEntity() noexcept;
     void destroyEntity( Entity entity ) noexcept;
 
-    bool isEntityValid( Entity entity ) const noexcept;
+    bool isEntityValid( const Entity& entity ) const noexcept;
 
 private:
 
