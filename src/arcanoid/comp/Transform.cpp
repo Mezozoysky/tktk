@@ -29,8 +29,8 @@
 
 using namespace tktk;
 
-Transform::Transform( const ecs::EntityHandle& ownerHandle, Vector2f position )
-: BasalType( ownerHandle )
+Transform::Transform( const util::ElementId& entityId, Vector2f position )
+: BasalType( entityId )
 {
     this->position = position;
 }
@@ -47,9 +47,9 @@ void TransformProcessor::setup( ecs::EventProxy& eventProxy, ecs::EntityManager&
 void TransformProcessor::onUpdate( float deltaTime )
 {
      std::cout << "TRANSFORM PROCESSOR Delta time: " << std::to_string( deltaTime ) << "; Updating: " << std::endl;
-    for ( int i{ 0 }; i < mComponents.getSize(); ++i )
+    for ( int i{ 0 }; i < mPool.getSize(); ++i )
     {
-        auto comp = mComponents[ i ];
+        auto comp = mPool[ i ];
          std::cout << std::to_string( comp.position.x ) << ", " << std::to_string( comp.position.y ) << std::endl;
     }
 }

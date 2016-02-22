@@ -28,6 +28,8 @@
 #define TKTK_ECS_ENTITY_HPP
 
 #include <cstdint>
+#include <tktk/util/TypeMap.hpp>
+#include <tktk/util/MemoryPool.hpp>
 
 namespace tktk
 {
@@ -35,40 +37,46 @@ namespace ecs
 {
 
 //Forward declarations
-class EntityManager;
+// class EntityManager;
 
 struct Entity
 {
-    Entity();
-    Entity( uint32_t index, uint32_t version );
-
-    uint32_t index() const noexcept;
-    uint32_t version() const noexcept;
-
-    uint64_t id{ 0 };
+    util::TypeMap< util::ElementId > map;
 };
 
-struct EntityHandle
-{
-    static const Entity ENTITY_INVALID;
-
-    EntityHandle( Entity entity, EntityManager* mgr );
-
-    inline bool isValid() const noexcept;
-    void invalidate() noexcept;
-
-    inline Entity getEntity() const noexcept
-    {
-        return ( mEntity );
-    }
-
-//     void destroyEntity() noexcept;
-
-private:
-
-    Entity mEntity { ENTITY_INVALID };
-    EntityManager* mManager{ nullptr };
-};
+// struct Entity
+// {
+//     Entity();
+//     Entity( uint32_t index, uint32_t version );
+// 
+//     uint32_t index() const noexcept;
+//     uint32_t version() const noexcept;
+// 
+//     uint64_t id{ 0 };
+// };
+// 
+// struct EntityHandle
+// {
+//     static const Entity ENTITY_INVALID;
+// 
+//     EntityHandle( Entity entity, EntityManager* mgr );
+// 
+//     inline bool isValid() const noexcept;
+//     void invalidate() noexcept;
+// 
+//     inline Entity getEntity() const noexcept
+//     {
+//         return ( mEntity );
+//     }
+// 
+//     void remove() noexcept;
+// 
+// 
+// private:
+// 
+//     Entity mEntity { ENTITY_INVALID };
+//     EntityManager* mManager{ nullptr };
+// };
 
 } //namespace ecs
 } //namespace tktk

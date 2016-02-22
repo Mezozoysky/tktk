@@ -42,32 +42,26 @@ EntityManager::~EntityManager()
 {
 }
 
-EntityHandle EntityManager::createEntity() noexcept
+EntityManager::Handle EntityManager::addEntity() noexcept
 {
-    std::uint32_t index{ mNextEntityIndex++ };
-    mEntityVersions.resize( mNextEntityIndex );
-    std::uint32_t version{ 1 };
-    mEntityVersions[ index ] = version;
+    util::ElementId eid{ mPool.createElement() };
 
-    EntityHandle handle{ { index, version}, this };
-    std::cout << "Entity created: " << handle.getEntity().id << " [ " << index << ", " << version << " ];" << std::endl;
+    Handle handle( eid, this );
     return ( handle );
 }
 
-void EntityManager::destroyEntity ( Entity entity ) noexcept
+void EntityManager::removeEntity( EntityManager::Handle& handle ) noexcept
 {
-    if ( !isEntityValid( entity ) )
+    if ( isElementIdValid( handle.getElementId() ) )
     {
-        return;
+        mPool.destroyElement( handle.getElementId() );
     }
-
-    std::uint32_t index{ entity.index() };
-    mEntityVersions[ index ]++;
+    handle.invalidate();
 }
 
-bool EntityManager::isEntityValid( const Entity& entity ) const noexcept
+bool EntityManager::isElementIdValid( const util::ElementId& eid ) const noexcept
 {
-    return ( entity.index() < mEntityVersions.size() && mEntityVersions[ entity.index() ] == entity.version() );
+    return ( mPool.isElementIdValid( eid ) );
 }
 
 

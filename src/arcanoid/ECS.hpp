@@ -46,27 +46,27 @@ public:
     }
     virtual ~ECS() = default;
 
-    ecs::EntityHandle addEntity() noexcept;
-    void removeEntity( ecs::EntityHandle& handle ) noexcept;
+//     ecs::EntityManager::Handle addEntity() noexcept;
+//     void removeEntity( ecs::EntityManager::Handle& handle ) noexcept;
 
     template< typename T, typename... TArgs >
-    ecs::ComponentHandle< T > addComponent( TArgs&&... args )
+    typename ecs::Processor< T >::Handle addComponent( TArgs&&... args )
     {
-        auto processor( getProcessorForCompType< T >() );
-        assert( processor && "Processor for given component type is not registered." );
+        auto procPtr( getProcessorForCompType< T >() );
+        assert( procPtr && "Processor for given component type is not registered." );
 
-        ecs::ComponentHandle< T > handle{ processor->addComponent( std::forward< TArgs >( args )... ) };
+        typename ecs::Processor< T >::Handle handle{ procPtr->addComponent( std::forward< TArgs >( args )... ) };
 
-        const uint32_t index{ handle->getEntity().index() };
-        mCompByTypeMapList[ index ].insert< T >( handle.getIndex() );
+//         const uint32_t index{ handle->getEntity().index() };
+//         mCompByTypeMapList[ index ].insert< T >( handle.getIndex() );
 
         return ( handle );
     }
 
     template< typename T >
-    void removeComponent( const ecs::EntityHandle& owner )
+    void removeComponent( const ecs::EntityManager::Handle& handle )
     {
-        // find Component index for given Entity corresponding to given component type T
+/*        // find Component index for given Entity corresponding to given component type T
         const uint32_t index{ owner.getEntity().index() };
         const util::TypeMap< std::size_t >& typeMap{ mCompByTypeMapList[ index ] };
         auto it( typeMap.find< T >() );
@@ -77,17 +77,18 @@ public:
         std::size_t compIndex{ it->second };
         // remove entry of given component type T for given Entity
         mCompByTypeMapList[ index ].remove< T >();
-
+*/
         // destroy the Component instance
-        auto processor( getProcessorForCompType< T >() );
-        assert( processor && "Processor for given component type is not registered." );
-        processor->removeComponent( compIndex );
+        auto procPtr( getProcessorForCompType< T >() );
+        assert( procPtr && "Processor for given component type is not registered." );
+        util::ElementId eid{ *( handle->map.find< T >() ) };
+        procPtr->destroyElement( eid );
     }
 
     template< typename T >
-    ecs::ComponentHandle< T > getComponent( const ecs::EntityHandle& owner )
+    typename ecs::Processor< T >::Handle getComponent( const ecs::EntityManager::Handle& handle )
     {
-        std::size_t compIndex;
+/*        std::size_t compIndex;
         // find the mapped Component index for given Entity and T
         std::uint32_t index = owner.getEntity().index();
         auto it = mCompByTypeMapList[ index ].find< T >();
@@ -99,11 +100,32 @@ public:
         std::shared_ptr< ecs::Processor< T > > processor = getProcessorForCompType< T >();
         ecs::ComponentHandle< T > handle{ compIndex, processor };
         return ( handle );
+*/
+        ecs::Entity* entity{ handle.getPtr() };
+        auto it = entity->map.find< T >();
+        if ( it == entity->map.end() )
+        {
+            typename ecs::Processor< T >::Handle bad{};
+            return ( bad );
+        }
+        util::ElementId compEId = entity->map.find< T >()->second;
+        //util::ElementId cId = handle->getComponent< T >
+
+        ecs::Processor< T >* procPtr{ getProcessorForCompType< T >() };
+        assert( procPtr && "Processor for given component type is not registered." );
+
+        if ( !procPtr->isElementIdValid( compEId ) )
+        {
+//             compEId = util::ElementId::INVALID;
+            procPtr = nullptr;
+        }
+        typename ecs::Processor< T >::Handle compHandle{ compEId, procPtr };
+        return ( compHandle );
     }
 
 private:
 
-    std::vector< util::TypeMap< std::size_t > > mCompByTypeMapList;
+//     std::vector< util::TypeMap< std::size_t > > mCompByTypeMapList;
 
 };
 

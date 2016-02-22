@@ -28,25 +28,22 @@
 
 using namespace tktk;
 
-ecs::EntityHandle ECS::addEntity() noexcept
+/*
+ecs::EntityManager::Handle ECS::addEntity() noexcept
 {
-    auto mgr( getEntityManager() );
-    ecs::EntityHandle handle = mgr.createEntity();
-
-//     mCompByTypeMapList[ handle.getEntity().index() ].clear(); //is it need?
-    uint32_t index = handle.getEntity().index();
-    if ( index >= mCompByTypeMapList.size() )
-    {
-        mCompByTypeMapList.resize( index + 1 );
-        mCompByTypeMapList[ index ].clear();
-    }
-    return ( handle );
+//     uint32_t index = handle.getEntity().index();
+//     if ( index >= mCompByTypeMapList.size() )
+//     {
+//         mCompByTypeMapList.resize( index + 1 );
+//         mCompByTypeMapList[ index ].clear();
+//     }
+    return ( mEntityManager.addEntity() );
 }
 
-void ECS::removeEntity( ecs::EntityHandle& handle ) noexcept
+void ECS::removeEntity( ecs::EntityManager::Handle& handle ) noexcept
 {
-    mCompByTypeMapList[ handle.getEntity().index() ].clear();
+//     mCompByTypeMapList[ handle.getEntity().index() ].clear();
     //TODO: remove all entity's components and mapping
-    getEntityManager().destroyEntity( handle.getEntity() );
-    handle.invalidate();
+    mEntityManager.removeEntity( handle );
 }
+*/

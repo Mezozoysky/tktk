@@ -57,7 +57,27 @@ public:
         );
     }
 
-    virtual ~System() = default;
+    virtual ~System()
+    {
+        // Unregister and destroy processors
+        auto it( mProcessors.begin() );
+        while ( it != mProcessors.end() )
+        {
+            auto procPtr( it->second );
+            delete procPtr;
+            mProcessors.remove( it++ );
+        }
+    }
+
+    ecs::EntityManager::Handle addEntity() noexcept
+    {
+        return ( mEntityManager.addEntity() );
+    }
+
+    void removeEntity( ecs::EntityManager::Handle& handle ) noexcept
+    {
+        mEntityManager.removeEntity( handle );
+    }
 
     virtual void setup() noexcept
     {
@@ -75,82 +95,82 @@ public:
     }
 
     template< typename T, typename... TArgs >
-    std::shared_ptr< T > registerProcessor( TArgs&&... args )
+    T* registerProcessor( TArgs&&... args )
     {
         static_assert(
                       std::is_base_of< ProcessorBase, T >::value
                       , "T should extend tktk::ecs::ProcessorBase"
         );
 
-        auto processor = std::make_shared< T >( std::forward< TArgs >( args )... );
-        mProcessors.insert< typename T::CompType >( processor );
+        auto procPtr = new T( std::forward< TArgs >( args )... );
+        mProcessors.insert< typename T::CompTypeT >( static_cast< ProcessorBase* >( procPtr ) );
 
-        return ( processor );
+        return ( procPtr );
     }
 
     template< typename T >
-    std::shared_ptr< T > getProcessor()
+    T* getProcessor()
     {
         static_assert(
                       std::is_base_of< ProcessorBase, T >::value
                       , "T should extend tktk::ecs::ProcessorBase"
         );
 
-        std::shared_ptr< T > processor;
+        T* procPtr;
 
-        auto it = mProcessors.find< typename T::CompType >();
+        auto it = mProcessors.find< typename T::CompTypeT >();
         if ( it != mProcessors.end() )
         {
-            processor = std::static_pointer_cast< T >( it->second );
+            procPtr = static_cast< T* >( it->second );
         }
 
-        return ( processor );
+        return ( procPtr );
     }
 
     template< typename T >
-    std::shared_ptr< Processor< T > > getProcessorForCompType()
+    Processor< T >* getProcessorForCompType()
     {
         static_assert(
             std::is_base_of< ComponentBase, T >::value
             , "T should extend tktk::ecs::ComponentBase"
         );
 
-        std::shared_ptr< Processor< T > > processor;
+        Processor< T >* procPtr;
 
         auto it = mProcessors.find< T >();
         if ( it != mProcessors.end() )
         {
-            processor = std::static_pointer_cast< Processor< T > >( it->second );
+            procPtr = static_cast< Processor< T >* >( it->second );
         }
 
-        return ( processor );
+        return ( procPtr );
     }
 
-    EntityManagerT& getEntityManager()
-    {
-        return ( mEntityManager );
-    }
+//     EntityManagerT& getEntityManager()
+//     {
+//         return ( mEntityManager );
+//     }
+// 
+//     const EntityManagerT& getEntityManager() const
+//     {
+//         return ( mEntityManager );
+//     }
+// 
+//     EventProxyT& getEventProxy()
+//     {
+//         return ( mEventProxy );
+//     }
+// 
+//     const EventProxyT& getEventProxy() const
+//     {
+//         return ( mEventProxy );
+//     }
 
-    const EntityManagerT& getEntityManager() const
-    {
-        return ( mEntityManager );
-    }
-
-    EventProxyT& getEventProxy()
-    {
-        return ( mEventProxy );
-    }
-
-    const EventProxyT& getEventProxy() const
-    {
-        return ( mEventProxy );
-    }
-
-private:
+protected:
     EntityManagerT mEntityManager;
     EventProxyT mEventProxy;
 
-    util::TypeMap< std::shared_ptr< ProcessorBase > > mProcessors;
+    util::TypeMap< ProcessorBase* > mProcessors;
 };
 
 } //namespace ecs

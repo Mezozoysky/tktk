@@ -29,8 +29,8 @@
 
 using namespace tktk;
 
-SpriteSheet::SpriteSheet( const ecs::EntityHandle& ownerHandle )
-: Renderer( ownerHandle )
+SpriteSheet::SpriteSheet( const util::ElementId& entityId )
+: Renderer( entityId )
 {
 }
 
@@ -46,9 +46,9 @@ void SpriteSheetProcessor::setup( ecs::EventProxy& eventProxy, ecs::EntityManage
 void SpriteSheetProcessor::onUpdate( float deltaTime )
 {
     std::cout << "SPRITE SHEET PROCESSOR Delta time: " << std::to_string( deltaTime ) << "; Updating: " << std::endl;
-    for ( int i{ 0 }; i < mComponents.getSize(); ++i )
+    for ( int i{ 0 }; i < mPool.getSize(); ++i )
     {
-        auto comp = mComponents[ i ];
+        auto comp = mPool[ i ];
         std::cout << std::to_string( i ) << " texture=" << comp.texture << ", centered=" << std::to_string( comp.centered ) << std::endl;
     }
 }

@@ -55,44 +55,50 @@ TEST_CASE( "MemoryPool correctness", "[mempool]" )
     CHECK( pool.getCapacity() == 0 );
     CHECK( pool.getSize() == 0 );
 
-    std::size_t index{ pool.createElement( "zero" ) };
+    util::ElementId id{ pool.createElement( "zero" ) };
 
+    CHECK( pool.isElementIdValid( id ) );
     CHECK( pool.getCapacity() == 2 );
     CHECK( pool.getSize() == 1 );
-    CHECK( pool[ index ] == "zero" );
+    CHECK( *pool.getPtr( id.index() ) == std::string( "zero" ) );
 
-    index = pool.createElement( "one" );
+    id = pool.createElement( "one" );
 
+    CHECK( pool.isElementIdValid( id ) );
     CHECK( pool.getCapacity() == 2 );
     CHECK( pool.getSize() == 2 );
-    CHECK( pool[ index ] == "one" );
+    CHECK( pool[ id.index() ] == "one" );
 
-    index = pool.createElement( "two" );
+    id = pool.createElement( "two" );
 
+    CHECK( pool.isElementIdValid( id ) );
     CHECK( pool.getCapacity() == 4 );
     CHECK( pool.getSize() == 3 );
-    CHECK( pool[ index ] == "two" );
+    CHECK( pool[ id.index() ] == "two" );
 
-    index = pool.createElement( "three" );
+    id = pool.createElement( "three" );
 
+    CHECK( pool.isElementIdValid( id ) );
     CHECK( pool.getCapacity() == 4 );
     CHECK( pool.getSize() == 4 );
-    CHECK( pool[ index ] == "three" );
+    CHECK( pool[ id.index() ] == "three" );
 
-    index = pool.createElement( "four" );
+    id = pool.createElement( "four" );
 
+    CHECK( pool.isElementIdValid( id ) );
     CHECK( pool.getCapacity() == 6 );
     CHECK( pool.getSize() == 5 );
-    CHECK( pool[ index ] == "four" );
+    CHECK( pool[ id.index() ] == "four" );
 
     pool.destroyElement( 1 );
     pool.destroyElement( 3 );
 
-    index = pool.createElement( "nova" );
-    CHECK( index == 1 );
+    id = pool.createElement( "nova" );
+    CHECK( pool.isElementIdValid( id ) );
+    CHECK( id.index() == 1 );
 
-    index = pool.createElement( "super nova" );
-    CHECK( index == 3 );
+    id = pool.createElement( "super nova" );
+    CHECK( id.index() == 3 );
 }
 
 
@@ -131,8 +137,8 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     : public ecs::Component< Comp >
     {
     public:
-        Comp( const ecs::EntityHandle& ownerHandle )
-        : BasalType{ ownerHandle }
+        Comp( const util::ElementId& entityId )
+        : BasalType{ entityId }
         {
         }
 
@@ -152,9 +158,9 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
         virtual void onUpdate( float deltaTime )
         {
             std::cout << "Proc::onUpdate: " << deltaTime << std::endl;
-            for ( int i{ 0 }; i < mComponents.getSize(); ++i )
+            for ( int i{ 0 }; i < mPool.getSize(); ++i )
             {
-                std::cout << mComponents[ i ].name << std::endl;
+                std::cout << mPool.getPtr( i )->name << std::endl;
             }
         }
 
@@ -164,8 +170,8 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     : public ecs::Component< Comp2 >
     {
     public:
-        Comp2( const ecs::EntityHandle& ownerHandle )
-        : BasalType{ ownerHandle }
+        Comp2( const util::ElementId& entityId )
+        : BasalType{ entityId }
         {
         }
 
@@ -185,9 +191,9 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
         virtual void onUpdate( float deltaTime )
         {
             std::cout << "Proc2::onUpdate: " << deltaTime << std::endl;
-            for ( int i{ 0 }; i < mComponents.getSize(); ++i )
+            for ( int i{ 0 }; i < mPool.getSize(); ++i )
             {
-                std::cout << mComponents[ i ].number << std::endl;
+                std::cout << mPool.getPtr( i )->number << std::endl;
             }
         }
 
@@ -201,13 +207,13 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
 
     ecs.setup();
 
-    std::shared_ptr< Proc > proc{ ecs.getProcessor< Proc >() };
+    Proc* proc{ ecs.getProcessor< Proc >() };
     auto proc2( ecs.getProcessor< Proc2 >() );
 
-    ecs::EntityHandle e1{ ecs.getEntityManager().createEntity() };
+    ecs::EntityManager::Handle e1{ ecs.addEntity() };
 
-    ecs::ComponentHandle< Comp > c1( proc->addComponent( e1 ) );
-    auto c2( proc2->addComponent( e1 ) );
+    Proc::Handle c1( proc->addComponent( e1.getElementId() ) );
+    auto c2( proc2->addComponent( e1.getElementId() ) );
 
     float timeStep{ 0.05f };
     float time{ 0.0f };
@@ -221,4 +227,5 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
         ecs.update( timeStep );
         time += timeStep;
     }
+    std::cout << "LOOP FINISHED" << std::endl;
 }

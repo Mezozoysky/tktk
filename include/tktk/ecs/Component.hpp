@@ -42,16 +42,10 @@ class Processor;
 
 struct ComponentBase
 {
-
-public:
     ComponentBase() = default;
     virtual ~ComponentBase() = default;
 
-    virtual const Entity& getEntity() const noexcept = 0;
-
-private:
-
-    Entity mOwner;
+    virtual const util::ElementId& getEntityId() const noexcept = 0;
 };
 
 template< typename CompT >
@@ -61,13 +55,8 @@ struct Component
     using Type = CompT;
     using BasalType = Component< Type >;
 
-    explicit Component( const Entity& owner ) noexcept
-    : mOwner{ owner }
-    {
-    }
-
-    explicit Component( const EntityHandle& ownerHandle) noexcept
-    : mOwner{ ownerHandle.getEntity() }
+    explicit Component( const util::ElementId& entityId ) noexcept
+    : mEntityId{ entityId }
     {
     }
 
@@ -75,13 +64,13 @@ struct Component
     {
     }
 
-    virtual const Entity& getEntity() const noexcept override final
+    virtual const util::ElementId& getEntityId() const noexcept override final
     {
-        return mOwner;
+        return mEntityId;
     }
 
 private:
-    Entity mOwner;
+    util::ElementId mEntityId;
 };
 
 
@@ -91,6 +80,7 @@ private:
 //     void invalidate() noexcept;
 // };
 
+/*
 template < typename T >
 struct ComponentHandle
 {
@@ -129,6 +119,7 @@ private:
     std::size_t mIndex{ 0 };
     std::shared_ptr< ecs::Processor< T > > mProcessor{ nullptr }; //TODO: it should be rather raw pointer
 };
+*/
 
 } //namespace ecs
 } //namespace tktk

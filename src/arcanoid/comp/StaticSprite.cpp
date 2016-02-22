@@ -29,13 +29,13 @@
 
 using namespace tktk;
 
-StaticSprite::StaticSprite( const ecs::EntityHandle& ownerHandle )
-: Renderer( ownerHandle )
+StaticSprite::StaticSprite( const util::ElementId& entityId )
+: Renderer( entityId )
 {
 }
 
-StaticSprite::StaticSprite( const ecs::EntityHandle& ownerHandle, const std::string& texture, bool centered )
-: Renderer( ownerHandle )
+StaticSprite::StaticSprite( const util::ElementId& entityId, const std::string& texture, bool centered )
+: Renderer( entityId )
 , texture{ texture }
 , centered{ centered }
 {
@@ -53,9 +53,9 @@ void StaticSpriteProcessor::setup( ecs::EventProxy& eventProxy, ecs::EntityManag
 void StaticSpriteProcessor::onUpdate( float deltaTime )
 {
     std::cout << "STATIC SPRITE PROCESSOR Delta time: " << std::to_string( deltaTime ) << "; Updating: " << std::endl;
-    for ( int i{ 0 }; i < mComponents.getSize(); ++i )
+    for ( int i{ 0 }; i < mPool.getSize(); ++i )
     {
-        auto comp = mComponents[ i ];
+        auto comp = mPool[ i ];
         std::cout << std::to_string( i ) << " texture=" << comp.texture << ", centered=" << std::to_string( comp.centered ) << std::endl;
     }
 }

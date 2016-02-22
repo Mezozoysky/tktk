@@ -41,6 +41,7 @@ namespace ecs
 struct Entity;
 
 
+
 class ProcessorBase
 // : public std::enable_shared_from_this< ProcessorBase >
 {
@@ -56,7 +57,7 @@ public:
 //     virtual void onUpdate( float deltaTime ) = 0;
 //    virtual void onFixedUpdate( float deltaTime ) = 0;
 
-   virtual bool isComponentAlive( std::size_t index ) const noexcept = 0;
+//    virtual bool isComponentAlive( std::size_t index ) const noexcept = 0;
 //    virtual void
 };
 
@@ -64,13 +65,56 @@ public:
 template< typename CompT >
 class Processor
 : public ProcessorBase
-, public std::enable_shared_from_this< Processor< CompT > >
-
 {
 
 public:
 
-    using CompType = CompT;
+    using CompTypeT = CompT;
+    using PoolTypeT = util::MemoryPool<CompTypeT>;
+
+    struct Handle
+    {
+        Handle()
+        {
+        }
+
+        Handle( const util::ElementId& eid, Processor< CompTypeT >* procPtr )
+        : mElementId{ eid }
+        , mProcPtr{ procPtr }
+        {
+        }
+
+        inline bool isValid() const noexcept
+        {
+            return ( mProcPtr && mProcPtr->isElementIdValid( mElementId ) );
+        }
+
+        void invalidate() noexcept
+        {
+            mElementId = PoolTypeT::ElementId::INVALID;
+            mProcPtr = nullptr;
+        }
+
+        inline util::ElementId getElementId() const noexcept
+        {
+            return ( mElementId );
+        }
+
+//         void remove() noexcept;
+
+        inline CompTypeT* operator ->() const noexcept
+        {
+            if ( !isValid() )
+            {
+                return ( nullptr );
+            }
+            return ( mProcPtr->getPtr( mElementId.index() ) );
+        }
+
+    private:
+        util::ElementId mElementId { util::ELEMENT_ID_INVALID };
+        Processor< CompTypeT >* mProcPtr{ nullptr };
+    };
 
     Processor()
     : ProcessorBase()
@@ -86,41 +130,42 @@ public:
 //         eventProxy.updateSignal.connect( std::bind( &ProcessorBase::onUpdate, this, std::placeholders::_1 ) );
 //     }
 
-    virtual bool isComponentAlive( std::size_t index ) const noexcept
+    virtual bool isElementIdValid( const util::ElementId& eid ) const noexcept
     {
-        return ( mComponents.isAlive( index ) );
+        return ( mPool.isElementIdValid( eid ) );
     }
 
     template< typename... Args >
-    ComponentHandle< CompType > addComponent( Args&&... args )
+    Handle addComponent( Args&&... args )
     {
-        std::size_t index{ mComponents.createElement( std::forward< Args >( args )... ) };
-        ComponentHandle< CompType > handle( index, Processor< CompType >::shared_from_this() );
+        util::ElementId eid{ mPool.createElement( std::forward< Args >( args )... ) };
+
+        Handle handle( eid, this );
         return ( handle );
     }
 
-    void removeComponent( ComponentHandle< CompType > handle )
+    void removeComponent( Handle& handle )
     {
         if ( handle.isValid() )
         {
-            mComponents.destroyElement( handle.getIndex() );
+            destroyElement( handle.getElementId() );
             handle.invalidate();
         }
     }
 
-    inline const CompType* getPtr( std::size_t index ) const noexcept
+    inline void destroyElement( const util::ElementId& eid )
     {
-        return ( mComponents.getPtr( index ) );
+        mPool.destroyElement( eid );
     }
 
-    inline CompType* getPtr( std::size_t index ) noexcept
+    inline CompTypeT* getPtr( std::uint32_t index ) const noexcept
     {
-        return ( mComponents.getPtr( index ) );
+        return ( mPool.getPtr( index ) );
     }
 
 protected:
 
-    util::MemoryPool< CompT > mComponents;
+    PoolTypeT mPool;
 };
 
 } //namespace ecs

@@ -32,6 +32,7 @@ namespace tktk
 namespace ecs
 {
 
+/*
 //
 // Entity
 //
@@ -80,15 +81,16 @@ void EntityHandle::invalidate() noexcept
     mManager = nullptr;
 }
 
-// void EntityHandle::destroyEntity() noexcept
-// {
-//     if ( isValid() )
-//     {
-//         //TODO: rewrite it with ECS removeEntity(). it calls EntityManager destroyEntity internally but also does unmapping etc.
-//         mManager->destroyEntity( mEntity );
-//         invalidate();
-//     }
-// }
+void EntityHandle::remove() noexcept
+{
+    if ( isValid() )
+    {
+        //TODO: rewrite it with ECS removeEntity(). it calls EntityManager destroyEntity internally but also does unmapping etc.
+        mManager->destroyEntity( mEntity );
+        invalidate();
+    }
+}
+*/
 
 } //namespace ecs
 } //namespace tktk

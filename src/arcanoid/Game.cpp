@@ -75,21 +75,23 @@ void Game::run()
         auto e2( mECS.addEntity() );
         auto e3( mECS.addEntity() );
 
-        mECS.addComponent< Transform >( e1, Transform::Vector2f( 100.0f, 75.0f ) );
+        mECS.addComponent< Transform >( e1.getElementId(), Transform::Vector2f( 100.0f, 75.0f ) );
 //         e1.addComponent< Transform >( Transform::Vector2f( 100.0f, 75.0f ) );
 
-        mECS.addComponent< Transform >( e2 );
-        mECS.getComponent< Transform >( e2 )->position = Transform::Vector2f( 15.0f, 100.0f );
+        mECS.addComponent< Transform >( e2.getElementId() );
+//         mECS.getComponent< Transform >( e2 )->position = Transform::Vector2f( 15.0f, 100.0f );
 //         e2.addComponent< Transform >();
 //         e2.getComponent< Transform >().position = Transform::Vector2f( 15.0f, 100.0f );
 
-        auto tf3( mECS.addComponent< Transform >( e2 ) );
+        auto tf3( mECS.addComponent< Transform >( e3.getElementId() ) );
         tf3->position = Transform::Vector2f( 60.0f, 40.0f );
-//         auto tf3( e3.getComponent< Transform > );
+//         auto tf3( e3.addComponent< Transform > );
 //         tf3->position = Transform::Vector2f( 60.0f, 40.0f );
 
-        auto sprite1( mECS.addComponent< StaticSprite >( e1, "texture0.png", true ) );
-        auto sheet1( mECS.addComponent< SpriteSheet >( e1 ) );
+//         mECS.removeComponent< Transform >();
+
+        auto sprite1( mECS.addComponent< StaticSprite >( e1.getElementId(), "texture0.png", true ) );
+        auto sheet1( mECS.addComponent< SpriteSheet >( e1.getElementId() ) );
         sheet1->texture = "sheet_texture0.png";
         sheet1->centered = true;
 //         auto sprite1( e1.addComponent< StaticSprite >( "texture0.png", true  ) );

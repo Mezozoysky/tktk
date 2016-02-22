@@ -100,7 +100,7 @@ add_executable(arcanoid WIN32 MACOSX_BUNDLE
 )
 set_target_properties(arcanoid PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(arcanoid tktk-ecs)
+target_link_libraries(arcanoid tktk-ecs tktk-util)
 target_link_libraries(arcanoid ${SDL2_LIBRARY})
 target_link_libraries(arcanoid ${OPENGL_LIBRARIES})
 target_link_libraries(arcanoid ${TKTK_OS_SPECIFIC_LIBS})

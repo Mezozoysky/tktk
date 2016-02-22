@@ -39,26 +39,55 @@ namespace tktk
 namespace util
 {
 
+struct ElementId
+{
+    ElementId()
+    : mId{ 0 }
+    {
+    }
+    ElementId( uint32_t index, uint32_t version )
+    : mId{ uint64_t( index ) | uint64_t( version ) << 32UL }
+    {
+    }
+
+    uint32_t index() const noexcept
+    {
+        return ( mId & 0xffffffffUL );
+    }
+
+    uint32_t version() const noexcept
+    {
+        return ( mId >> 32UL );
+    }
+
+private:
+    uint64_t mId{ 0 };
+};
+
+const ElementId ELEMENT_ID_INVALID{};
+
+
 class MemoryPoolBase
 {
 public:
     MemoryPoolBase() = default;
     virtual ~MemoryPoolBase() = default;
 
-    virtual std::size_t getSize() const noexcept = 0;
-    virtual std::size_t getCapacity() const noexcept = 0;
-    virtual std::size_t getChunksNumber() const noexcept = 0;
-    virtual std::size_t getChunkCapacity() const noexcept = 0;
-    virtual std::size_t getDeadSize() const noexcept = 0;
+    virtual std::uint32_t getSize() const noexcept = 0;
+    virtual std::uint32_t getCapacity() const noexcept = 0;
+    virtual std::uint32_t getChunksNumber() const noexcept = 0;
+    virtual std::uint32_t getChunkCapacity() const noexcept = 0;
+    virtual std::uint32_t getDeadSize() const noexcept = 0;
+    virtual std::size_t getElementSize() const noexcept = 0;
 
     virtual void clear() noexcept = 0;
-    virtual void reserve( std::size_t cap ) noexcept = 0;
+    virtual void reserve( std::uint32_t cap ) noexcept = 0;
 
-    virtual bool isAlive( std::size_t index ) const noexcept = 0;
+//     virtual bool isAlive( std::size_t index ) const noexcept = 0;
 };
 
 
-template < typename ValueTypeT, std::size_t chunkSizeV = 256 >
+template < typename ValueTypeT, std::uint32_t chunkSizeV = 256 >
 class MemoryPool
 : public MemoryPoolBase
 {
@@ -82,106 +111,118 @@ public:
     }
 
     template< typename... Args >
-    std::size_t createElement( Args&&... args )
+    ElementId createElement( Args&&... args )
     {
-        std::size_t index;
+        std::uint32_t index;
 
         if ( mDeadIndices.empty() )
         {
-            index = mElementsPresence.size();
+            index = mVersions.size();
 
             if ( index == mCapacity )
             {
                 addChunk();
             }
 
-            mElementsPresence.push_back( 1 );
+            mVersions.push_back( 1 );
         }
         else
         {
             index = mDeadIndices.back();
             mDeadIndices.pop_back();
-            mElementsPresence[ index ] = 1;
         }
 
         std::size_t chunkIndex{ index / mChunkSize };
         std::size_t elementIndex{ index % mChunkSize };
         new( mChunks[ chunkIndex ].data + elementIndex ) ValueTypeT( std::forward< Args >( args )... );
 
-        return ( index );
+        ElementId eid{ index, mVersions[ index ] };
+        return ( eid );
     }
 
-    void destroyElement( std::size_t index )
+    void destroyElement( ElementId eid )
     {
-        assert( index < mElementsPresence.size() );
+        if ( !isElementIdValid( eid ) )
+        {
+            return;
+        }
 
+        std::uint32_t index{ eid.index() };
+
+        destroyElement( index );
+    }
+
+    void destroyElement( std::uint32_t index )
+    {
+        assert( index < mVersions.size() && "Bad index!" );
         std::size_t chunkIndex{ index / mChunkSize };
         std::size_t elementIndex{ index % mChunkSize };
         reinterpret_cast< const ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex )->~ValueTypeT();
-        mElementsPresence[ index ] = 0;
+        mVersions[ index ]++;
 
         auto it = std::lower_bound( mDeadIndices.begin(), mDeadIndices.end(), index, std::greater< std::size_t >() );
         mDeadIndices.insert( it, index );
     }
 
-    const ValueTypeT& operator[]( std::size_t index ) const
+    const ValueTypeT& operator[]( std::uint32_t index ) const noexcept
     {
-        std::size_t chunkIndex{ index / mChunkSize };
-        std::size_t elementIndex{ index % mChunkSize };
+        assert( index < mVersions.size() && "Bad index!" );
+        std::uint32_t chunkIndex{ index / mChunkSize };
+        std::uint32_t elementIndex{ index % mChunkSize };
         return ( *reinterpret_cast< const ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex ) );
     }
 
-    ValueTypeT& operator[]( std::size_t index )
+    ValueTypeT& operator[]( std::uint32_t index ) noexcept
     {
-        std::size_t chunkIndex{ index / mChunkSize };
-        std::size_t elementIndex{ index % mChunkSize };
+        assert( index < mVersions.size() && "Bad index!" );
+        std::uint32_t chunkIndex{ index / mChunkSize };
+        std::uint32_t elementIndex{ index % mChunkSize };
         return ( *reinterpret_cast< ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex ) );
     }
 
-    const ValueTypeT* getPtr( std::size_t index ) const
+    ValueTypeT* getPtr( std::size_t index ) const noexcept
     {
+        assert( index < mVersions.size() && "Bad index!" );
         std::size_t chunkIndex{ index / mChunkSize };
         std::size_t elementIndex{ index % mChunkSize };
-        return ( reinterpret_cast< ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex ) );
+        return ( const_cast< ValueTypeT* >( reinterpret_cast< const ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex ) ) ); // fuck
     }
 
-    ValueTypeT* getPtr( std::size_t index )
+    virtual std::uint32_t getSize() const noexcept final
     {
-        std::size_t chunkIndex{ index / mChunkSize };
-        std::size_t elementIndex{ index % mChunkSize };
-        return ( reinterpret_cast< ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex ) );
+        return ( mVersions.size() );
     }
 
-    virtual std::size_t getSize() const noexcept final
-    {
-        return ( mElementsPresence.size() );
-    }
-
-    virtual std::size_t getCapacity() const noexcept final
+    virtual std::uint32_t getCapacity() const noexcept final
     {
         return ( mCapacity );
     }
 
-    virtual std::size_t getChunksNumber() const noexcept final
+    virtual std::uint32_t getChunksNumber() const noexcept final
     {
         return ( mChunks.size() );
     }
 
-    virtual std::size_t getChunkCapacity() const noexcept final
+    virtual std::uint32_t getChunkCapacity() const noexcept final
     {
         return ( mChunkSize );
     }
 
-    virtual std::size_t getDeadSize() const noexcept final
+    virtual std::uint32_t getDeadSize() const noexcept final
     {
         return ( mDeadIndices.size() );
     }
 
+    virtual std::size_t getElementSize() const noexcept final
+    {
+        return ( sizeof( ValueTypeT ) );
+    }
+
     virtual void clear() noexcept final
     {
-        for ( std::size_t i = 0; i < mElementsPresence.size(); ++i )
+        for ( std::uint32_t i = 0; i < mVersions.size(); ++i )
         {
-            if ( mElementsPresence[ i ] )
+            if ( mVersions[ i ] )
             {
                 destroyElement( i );
             }
@@ -193,7 +234,7 @@ public:
         }
     }
 
-    virtual void reserve( std::size_t cap ) noexcept final
+    virtual void reserve( std::uint32_t cap ) noexcept final
     {
         while ( mCapacity < cap )
         {
@@ -201,9 +242,10 @@ public:
         }
     }
 
-    virtual bool isAlive( std::size_t index ) const noexcept final
+    virtual bool isElementIdValid( const ElementId& eid  ) const noexcept final
     {
-        if ( index < mElementsPresence.size() && !std::binary_search( mDeadIndices.begin(), mDeadIndices.end(), index ) )
+        std::uint32_t index{ eid.index() };
+        if ( index < mVersions.size() && mVersions[ index ] == eid.version() )
         {
             return ( true );
         }
@@ -216,17 +258,16 @@ private:
     {
         mChunks.emplace_back();
         mCapacity += mChunkSize;
-        mElementsPresence.reserve( mCapacity );
+        mVersions.reserve( mCapacity );
     }
 
 private:
-    std::size_t mElementSize{ sizeof( ValueTypeT ) };
-    std::size_t mChunkSize;
-    std::size_t mCapacity{ 0 };
+    std::uint32_t mChunkSize;
+    std::uint32_t mCapacity{ 0 };
 
     std::vector< Chunk > mChunks;
-    std::vector< std::uint8_t > mElementsPresence;
-    std::vector< std::size_t > mDeadIndices;
+    std::vector< std::uint32_t > mVersions;
+    std::vector< std::uint32_t > mDeadIndices;
 };
 
 

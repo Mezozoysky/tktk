@@ -29,8 +29,8 @@
 
 using namespace tktk;
 
-Renderer::Renderer( const ecs::EntityHandle& ownerHandle )
-: BasalType( ownerHandle )
+Renderer::Renderer( const util::ElementId& entityId )
+: BasalType( entityId )
 {
 }
 

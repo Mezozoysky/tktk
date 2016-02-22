@@ -34,7 +34,7 @@ using namespace tktk;
 struct SpriteSheet
 : public Renderer
 {
-    explicit SpriteSheet( const ecs::EntityHandle& ownerHandle );
+    explicit SpriteSheet( const util::ElementId& entityId );
     virtual ~SpriteSheet();
 
     std::string texture{};
