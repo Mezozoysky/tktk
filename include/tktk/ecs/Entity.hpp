@@ -41,7 +41,7 @@ namespace ecs
 
 struct Entity
 {
-    util::TypeMap< util::ElementId > map;
+    util::TypeMap< util::Id64 > map;
 };
 
 // struct Entity

@@ -44,7 +44,7 @@ EntityManager::~EntityManager()
 
 EntityManager::Handle EntityManager::addEntity() noexcept
 {
-    util::ElementId eid{ mPool.createElement() };
+    util::Id64 eid{ mPool.createElement() };
 
     Handle handle( eid, this );
     return ( handle );
@@ -52,16 +52,16 @@ EntityManager::Handle EntityManager::addEntity() noexcept
 
 void EntityManager::removeEntity( EntityManager::Handle& handle ) noexcept
 {
-    if ( isElementIdValid( handle.getElementId() ) )
+    if ( isIdValid( handle.getId() ) )
     {
-        mPool.destroyElement( handle.getElementId() );
+        mPool.destroyElement( handle.getId() );
     }
     handle.invalidate();
 }
 
-bool EntityManager::isElementIdValid( const util::ElementId& eid ) const noexcept
+bool EntityManager::isIdValid( const util::Id64& eid ) const noexcept
 {
-    return ( mPool.isElementIdValid( eid ) );
+    return ( mPool.isIdValid( eid ) );
 }
 
 

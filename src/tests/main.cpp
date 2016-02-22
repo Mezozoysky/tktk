@@ -55,37 +55,37 @@ TEST_CASE( "MemoryPool correctness", "[mempool]" )
     CHECK( pool.getCapacity() == 0 );
     CHECK( pool.getSize() == 0 );
 
-    util::ElementId id{ pool.createElement( "zero" ) };
+    util::Id64 id{ pool.createElement( "zero" ) };
 
-    CHECK( pool.isElementIdValid( id ) );
+    CHECK( pool.isIdValid( id ) );
     CHECK( pool.getCapacity() == 2 );
     CHECK( pool.getSize() == 1 );
     CHECK( *pool.getPtr( id.index() ) == std::string( "zero" ) );
 
     id = pool.createElement( "one" );
 
-    CHECK( pool.isElementIdValid( id ) );
+    CHECK( pool.isIdValid( id ) );
     CHECK( pool.getCapacity() == 2 );
     CHECK( pool.getSize() == 2 );
     CHECK( pool[ id.index() ] == "one" );
 
     id = pool.createElement( "two" );
 
-    CHECK( pool.isElementIdValid( id ) );
+    CHECK( pool.isIdValid( id ) );
     CHECK( pool.getCapacity() == 4 );
     CHECK( pool.getSize() == 3 );
     CHECK( pool[ id.index() ] == "two" );
 
     id = pool.createElement( "three" );
 
-    CHECK( pool.isElementIdValid( id ) );
+    CHECK( pool.isIdValid( id ) );
     CHECK( pool.getCapacity() == 4 );
     CHECK( pool.getSize() == 4 );
     CHECK( pool[ id.index() ] == "three" );
 
     id = pool.createElement( "four" );
 
-    CHECK( pool.isElementIdValid( id ) );
+    CHECK( pool.isIdValid( id ) );
     CHECK( pool.getCapacity() == 6 );
     CHECK( pool.getSize() == 5 );
     CHECK( pool[ id.index() ] == "four" );
@@ -94,7 +94,7 @@ TEST_CASE( "MemoryPool correctness", "[mempool]" )
     pool.destroyElement( 3 );
 
     id = pool.createElement( "nova" );
-    CHECK( pool.isElementIdValid( id ) );
+    CHECK( pool.isIdValid( id ) );
     CHECK( id.index() == 1 );
 
     id = pool.createElement( "super nova" );
@@ -137,7 +137,7 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     : public ecs::Component< Comp >
     {
     public:
-        Comp( const util::ElementId& entityId )
+        Comp( const util::Id64& entityId )
         : BasalType{ entityId }
         {
         }
@@ -170,7 +170,7 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     : public ecs::Component< Comp2 >
     {
     public:
-        Comp2( const util::ElementId& entityId )
+        Comp2( const util::Id64& entityId )
         : BasalType{ entityId }
         {
         }
@@ -212,8 +212,8 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
 
     ecs::EntityManager::Handle e1{ ecs.addEntity() };
 
-    Proc::Handle c1( proc->addComponent( e1.getElementId() ) );
-    auto c2( proc2->addComponent( e1.getElementId() ) );
+    Proc::Handle c1( proc->addComponent( e1.getId() ) );
+    auto c2( proc2->addComponent( e1.getId() ) );
 
     float timeStep{ 0.05f };
     float time{ 0.0f };

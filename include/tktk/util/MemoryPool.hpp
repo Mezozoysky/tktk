@@ -39,13 +39,13 @@ namespace tktk
 namespace util
 {
 
-struct ElementId
+struct Id64
 {
-    ElementId()
+    Id64()
     : mId{ 0 }
     {
     }
-    ElementId( uint32_t index, uint32_t version )
+    Id64( uint32_t index, uint32_t version )
     : mId{ uint64_t( index ) | uint64_t( version ) << 32UL }
     {
     }
@@ -64,7 +64,7 @@ private:
     uint64_t mId{ 0 };
 };
 
-const ElementId ELEMENT_ID_INVALID{};
+const Id64 ID64_INVALID{};
 
 
 class MemoryPoolBase
@@ -111,7 +111,7 @@ public:
     }
 
     template< typename... Args >
-    ElementId createElement( Args&&... args )
+    Id64 createElement( Args&&... args )
     {
         std::uint32_t index;
 
@@ -136,18 +136,18 @@ public:
         std::size_t elementIndex{ index % mChunkSize };
         new( mChunks[ chunkIndex ].data + elementIndex ) ValueTypeT( std::forward< Args >( args )... );
 
-        ElementId eid{ index, mVersions[ index ] };
-        return ( eid );
+        Id64 id{ index, mVersions[ index ] };
+        return ( id );
     }
 
-    void destroyElement( ElementId eid )
+    void destroyElement( Id64 id )
     {
-        if ( !isElementIdValid( eid ) )
+        if ( !isIdValid( id ) )
         {
             return;
         }
 
-        std::uint32_t index{ eid.index() };
+        std::uint32_t index{ id.index() };
 
         destroyElement( index );
     }
@@ -242,10 +242,10 @@ public:
         }
     }
 
-    virtual bool isElementIdValid( const ElementId& eid  ) const noexcept final
+    virtual bool isIdValid( const Id64& id  ) const noexcept final
     {
-        std::uint32_t index{ eid.index() };
-        if ( index < mVersions.size() && mVersions[ index ] == eid.version() )
+        std::uint32_t index{ id.index() };
+        if ( index < mVersions.size() && mVersions[ index ] == id.version() )
         {
             return ( true );
         }

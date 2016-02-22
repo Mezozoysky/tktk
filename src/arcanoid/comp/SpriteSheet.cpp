@@ -29,7 +29,7 @@
 
 using namespace tktk;
 
-SpriteSheet::SpriteSheet( const util::ElementId& entityId )
+SpriteSheet::SpriteSheet( const util::Id64& entityId )
 : Renderer( entityId )
 {
 }

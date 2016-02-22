@@ -78,26 +78,26 @@ public:
         {
         }
 
-        Handle( const util::ElementId& eid, Processor< CompTypeT >* procPtr )
-        : mElementId{ eid }
+        Handle( const util::Id64& cId, Processor< CompTypeT >* procPtr )
+        : mId{ cId }
         , mProcPtr{ procPtr }
         {
         }
 
         inline bool isValid() const noexcept
         {
-            return ( mProcPtr && mProcPtr->isElementIdValid( mElementId ) );
+            return ( mProcPtr && mProcPtr->isIdValid( mId ) );
         }
 
         void invalidate() noexcept
         {
-            mElementId = PoolTypeT::ElementId::INVALID;
+            mId = util::ID64_INVALID;
             mProcPtr = nullptr;
         }
 
-        inline util::ElementId getElementId() const noexcept
+        inline util::Id64 getId() const noexcept
         {
-            return ( mElementId );
+            return ( mId );
         }
 
 //         void remove() noexcept;
@@ -108,11 +108,11 @@ public:
             {
                 return ( nullptr );
             }
-            return ( mProcPtr->getPtr( mElementId.index() ) );
+            return ( mProcPtr->getPtr( mId.index() ) );
         }
 
     private:
-        util::ElementId mElementId { util::ELEMENT_ID_INVALID };
+        util::Id64 mId { util::ID64_INVALID };
         Processor< CompTypeT >* mProcPtr{ nullptr };
     };
 
@@ -130,17 +130,17 @@ public:
 //         eventProxy.updateSignal.connect( std::bind( &ProcessorBase::onUpdate, this, std::placeholders::_1 ) );
 //     }
 
-    virtual bool isElementIdValid( const util::ElementId& eid ) const noexcept
+    virtual bool isIdValid( const util::Id64& cId ) const noexcept
     {
-        return ( mPool.isElementIdValid( eid ) );
+        return ( mPool.isIdValid( cId ) );
     }
 
     template< typename... Args >
     Handle addComponent( Args&&... args )
     {
-        util::ElementId eid{ mPool.createElement( std::forward< Args >( args )... ) };
+        util::Id64 cId{ mPool.createElement( std::forward< Args >( args )... ) };
 
-        Handle handle( eid, this );
+        Handle handle( cId, this );
         return ( handle );
     }
 
@@ -148,12 +148,12 @@ public:
     {
         if ( handle.isValid() )
         {
-            destroyElement( handle.getElementId() );
+            destroyElement( handle.getId() );
             handle.invalidate();
         }
     }
 
-    inline void destroyElement( const util::ElementId& eid )
+    inline void destroyElement( const util::Id64& eid )
     {
         mPool.destroyElement( eid );
     }

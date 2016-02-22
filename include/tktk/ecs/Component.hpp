@@ -45,7 +45,7 @@ struct ComponentBase
     ComponentBase() = default;
     virtual ~ComponentBase() = default;
 
-    virtual const util::ElementId& getEntityId() const noexcept = 0;
+    virtual const util::Id64& getEntityId() const noexcept = 0;
 };
 
 template< typename CompT >
@@ -55,7 +55,7 @@ struct Component
     using Type = CompT;
     using BasalType = Component< Type >;
 
-    explicit Component( const util::ElementId& entityId ) noexcept
+    explicit Component( const util::Id64& entityId ) noexcept
     : mEntityId{ entityId }
     {
     }
@@ -64,13 +64,13 @@ struct Component
     {
     }
 
-    virtual const util::ElementId& getEntityId() const noexcept override final
+    virtual const util::Id64& getEntityId() const noexcept override final
     {
         return mEntityId;
     }
 
 private:
-    util::ElementId mEntityId;
+    util::Id64 mEntityId;
 };
 
 

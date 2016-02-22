@@ -81,8 +81,8 @@ public:
         // destroy the Component instance
         auto procPtr( getProcessorForCompType< T >() );
         assert( procPtr && "Processor for given component type is not registered." );
-        util::ElementId eid{ *( handle->map.find< T >() ) };
-        procPtr->destroyElement( eid );
+        util::Id64 cId{ *( handle->map.find< T >() ) };
+        procPtr->destroyElement( cId );
     }
 
     template< typename T >
@@ -101,26 +101,27 @@ public:
         ecs::ComponentHandle< T > handle{ compIndex, processor };
         return ( handle );
 */
+        typename ecs::Processor< T >::Handle invalidCHandle{};
+
         ecs::Entity* entity{ handle.getPtr() };
         auto it = entity->map.find< T >();
         if ( it == entity->map.end() )
         {
-            typename ecs::Processor< T >::Handle bad{};
-            return ( bad );
+            return ( invalidCHandle );
         }
-        util::ElementId compEId = entity->map.find< T >()->second;
-        //util::ElementId cId = handle->getComponent< T >
+        util::Id64 cId = entity->map.find< T >()->second;
+        //TODO: util::Id64 cId = handle->getComponent< T >
 
         ecs::Processor< T >* procPtr{ getProcessorForCompType< T >() };
         assert( procPtr && "Processor for given component type is not registered." );
 
-        if ( !procPtr->isElementIdValid( compEId ) )
+        if ( !procPtr->isIdValid( cId ) )
         {
-//             compEId = util::ElementId::INVALID;
-            procPtr = nullptr;
+            return ( invalidCHandle );
         }
-        typename ecs::Processor< T >::Handle compHandle{ compEId, procPtr };
-        return ( compHandle );
+
+        typename ecs::Processor< T >::Handle cHandle{ cId, procPtr };
+        return ( cHandle );
     }
 
 private:

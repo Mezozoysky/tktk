@@ -50,7 +50,7 @@ struct Transform
         {
         }
     };
-    explicit Transform( const util::ElementId& entityId, Vector2f position = Vector2f{} );
+    explicit Transform( const util::Id64& entityId, Vector2f position = Vector2f{} );
     virtual ~Transform();
 
     Vector2f position{};

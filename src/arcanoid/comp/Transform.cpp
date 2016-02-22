@@ -29,7 +29,7 @@
 
 using namespace tktk;
 
-Transform::Transform( const util::ElementId& entityId, Vector2f position )
+Transform::Transform( const util::Id64& entityId, Vector2f position )
 : BasalType( entityId )
 {
     this->position = position;

@@ -35,7 +35,7 @@ using namespace tktk;
 struct Renderer
 : public ecs::Component< Renderer >
 {
-    explicit Renderer( const util::ElementId& entityId );
+    explicit Renderer( const util::Id64& entityId );
     virtual ~Renderer();
 };
 

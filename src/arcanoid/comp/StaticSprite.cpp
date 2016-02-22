@@ -29,12 +29,12 @@
 
 using namespace tktk;
 
-StaticSprite::StaticSprite( const util::ElementId& entityId )
+StaticSprite::StaticSprite( const util::Id64& entityId )
 : Renderer( entityId )
 {
 }
 
-StaticSprite::StaticSprite( const util::ElementId& entityId, const std::string& texture, bool centered )
+StaticSprite::StaticSprite( const util::Id64& entityId, const std::string& texture, bool centered )
 : Renderer( entityId )
 , texture{ texture }
 , centered{ centered }

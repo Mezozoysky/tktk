@@ -29,7 +29,7 @@
 
 using namespace tktk;
 
-Renderer::Renderer( const util::ElementId& entityId )
+Renderer::Renderer( const util::Id64& entityId )
 : BasalType( entityId )
 {
 }

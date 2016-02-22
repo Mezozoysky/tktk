@@ -46,26 +46,26 @@ public:
 
     struct Handle
     {
-        Handle( const util::ElementId& eid, EntityManager* mgrPtr )
-        : mElementId{ eid }
+        Handle( const util::Id64& eid, EntityManager* mgrPtr )
+        : mId{ eid }
         , mMgrPtr{ mgrPtr }
         {
         }
 
         inline bool isValid() const noexcept
         {
-            return ( mMgrPtr && mMgrPtr->isElementIdValid( mElementId ) );
+            return ( mMgrPtr && mMgrPtr->isIdValid( mId ) );
         }
 
         void invalidate() noexcept
         {
-//             mElementId = util::ElementId::INVALID;
+            mId = util::ID64_INVALID;
             mMgrPtr = nullptr;
         }
 
-        inline util::ElementId getElementId() const noexcept
+        inline util::Id64 getId() const noexcept
         {
-            return ( mElementId );
+            return ( mId );
         }
 
         void remove() noexcept
@@ -82,7 +82,7 @@ public:
             {
                 return ( nullptr );
             }
-            return ( mMgrPtr->getPtr( mElementId.index() ) );
+            return ( mMgrPtr->getPtr( mId.index() ) );
         }
 
         inline Entity* getPtr() const noexcept
@@ -91,11 +91,11 @@ public:
             {
                 return ( nullptr );
             }
-            return ( mMgrPtr->getPtr( mElementId.index() ) );
+            return ( mMgrPtr->getPtr( mId.index() ) );
         }
 
     private:
-        util::ElementId mElementId/*{ util::ElementId::INVALID }*/;
+        util::Id64 mId{ util::ID64_INVALID };
         EntityManager* mMgrPtr{ nullptr };
     };
 
@@ -105,7 +105,7 @@ public:
     Handle addEntity() noexcept;
     void removeEntity( Handle& handle ) noexcept;
 
-    bool isElementIdValid( const util::ElementId& eid ) const noexcept;
+    bool isIdValid( const util::Id64& eId ) const noexcept;
 
     inline Entity* getPtr( std::uint32_t index ) const noexcept
     {

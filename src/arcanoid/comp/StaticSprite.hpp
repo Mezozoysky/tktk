@@ -34,8 +34,8 @@ using namespace tktk;
 struct StaticSprite
 : public Renderer
 {
-    explicit StaticSprite( const util::ElementId& entityId );
-    explicit StaticSprite( const util::ElementId& entityId, const std::string& texture, bool centered );
+    explicit StaticSprite( const util::Id64& entityId );
+    explicit StaticSprite( const util::Id64& entityId, const std::string& texture, bool centered );
     virtual ~StaticSprite();
 
     std::string texture{};
