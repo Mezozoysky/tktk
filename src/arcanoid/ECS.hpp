@@ -50,12 +50,12 @@ public:
 //     void removeEntity( ecs::EntityManager::Handle& handle ) noexcept;
 
     template< typename T, typename... TArgs >
-    typename ecs::Processor< T >::Handle addComponent( TArgs&&... args )
+    typename ecs::Processor< T >::Handle addComponent( ecs::EntityManager::Handle& eHandle, TArgs&&... args )
     {
         auto procPtr( getProcessorForCompType< T >() );
         assert( procPtr && "Processor for given component type is not registered." );
 
-        typename ecs::Processor< T >::Handle handle{ procPtr->addComponent( std::forward< TArgs >( args )... ) };
+        typename ecs::Processor< T >::Handle handle{ procPtr->addComponent( eHandle.getId(), std::forward< TArgs >( args )... ) };
 
 //         const uint32_t index{ handle->getEntity().index() };
 //         mCompByTypeMapList[ index ].insert< T >( handle.getIndex() );
