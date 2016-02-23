@@ -79,7 +79,7 @@ void Game::run()
 //         e1.addComponent< Transform >( Transform::Vector2f( 100.0f, 75.0f ) );
 
         mECS.addComponent< Transform >( e2 );
-//         mECS.getComponent< Transform >( e2 )->position = Transform::Vector2f( 15.0f, 100.0f );
+        mECS.getComponent< Transform >( e2 )->position = Transform::Vector2f( 15.0f, 100.0f );
 //         e2.addComponent< Transform >();
 //         e2.getComponent< Transform >().position = Transform::Vector2f( 15.0f, 100.0f );
 
@@ -88,7 +88,8 @@ void Game::run()
 //         auto tf3( e3.addComponent< Transform > );
 //         tf3->position = Transform::Vector2f( 60.0f, 40.0f );
 
-//         mECS.removeComponent< Transform >();
+        mECS.removeComponent< Transform >( e2 );
+//         mECS.removeEntity( e2 );
 
         auto sprite1( mECS.addComponent< StaticSprite >( e1, "texture0.png", true ) );
         auto sheet1( mECS.addComponent< SpriteSheet >( e1 ) );

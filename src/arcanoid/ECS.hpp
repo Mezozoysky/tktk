@@ -32,6 +32,7 @@
 #include <tktk/ecs/Component.hpp>
 #include <cassert>
 #include <utility>
+#include <iostream>
 
 using namespace tktk;
 
@@ -55,16 +56,21 @@ public:
         auto procPtr( getProcessorForCompType< T >() );
         assert( procPtr && "Processor for given component type is not registered." );
 
-        typename ecs::Processor< T >::Handle handle{ procPtr->addComponent( eHandle.getId(), std::forward< TArgs >( args )... ) };
+        typename ecs::Processor< T >::Handle cHandle{ procPtr->addComponent( eHandle.getId(), std::forward< TArgs >( args )... ) };
 
 //         const uint32_t index{ handle->getEntity().index() };
 //         mCompByTypeMapList[ index ].insert< T >( handle.getIndex() );
+        if ( eHandle->map.find< T >() != eHandle->map.end() )
+        {
+            assert( false && "Type already exists!" );
+        }
+        eHandle->map.insert< T >( cHandle.getId() );
 
-        return ( handle );
+        return ( cHandle );
     }
 
     template< typename T >
-    void removeComponent( const ecs::EntityManager::Handle& handle )
+    void removeComponent( const ecs::EntityManager::Handle& eHandle )
     {
 /*        // find Component index for given Entity corresponding to given component type T
         const uint32_t index{ owner.getEntity().index() };
@@ -78,15 +84,47 @@ public:
         // remove entry of given component type T for given Entity
         mCompByTypeMapList[ index ].remove< T >();
 */
-        // destroy the Component instance
+
+        std::cout << "[ECS::removeComponent] " << "get inside" << std::endl;
+
+        if ( !eHandle.isValid() )
+        {
+            std::cout << "[ECS::removeComponent] " << "entity handle is invalid; returning" << std::endl;
+            return;
+        }
+        std::cout << "[ECS::removeComponent] " << "entity handle is valid" << std::endl;
         auto procPtr( getProcessorForCompType< T >() );
         assert( procPtr && "Processor for given component type is not registered." );
-        util::Id64 cId{ *( handle->map.find< T >() ) };
-        procPtr->destroyElement( cId );
+        std::cout << "[ECS::removeComponent] " << "processor retreived" << std::endl;
+        auto it = eHandle->map.find< T >();
+        if ( it == eHandle->map.end() )
+        {
+            std::cout << "[ECS::removeComponent] " << "entity has not cId for type T" << std::endl;
+        }
+        else
+        {
+            std::cout << "[ECS::removeComponent] " << "entity has cId for T" << std::endl;
+            util::Id64 cId{ eHandle->map.find< T >()->second };
+            std::cout << "[ECS::removeComponent] " << "comp id retreived: " << ( cId.index() ) << std::endl;
+            procPtr->destroyElement( cId );
+            std::cout << "[ECS::removeComponent] " << "component by cId has destroyed" << std::endl;
+            eHandle->map.remove< T >();
+            std::cout << "[ECS::removeComponent] " << "T removed from entity map" << std::endl;
+            auto it = eHandle->map.find< T >();
+            if ( it != eHandle->map.end() )
+            {
+                std::cout << "[ECS::removeComponent] " << "entity still has T->cId in map" << std::endl;
+            }
+            else
+            {
+                std::cout << "[ECS::removeComponent] " << "T->cId hs removed from entity's map" << std::endl;
+            }
+        }
+        std::cout << "[ECS::removeComponent] " << "all done; returning" << std::endl;
     }
 
     template< typename T >
-    typename ecs::Processor< T >::Handle getComponent( const ecs::EntityManager::Handle& handle )
+    typename ecs::Processor< T >::Handle getComponent( const ecs::EntityManager::Handle& eHandle )
     {
 /*        std::size_t compIndex;
         // find the mapped Component index for given Entity and T
@@ -103,13 +141,12 @@ public:
 */
         typename ecs::Processor< T >::Handle invalidCHandle{};
 
-        ecs::Entity* entity{ handle.getPtr() };
-        auto it = entity->map.find< T >();
-        if ( it == entity->map.end() )
+        auto it = eHandle->map.find< T >();
+        if ( it == eHandle->map.end() )
         {
             return ( invalidCHandle );
         }
-        util::Id64 cId = entity->map.find< T >()->second;
+        util::Id64 cId = it->second;
         //TODO: util::Id64 cId = handle->getComponent< T >
 
         ecs::Processor< T >* procPtr{ getProcessorForCompType< T >() };
