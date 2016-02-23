@@ -37,46 +37,37 @@ namespace ecs
 {
 
 //Forward declarations
-// class EntityManager;
+class EntityManager;
 
+///
+/// Entity
+///
 struct Entity
 {
-    util::TypeMap< util::Id64 > map;
+    ///
+    /// Entity::Handle
+    ///
+    struct Handle
+    {
+        Handle( const util::Id64& eid, EntityManager* mgrPtr );
+        bool isValid() const noexcept;
+        void invalidate() noexcept;
+        inline util::Id64 getId() const noexcept
+        {
+            return ( mId );
+        }
+        void remove() noexcept;
+        Entity* operator ->() const noexcept;
+
+    private:
+        util::Id64 mId{ util::ID64_INVALID };
+        EntityManager* mMgrPtr{ nullptr };
+    };
+
+
+    util::TypeMap< util::Id64 > map; //TODO: make if more efficient and more friendly
 };
 
-// struct Entity
-// {
-//     Entity();
-//     Entity( uint32_t index, uint32_t version );
-// 
-//     uint32_t index() const noexcept;
-//     uint32_t version() const noexcept;
-// 
-//     uint64_t id{ 0 };
-// };
-// 
-// struct EntityHandle
-// {
-//     static const Entity ENTITY_INVALID;
-// 
-//     EntityHandle( Entity entity, EntityManager* mgr );
-// 
-//     inline bool isValid() const noexcept;
-//     void invalidate() noexcept;
-// 
-//     inline Entity getEntity() const noexcept
-//     {
-//         return ( mEntity );
-//     }
-// 
-//     void remove() noexcept;
-// 
-// 
-// private:
-// 
-//     Entity mEntity { ENTITY_INVALID };
-//     EntityManager* mManager{ nullptr };
-// };
 
 } //namespace ecs
 } //namespace tktk

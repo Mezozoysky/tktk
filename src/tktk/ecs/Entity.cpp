@@ -32,65 +32,40 @@ namespace tktk
 namespace ecs
 {
 
-/*
-//
-// Entity
-//
-
-Entity::Entity()
-: id{ 0 }
+Entity::Handle::Handle( const util::Id64& eid, EntityManager* mgrPtr )
+: mId{ eid }
+, mMgrPtr{ mgrPtr }
 {
 }
 
-Entity::Entity ( uint32_t index, uint32_t version )
-: id{ uint64_t( index ) | uint64_t( version ) << 32UL }
+bool Entity::Handle::isValid() const noexcept
 {
-
+    return ( mMgrPtr && mMgrPtr->isIdValid( mId ) );
 }
 
-uint32_t Entity::index() const noexcept
+void Entity::Handle::invalidate() noexcept
 {
-    return ( id & 0xffffffffUL );
+    mId = util::ID64_INVALID;
+    mMgrPtr = nullptr;
 }
 
-uint32_t Entity::version() const noexcept
-{
-    return ( id >> 32UL );
-}
-
-//
-// EntityHandle
-//
-
-const Entity EntityHandle::ENTITY_INVALID{};
-
-EntityHandle::EntityHandle( Entity entity, EntityManager* mgr )
-: mEntity( entity )
-, mManager( mgr )
-{
-}
-
-bool EntityHandle::isValid() const noexcept
-{
-    return ( mManager && mManager->isEntityValid( mEntity ) );
-}
-
-void EntityHandle::invalidate() noexcept
-{
-    mEntity = ENTITY_INVALID;
-    mManager = nullptr;
-}
-
-void EntityHandle::remove() noexcept
+void Entity::Handle::remove() noexcept
 {
     if ( isValid() )
     {
-        //TODO: rewrite it with ECS removeEntity(). it calls EntityManager destroyEntity internally but also does unmapping etc.
-        mManager->destroyEntity( mEntity );
-        invalidate();
+        mMgrPtr->removeEntity( *this );
     }
 }
-*/
+
+Entity* Entity::Handle::operator ->() const noexcept
+{
+    if ( !isValid() )
+    {
+        return ( nullptr );
+    }
+    return ( mMgrPtr->getPtr( mId.index() ) );
+}
+
 
 } //namespace ecs
 } //namespace tktk

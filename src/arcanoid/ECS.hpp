@@ -51,7 +51,7 @@ public:
 //     void removeEntity( ecs::EntityManager::Handle& handle ) noexcept;
 
     template< typename T, typename... TArgs >
-    typename ecs::Processor< T >::Handle addComponent( ecs::EntityManager::Handle& eHandle, TArgs&&... args )
+    typename ecs::Processor< T >::Handle addComponent( ecs::Entity::Handle& eHandle, TArgs&&... args )
     {
         auto procPtr( getProcessorForCompType< T >() );
         assert( procPtr && "Processor for given component type is not registered." );
@@ -70,7 +70,7 @@ public:
     }
 
     template< typename T >
-    void removeComponent( const ecs::EntityManager::Handle& eHandle )
+    void removeComponent( const ecs::Entity::Handle& eHandle )
     {
 /*        // find Component index for given Entity corresponding to given component type T
         const uint32_t index{ owner.getEntity().index() };
@@ -124,7 +124,7 @@ public:
     }
 
     template< typename T >
-    typename ecs::Processor< T >::Handle getComponent( const ecs::EntityManager::Handle& eHandle )
+    typename ecs::Processor< T >::Handle getComponent( const ecs::Entity::Handle& eHandle )
     {
 /*        std::size_t compIndex;
         // find the mapped Component index for given Entity and T

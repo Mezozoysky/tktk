@@ -44,66 +44,11 @@ public:
 
     using PoolTypeT = util::MemoryPool< Entity >;
 
-    struct Handle
-    {
-        Handle( const util::Id64& eid, EntityManager* mgrPtr )
-        : mId{ eid }
-        , mMgrPtr{ mgrPtr }
-        {
-        }
-
-        inline bool isValid() const noexcept
-        {
-            return ( mMgrPtr && mMgrPtr->isIdValid( mId ) );
-        }
-
-        void invalidate() noexcept
-        {
-            mId = util::ID64_INVALID;
-            mMgrPtr = nullptr;
-        }
-
-        inline util::Id64 getId() const noexcept
-        {
-            return ( mId );
-        }
-
-        void remove() noexcept
-        {
-            if ( isValid() )
-            {
-                mMgrPtr->removeEntity( *this );
-            }
-        }
-
-        inline Entity* operator ->() const noexcept
-        {
-            if ( !isValid() )
-            {
-                return ( nullptr );
-            }
-            return ( mMgrPtr->getPtr( mId.index() ) );
-        }
-
-        inline Entity* getPtr() const noexcept
-        {
-            if ( !isValid() )
-            {
-                return ( nullptr );
-            }
-            return ( mMgrPtr->getPtr( mId.index() ) );
-        }
-
-    private:
-        util::Id64 mId{ util::ID64_INVALID };
-        EntityManager* mMgrPtr{ nullptr };
-    };
-
     EntityManager();
     virtual ~EntityManager();
 
-    Handle addEntity() noexcept;
-    void removeEntity( Handle& handle ) noexcept;
+    Entity::Handle addEntity() noexcept;
+    void removeEntity( Entity::Handle& handle ) noexcept;
 
     bool isIdValid( const util::Id64& eId ) const noexcept;
 

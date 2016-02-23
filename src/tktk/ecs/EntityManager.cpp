@@ -42,15 +42,15 @@ EntityManager::~EntityManager()
 {
 }
 
-EntityManager::Handle EntityManager::addEntity() noexcept
+Entity::Handle EntityManager::addEntity() noexcept
 {
     util::Id64 eid{ mPool.createElement() };
 
-    Handle handle( eid, this );
+    Entity::Handle handle( eid, this );
     return ( handle );
 }
 
-void EntityManager::removeEntity( EntityManager::Handle& handle ) noexcept
+void EntityManager::removeEntity( Entity::Handle& handle ) noexcept
 {
     if ( isIdValid( handle.getId() ) )
     {

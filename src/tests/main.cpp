@@ -210,7 +210,7 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     Proc* proc{ ecs.getProcessor< Proc >() };
     auto proc2( ecs.getProcessor< Proc2 >() );
 
-    ecs::EntityManager::Handle e1{ ecs.addEntity() };
+    ecs::Entity::Handle e1{ ecs.addEntity() };
 
     Proc::Handle c1( proc->addComponent( e1.getId() ) );
     auto c2( proc2->addComponent( e1.getId() ) );

@@ -69,12 +69,12 @@ public:
         }
     }
 
-    ecs::EntityManager::Handle addEntity() noexcept
+    Entity::Handle addEntity() noexcept
     {
         return ( mEntityManager.addEntity() );
     }
 
-    void removeEntity( ecs::EntityManager::Handle& handle ) noexcept
+    void removeEntity( Entity::Handle& handle ) noexcept
     {
         mEntityManager.removeEntity( handle );
     }
