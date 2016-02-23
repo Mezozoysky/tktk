@@ -49,6 +49,7 @@ void TransformProcessor::onUpdate( float deltaTime )
      std::cout << "TRANSFORM PROCESSOR Delta time: " << std::to_string( deltaTime ) << "; Updating: " << std::endl;
     for ( int i{ 0 }; i < mPool.getSize(); ++i )
     {
+        if ( !mPool.isAlive( i ) ) continue;
         auto comp = mPool[ i ];
          std::cout << std::to_string( comp.position.x ) << ", " << std::to_string( comp.position.y ) << std::endl;
     }
