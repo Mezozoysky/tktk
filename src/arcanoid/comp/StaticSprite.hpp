@@ -27,12 +27,13 @@
 #ifndef ARCANOID_COMP_STATIC_SPRITE_HPP
 #define ARCANOID_COMP_STATIC_SPRITE_HPP
 
-#include "Renderer.hpp"
+#include <tktk/ecs/Component.hpp>
+#include <tktk/ecs/Processor.hpp>
 
 using namespace tktk;
 
 struct StaticSprite
-: public Renderer
+: public ecs::Component< StaticSprite >
 {
     explicit StaticSprite( const util::Id64& entityId );
     explicit StaticSprite( const util::Id64& entityId, const std::string& texture, bool centered );

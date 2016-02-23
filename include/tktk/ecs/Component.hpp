@@ -55,6 +55,54 @@ struct Component
     using Type = CompT;
     using BasalType = Component< Type >;
 
+    ///
+    /// Component<T>::Handle
+    ///
+    struct Handle
+    {
+        Handle()
+        {
+        }
+
+        Handle( const util::Id64& cId, Processor< Type >* procPtr )
+        : mId{ cId }
+        , mProcPtr{ procPtr }
+        {
+        }
+
+        inline bool isValid() const noexcept
+        {
+            return ( mProcPtr && mProcPtr->isIdValid( mId ) );
+        }
+
+        void invalidate() noexcept
+        {
+            mId = util::ID64_INVALID;
+            mProcPtr = nullptr;
+        }
+
+        inline util::Id64 getId() const noexcept
+        {
+            return ( mId );
+        }
+
+        //         void remove() noexcept;
+
+        inline Type* operator ->() const noexcept
+        {
+            if ( !isValid() )
+            {
+                return ( nullptr );
+            }
+            return ( mProcPtr->getPtr( mId.index() ) );
+        }
+
+    private:
+        util::Id64 mId { util::ID64_INVALID };
+        Processor< Type >* mProcPtr{ nullptr };
+    };
+
+
     explicit Component( const util::Id64& entityId ) noexcept
     : mEntityId{ entityId }
     {

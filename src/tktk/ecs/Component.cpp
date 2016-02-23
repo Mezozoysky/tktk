@@ -31,6 +31,5 @@ namespace tktk
 namespace ecs
 {
 
-
 } //namespace ecs
 } //namespace tktk

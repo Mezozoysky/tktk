@@ -51,12 +51,12 @@ public:
 //     void removeEntity( ecs::EntityManager::Handle& handle ) noexcept;
 
     template< typename T, typename... TArgs >
-    typename ecs::Processor< T >::Handle addComponent( ecs::Entity::Handle& eHandle, TArgs&&... args )
+    typename T::Handle addComponent( ecs::Entity::Handle& eHandle, TArgs&&... args )
     {
         auto procPtr( getProcessorForCompType< T >() );
         assert( procPtr && "Processor for given component type is not registered." );
 
-        typename ecs::Processor< T >::Handle cHandle{ procPtr->addComponent( eHandle.getId(), std::forward< TArgs >( args )... ) };
+        typename T::Handle cHandle{ procPtr->addComponent( eHandle.getId(), std::forward< TArgs >( args )... ) };
 
 //         const uint32_t index{ handle->getEntity().index() };
 //         mCompByTypeMapList[ index ].insert< T >( handle.getIndex() );
@@ -124,7 +124,7 @@ public:
     }
 
     template< typename T >
-    typename ecs::Processor< T >::Handle getComponent( const ecs::Entity::Handle& eHandle )
+    typename T::Handle getComponent( const ecs::Entity::Handle& eHandle )
     {
 /*        std::size_t compIndex;
         // find the mapped Component index for given Entity and T
@@ -139,7 +139,7 @@ public:
         ecs::ComponentHandle< T > handle{ compIndex, processor };
         return ( handle );
 */
-        typename ecs::Processor< T >::Handle invalidCHandle{};
+        typename T::Handle invalidCHandle{};
 
         auto it = eHandle->map.find< T >();
         if ( it == eHandle->map.end() )
@@ -157,7 +157,7 @@ public:
             return ( invalidCHandle );
         }
 
-        typename ecs::Processor< T >::Handle cHandle{ cId, procPtr };
+        typename T::Handle cHandle{ cId, procPtr };
         return ( cHandle );
     }
 

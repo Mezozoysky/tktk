@@ -27,12 +27,13 @@
 #ifndef ARCANOID_COMP_SPRITE_SHEET_HPP
 #define ARCANOID_COMP_SPRITE_SHEET_HPP
 
-#include "Renderer.hpp"
+#include <tktk/ecs/Component.hpp>
+#include <tktk/ecs/Processor.hpp>
 
 using namespace tktk;
 
 struct SpriteSheet
-: public Renderer
+: public ecs::Component< SpriteSheet >
 {
     explicit SpriteSheet( const util::Id64& entityId );
     virtual ~SpriteSheet();

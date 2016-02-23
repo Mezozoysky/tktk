@@ -93,8 +93,8 @@ void Game::run()
 
         auto sprite1( mECS.addComponent< StaticSprite >( e1, "texture0.png", true ) );
         auto sheet1( mECS.addComponent< SpriteSheet >( e1 ) );
-        sheet1->texture = "sheet_texture0.png";
-        sheet1->centered = true;
+//         sheet1->texture = "sheet_texture0.png";
+//         sheet1->centered = true;
 //         auto sprite1( e1.addComponent< StaticSprite >( "texture0.png", true  ) );
 //         auto sheet1( e1.addComponent< SpriteSheet >() );
 //         sheet1->texture = "sheet_texture0.png";

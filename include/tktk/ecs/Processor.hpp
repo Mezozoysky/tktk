@@ -72,50 +72,6 @@ public:
     using CompTypeT = CompT;
     using PoolTypeT = util::MemoryPool<CompTypeT>;
 
-    struct Handle
-    {
-        Handle()
-        {
-        }
-
-        Handle( const util::Id64& cId, Processor< CompTypeT >* procPtr )
-        : mId{ cId }
-        , mProcPtr{ procPtr }
-        {
-        }
-
-        inline bool isValid() const noexcept
-        {
-            return ( mProcPtr && mProcPtr->isIdValid( mId ) );
-        }
-
-        void invalidate() noexcept
-        {
-            mId = util::ID64_INVALID;
-            mProcPtr = nullptr;
-        }
-
-        inline util::Id64 getId() const noexcept
-        {
-            return ( mId );
-        }
-
-//         void remove() noexcept;
-
-        inline CompTypeT* operator ->() const noexcept
-        {
-            if ( !isValid() )
-            {
-                return ( nullptr );
-            }
-            return ( mProcPtr->getPtr( mId.index() ) );
-        }
-
-    private:
-        util::Id64 mId { util::ID64_INVALID };
-        Processor< CompTypeT >* mProcPtr{ nullptr };
-    };
-
     Processor()
     : ProcessorBase()
     {
@@ -136,15 +92,15 @@ public:
     }
 
     template< typename... Args >
-    Handle addComponent( Args&&... args )
+    typename CompTypeT::Handle addComponent( Args&&... args )
     {
         util::Id64 cId{ mPool.createElement( std::forward< Args >( args )... ) };
 
-        Handle handle( cId, this );
+        typename CompTypeT::Handle handle( cId, this );
         return ( handle );
     }
 
-    void removeComponent( Handle& handle )
+    void removeComponent( typename CompTypeT::Handle& handle )
     {
         if ( handle.isValid() )
         {
