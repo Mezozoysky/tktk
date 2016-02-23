@@ -83,7 +83,7 @@ public:
     virtual void clear() noexcept = 0;
     virtual void reserve( std::uint32_t cap ) noexcept = 0;
 
-//     virtual bool isAlive( std::size_t index ) const noexcept = 0;
+    virtual bool isAlive( std::uint32_t index ) const noexcept = 0;
 };
 
 
@@ -147,9 +147,7 @@ public:
             return;
         }
 
-        std::uint32_t index{ id.index() };
-
-        destroyElement( index );
+        destroyElement( id.index() );
     }
 
     void destroyElement( std::uint32_t index )
@@ -250,6 +248,13 @@ public:
             return ( true );
         }
         return ( false );
+    }
+
+    virtual bool isAlive( std::uint32_t index ) const noexcept final
+    {
+        assert( index < mVersions.size() && "Bad index!" );
+        auto it( std::find_if( mDeadIndices.begin(), mDeadIndices.end(), [index]( std::uint32_t dead ) { return ( dead == index ); } ) );
+        return ( it == mDeadIndices.end() );
     }
 
 private:
