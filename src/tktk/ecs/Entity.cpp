@@ -25,35 +25,35 @@
 */
 
 #include <tktk/ecs/Entity.hpp>
-#include <tktk/ecs/EntityManager.hpp>
+#include <tktk/ecs/System.hpp>
 
 namespace tktk
 {
 namespace ecs
 {
 
-Entity::Handle::Handle( const util::Id64& eid, EntityManager* mgrPtr )
+Entity::Handle::Handle( const util::Id64& eid, System* systemPtr )
 : mId{ eid }
-, mMgrPtr{ mgrPtr }
+, mSystemPtr{ systemPtr }
 {
 }
 
 bool Entity::Handle::isValid() const noexcept
 {
-    return ( mMgrPtr && mMgrPtr->isIdValid( mId ) );
+    return ( mSystemPtr && mSystemPtr->isIdValid( mId ) );
 }
 
 void Entity::Handle::invalidate() noexcept
 {
     mId = util::ID64_INVALID;
-    mMgrPtr = nullptr;
+    mSystemPtr = nullptr;
 }
 
 void Entity::Handle::remove() noexcept
 {
     if ( isValid() )
     {
-        mMgrPtr->removeEntity( *this );
+        mSystemPtr->removeEntity( *this );
     }
 }
 
@@ -63,7 +63,7 @@ Entity* Entity::Handle::operator ->() const noexcept
     {
         return ( nullptr );
     }
-    return ( mMgrPtr->getPtr( mId.index() ) );
+    return ( mSystemPtr->getEntityPtr( mId ) );
 }
 
 

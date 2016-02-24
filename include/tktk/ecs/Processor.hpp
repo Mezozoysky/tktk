@@ -29,8 +29,6 @@
 
 #include <tktk/util/MemoryPool.hpp>
 #include <tktk/ecs/Component.hpp>
-#include <tktk/ecs/EventProxy.hpp>
-#include <tktk/ecs/EntityManager.hpp>
 #include <memory>
 
 namespace tktk
@@ -53,7 +51,7 @@ public:
     ProcessorBase() = default;
     virtual ~ProcessorBase() = default;
 
-    virtual void setup( EventProxy& eventProxy, EntityManager& entityManager ) = 0;
+    virtual void setup( System* systemPtr ) = 0;
 //     virtual void onUpdate( float deltaTime ) = 0;
 //    virtual void onFixedUpdate( float deltaTime ) = 0;
 

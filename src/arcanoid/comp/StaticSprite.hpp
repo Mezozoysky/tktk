@@ -48,7 +48,7 @@ class StaticSpriteProcessor
 : public ecs::Processor< StaticSprite >
 {
 public:
-    virtual void setup( ecs::EventProxy& eventProxy, ecs::EntityManager& entityManager ) override;
+    virtual void setup( ecs::System* systemPtr ) override;
     virtual void onUpdate( float deltaTime );
 };
 

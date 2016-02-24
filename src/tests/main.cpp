@@ -150,9 +150,9 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     : public ecs::Processor< Comp >
     {
     public:
-        virtual void setup( ecs::EventProxy& eventProxy, ecs::EntityManager& entityManager ) override
+        virtual void setup( ecs::System* systemPtr ) override
         {
-            eventProxy.updateSignal.connect( std::bind( &Proc::onUpdate, this, std::placeholders::_1 ) );
+            systemPtr->updateSignal.connect( std::bind( &Proc::onUpdate, this, std::placeholders::_1 ) );
         }
 
         virtual void onUpdate( float deltaTime )
@@ -183,9 +183,9 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     : public ecs::Processor< Comp2 >
     {
     public:
-        virtual void setup( ecs::EventProxy& eventProxy, ecs::EntityManager& entityManager ) override
+        virtual void setup( ecs::System* systemPtr ) override
         {
-            eventProxy.updateSignal.connect( std::bind( &Proc2::onUpdate, this, std::placeholders::_1 ) );
+            systemPtr->updateSignal.connect( std::bind( &Proc2::onUpdate, this, std::placeholders::_1 ) );
         }
 
         virtual void onUpdate( float deltaTime )
@@ -200,7 +200,7 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     };
 
 
-    ecs::System<> ecs;
+    ecs::System ecs;
 
     ecs.registerProcessor< Proc >();
     ecs.registerProcessor< Proc2 >();

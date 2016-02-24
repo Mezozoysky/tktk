@@ -37,12 +37,12 @@
 using namespace tktk;
 
 class ECS
-: public ecs::System<>
+: public ecs::System
 {
 public:
 
     ECS() noexcept
-    : ecs::System<>()
+    : ecs::System()
     {
     }
     virtual ~ECS() = default;

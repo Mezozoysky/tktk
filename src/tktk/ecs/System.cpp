@@ -25,13 +25,11 @@
 */
 
 #include <tktk/ecs/System.hpp>
-#include <tktk/ecs/EntityManager.hpp>
 
 namespace tktk
 {
 namespace ecs
 {
-
 
 } //namespace ecs
 } //namespace tktk

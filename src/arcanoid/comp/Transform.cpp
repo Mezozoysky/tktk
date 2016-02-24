@@ -25,6 +25,7 @@
 */
 
 #include "Transform.hpp"
+#include <tktk/ecs/System.hpp>
 #include <iostream>
 
 using namespace tktk;
@@ -39,9 +40,9 @@ Transform::~Transform()
 {
 }
 
-void TransformProcessor::setup( ecs::EventProxy& eventProxy, ecs::EntityManager& entityManager )
+void TransformProcessor::setup( ecs::System* systemPtr )
 {
-    eventProxy.updateSignal.connect( std::bind( &TransformProcessor::onUpdate, this, std::placeholders::_1 ) );
+    systemPtr->updateSignal.connect( std::bind( &TransformProcessor::onUpdate, this, std::placeholders::_1 ) );
 }
 
 void TransformProcessor::onUpdate( float deltaTime )

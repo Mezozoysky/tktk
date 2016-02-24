@@ -37,7 +37,7 @@ namespace ecs
 {
 
 //Forward declarations
-class EntityManager;
+class System;
 
 ///
 /// Entity
@@ -49,7 +49,7 @@ struct Entity
     ///
     struct Handle
     {
-        Handle( const util::Id64& eid, EntityManager* mgrPtr );
+        Handle( const util::Id64& eid, System* mgrPtr );
         bool isValid() const noexcept;
         void invalidate() noexcept;
         inline util::Id64 getId() const noexcept
@@ -61,7 +61,7 @@ struct Entity
 
     private:
         util::Id64 mId{ util::ID64_INVALID };
-        EntityManager* mMgrPtr{ nullptr };
+        System* mSystemPtr{ nullptr };
     };
 
 

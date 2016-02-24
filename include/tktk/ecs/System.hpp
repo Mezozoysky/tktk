@@ -31,33 +31,27 @@
 #include <memory>
 #include <algorithm>
 #include <tktk/ecs/Processor.hpp>
-#include <tktk/ecs/EntityManager.hpp>
-#include <tktk/ecs/EventProxy.hpp>
 #include <tktk/util/TypeMap.hpp>
+#include <tktk/util/Signal.hpp>
 
 namespace tktk
 {
 namespace ecs
 {
 
-template< typename EventProxyT = EventProxy, typename EntityManagerT = EntityManager >
+
 class System
 {
 public:
+    using PoolTypeT = util::MemoryPool< Entity >;
+
+    util::Signal< float > updateSignal;
 
     System() noexcept
     {
-        static_assert(
-                      std::is_base_of< EventProxy, EventProxyT >::value
-                      , "EventProxyT should extend tktk::ecs::EventProxy"
-        );
-        static_assert(
-                      std::is_base_of< EntityManager, EntityManagerT >::value
-                      , "EntityManagerT should extend tktk::ecs::EntityManager"
-        );
     }
 
-    virtual ~System()
+    virtual ~System() noexcept
     {
         // Unregister and destroy processors
         auto it( mProcessors.begin() );
@@ -69,30 +63,78 @@ public:
         }
     }
 
-    Entity::Handle addEntity() noexcept
-    {
-        return ( mEntityManager.addEntity() );
-    }
-
-    void removeEntity( Entity::Handle& handle ) noexcept
-    {
-        mEntityManager.removeEntity( handle );
-    }
-
     virtual void setup() noexcept
     {
         auto it = mProcessors.begin();
         while ( it != mProcessors.end() )
         {
-            it->second->setup( mEventProxy, mEntityManager );
+            it->second->setup( this );
             ++it;
         }
     }
 
     virtual void update( float deltaTime ) noexcept
     {
-        mEventProxy.updateSignal( deltaTime );
+        updateSignal( deltaTime );
     }
+
+    ///
+    /// About entity
+    ///
+
+    Entity::Handle addEntity() noexcept
+    {
+        util::Id64 eId{ mEntityPool.createElement() };
+        Entity::Handle handle( eId, this );
+        return ( handle );
+    }
+
+    void removeEntity( Entity::Handle& handle ) noexcept
+    {
+        mEntityPool.destroyElement( handle.getId() );
+        handle.invalidate();
+    }
+
+    // for use from entity handle
+    void removeEntity( const util::Id64& eId  ) noexcept
+    {
+        mEntityPool.destroyElement( eId );
+    }
+
+    bool isEntityValid( const Entity::Handle& handle ) const noexcept
+    {
+        return ( mEntityPool.isIdValid( handle.getId() ) );
+    }
+
+    // for use from entity handle
+    bool isIdValid( const util::Id64& eId ) const noexcept
+    {
+        return ( mEntityPool.isIdValid( eId ) );
+    }
+
+    Entity* getEntityPtr( const Entity::Handle& handle ) const noexcept
+    {
+        return ( getEntityPtr( handle.getId() ) );
+    }
+
+    // for use from entity handle
+    Entity* getEntityPtr( const util::Id64& eId ) const noexcept
+    {
+        if ( !mEntityPool.isIdValid( eId ) )
+        {
+            return ( nullptr );
+        }
+        return ( mEntityPool.getPtr( eId.index() ) );
+    }
+
+    ///
+    /// About components
+    ///
+
+    ///
+    /// About processors
+    ///
+
 
     template< typename T, typename... TArgs >
     T* registerProcessor( TArgs&&... args )
@@ -146,29 +188,8 @@ public:
         return ( procPtr );
     }
 
-//     EntityManagerT& getEntityManager()
-//     {
-//         return ( mEntityManager );
-//     }
-// 
-//     const EntityManagerT& getEntityManager() const
-//     {
-//         return ( mEntityManager );
-//     }
-// 
-//     EventProxyT& getEventProxy()
-//     {
-//         return ( mEventProxy );
-//     }
-// 
-//     const EventProxyT& getEventProxy() const
-//     {
-//         return ( mEventProxy );
-//     }
-
 protected:
-    EntityManagerT mEntityManager;
-    EventProxyT mEventProxy;
+    PoolTypeT mEntityPool;
 
     util::TypeMap< ProcessorBase* > mProcessors;
 };

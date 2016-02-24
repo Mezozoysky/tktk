@@ -26,6 +26,7 @@
 
 #include "SpriteSheet.hpp"
 #include <iostream>
+#include <tktk/ecs/System.hpp>
 
 using namespace tktk;
 
@@ -38,9 +39,9 @@ SpriteSheet::~SpriteSheet()
 {
 }
 
-void SpriteSheetProcessor::setup( ecs::EventProxy& eventProxy, ecs::EntityManager& entityManager )
+void SpriteSheetProcessor::setup( ecs::System* systemPtr )
 {
-    eventProxy.updateSignal.connect( std::bind( &SpriteSheetProcessor::onUpdate, this, std::placeholders::_1 ) );
+    systemPtr->updateSignal.connect( std::bind( &SpriteSheetProcessor::onUpdate, this, std::placeholders::_1 ) );
 }
 
 void SpriteSheetProcessor::onUpdate( float deltaTime )

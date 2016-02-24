@@ -26,6 +26,7 @@
 
 #include "StaticSprite.hpp"
 #include <iostream>
+#include <tktk/ecs/System.hpp>
 
 using namespace tktk;
 
@@ -45,9 +46,9 @@ StaticSprite::~StaticSprite()
 {
 }
 
-void StaticSpriteProcessor::setup( ecs::EventProxy& eventProxy, ecs::EntityManager& entityManager )
+void StaticSpriteProcessor::setup( ecs::System* systemPtr )
 {
-    eventProxy.updateSignal.connect( std::bind( &StaticSpriteProcessor::onUpdate, this, std::placeholders::_1 ) );
+    systemPtr->updateSignal.connect( std::bind( &StaticSpriteProcessor::onUpdate, this, std::placeholders::_1 ) );
 }
 
 void StaticSpriteProcessor::onUpdate( float deltaTime )

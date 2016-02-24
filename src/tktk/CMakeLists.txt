@@ -23,16 +23,12 @@ set(TKTK_LIB_ECS_SOURCES "")
 # ======================
 set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Entity.hpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/ecs/EntityManager.hpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/ecs/EventProxy.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Component.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Processor.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/System.hpp
 )
 set(GROUP_SOURCES
     ${CMAKE_SOURCE_DIR}/src/tktk/ecs/Entity.cpp
-    ${CMAKE_SOURCE_DIR}/src/tktk/ecs/EntityManager.cpp
-    ${CMAKE_SOURCE_DIR}/src/tktk/ecs/EventProxy.cpp
     ${CMAKE_SOURCE_DIR}/src/tktk/ecs/Component.cpp
     ${CMAKE_SOURCE_DIR}/src/tktk/ecs/Processor.cpp
     ${CMAKE_SOURCE_DIR}/src/tktk/ecs/System.cpp
