@@ -25,7 +25,6 @@
  */
 
 #include "StaticSprite.hpp"
-#include <iostream>
 #include <tktk/ecs/System.hpp>
 
 using namespace tktk;
@@ -53,12 +52,10 @@ void StaticSpriteProc::setup( ecs::System* systemPtr )
 
 void StaticSpriteProc::onUpdate( float deltaTime )
 {
-    ll_trace( "method in; Delta time: " << std::to_string( deltaTime ) << "; Updating: " );
     for ( int i{ 0 }; i < mPool.getSize(); ++i )
     {
         if ( !mPool.isAlive( i ) ) continue;
         auto comp = mPool[ i ];
-        ll_debug( "Updating StaticSprite comp#" << std::to_string( i ) << " texture=" << comp.texture << ", centered=" << std::to_string( comp.centered ) );
+        //ll_debug( "Updating StaticSprite comp#" << std::to_string( i ) << " texture=" << comp.texture << ", centered=" << std::to_string( comp.centered ) );
     }
-    ll_trace( "method out;" );
 }

@@ -32,6 +32,7 @@
 
 using namespace tktk;
 
+
 struct StaticSprite
 : public ecs::Comp< StaticSprite >
 {

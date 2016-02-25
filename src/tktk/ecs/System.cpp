@@ -71,7 +71,7 @@ void System::removeEntity( Entity::Handle& eHandle ) noexcept
     ll_debug( "-> Removing the entity .." );
     if ( !eHandle.isValid() )
     {
-        ll_debug( "Entity handle is invalid. Remove nothing." );
+        ll_debug( "<- Entity handle is invalid. Remove nothing." );
         return;
     }
 

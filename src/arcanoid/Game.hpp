@@ -29,7 +29,10 @@
 
 #include <memory>
 #include "ECS.hpp"
-#include <SDL.h>
+
+// Forward declarations
+class SDL_Window;
+class SDL_Renderer;
 
 using namespace tktk;
 

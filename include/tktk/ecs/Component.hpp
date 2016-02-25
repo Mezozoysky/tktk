@@ -45,7 +45,7 @@ class Proc;
 
 struct Component
 {
-    /// plain Component::Handle
+    /// untyped Component::Handle
     struct Handle
     {
         Handle()
@@ -89,7 +89,7 @@ struct Comp
     using Type = CompT;
     using BasalType = Comp< Type >;
 
-    /// plain Component::Handle
+    /// typed Component<CompT>::Handle
     struct Handle
     {
         Handle()
@@ -105,7 +105,6 @@ struct Comp
         Handle( const util::Id64& cId, Processor* procPtr ) noexcept
         : mUntypedCHandle{ cId, procPtr }
         {
-//             Component::Handle untracked{ cId, procPtr };
         }
 
         inline bool isValid() const noexcept
@@ -162,53 +161,6 @@ private:
     util::Id64 mEntityId;
 };
 
-
-// struct ComponentHandleBase
-// {
-//     bool isValid() const noexcept;
-//     void invalidate() noexcept;
-// };
-
-/*
-template < typename T >
-struct ComponentHandle
-{
-    using CompType = T;
-
-    ComponentHandle( std::size_t index, typename std::shared_ptr< ecs::Processor< T > > processor )
-    : mIndex{ index }
-    , mProcessor{ processor }
-    {
-    }
-
-    inline bool isValid() const noexcept
-    {
-        return ( mProcessor && mProcessor->isComponentAlive( mIndex ) );
-    }
-
-    void invalidate() noexcept
-    {
-        mIndex = -1;
-        mProcessor = nullptr;
-    }
-
-    inline CompType* operator ->() const noexcept
-    {
-        return ( mProcessor->getPtr( mIndex ) );
-    }
-
-    inline std::size_t getIndex() const noexcept
-    {
-        return ( mIndex );
-    }
-
-
-private:
-
-    std::size_t mIndex{ 0 };
-    std::shared_ptr< ecs::Processor< T > > mProcessor{ nullptr }; //TODO: it should be rather raw pointer
-};
-*/
 
 } //namespace ecs
 } //namespace tktk

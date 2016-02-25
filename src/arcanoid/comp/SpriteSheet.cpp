@@ -30,6 +30,7 @@
 
 using namespace tktk;
 
+
 SpriteSheet::SpriteSheet( const util::Id64& entityId )
 : BasalType( entityId )
 {
@@ -46,12 +47,10 @@ void SpriteSheetProc::setup( ecs::System* systemPtr )
 
 void SpriteSheetProc::onUpdate( float deltaTime )
 {
-    ll_trace( "method in; Delta time: " << std::to_string( deltaTime ) << "; Updating: " );
     for ( int i{ 0 }; i < mPool.getSize(); ++i )
     {
         if ( !mPool.isAlive( i ) ) continue;
         auto comp = mPool[ i ];
-        ll_debug( "Updating SpriteSheet comp#" << std::to_string( i ) << " texture=" << comp.texture << ", centered=" << std::to_string( comp.centered ) );
+        //ll_debug( "Updating SpriteSheet comp#" << std::to_string( i ) << " texture=" << comp.texture << ", centered=" << std::to_string( comp.centered ) );
     }
-    ll_trace( "method out;" );
 }

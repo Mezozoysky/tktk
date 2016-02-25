@@ -102,8 +102,6 @@ public:
         mMap.erase( it );
     }
 
-    //TODO: create remove by iterator methods
-
     void clear() noexcept
     {
         mMap.clear();

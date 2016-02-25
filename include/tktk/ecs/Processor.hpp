@@ -44,7 +44,6 @@ class System;
 
 
 class Processor
-// : public std::enable_shared_from_this< ProcessorBase >
 {
     Processor( const Processor& ) = delete;
     Processor& operator= ( const Processor& ) = delete;
@@ -61,12 +60,6 @@ public:
     virtual Component* getPtr( const util::Id64& id ) const noexcept = 0;
 
     virtual void destroyElement( const util::Id64& id ) noexcept = 0;
-
-//     virtual void onUpdate( float deltaTime ) = 0;
-//    virtual void onFixedUpdate( float deltaTime ) = 0;
-
-//    virtual bool isComponentAlive( std::size_t index ) const noexcept = 0;
-//    virtual void
 };
 
 
@@ -88,11 +81,6 @@ public:
     virtual ~Proc() noexcept
     {
     }
-
-//     virtual void setup( EventProxy& eventProxy, EntityManager& entityManager ) override
-//     {
-//         eventProxy.updateSignal.connect( std::bind( &ProcessorBase::onUpdate, this, std::placeholders::_1 ) );
-//     }
 
     virtual bool isIdValid( const util::Id64& cId ) const noexcept override final
     {

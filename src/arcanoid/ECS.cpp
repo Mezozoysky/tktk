@@ -28,22 +28,3 @@
 
 using namespace tktk;
 
-/*
-ecs::EntityManager::Handle ECS::addEntity() noexcept
-{
-//     uint32_t index = handle.getEntity().index();
-//     if ( index >= mCompByTypeMapList.size() )
-//     {
-//         mCompByTypeMapList.resize( index + 1 );
-//         mCompByTypeMapList[ index ].clear();
-//     }
-    return ( mEntityManager.addEntity() );
-}
-
-void ECS::removeEntity( ecs::EntityManager::Handle& handle ) noexcept
-{
-//     mCompByTypeMapList[ handle.getEntity().index() ].clear();
-    //TODO: remove all entity's components and mapping
-    mEntityManager.removeEntity( handle );
-}
-*/
