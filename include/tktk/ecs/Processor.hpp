@@ -37,22 +37,31 @@ namespace tktk
 namespace ecs
 {
 
+// Forward declarations
 struct Entity;
+class System;
 
 
 
-class ProcessorBase
+class Processor
 // : public std::enable_shared_from_this< ProcessorBase >
 {
-    ProcessorBase( const ProcessorBase& ) = delete;
-    ProcessorBase& operator= ( const ProcessorBase& ) = delete;
+    Processor( const Processor& ) = delete;
+    Processor& operator= ( const Processor& ) = delete;
 
 public:
 
-    ProcessorBase() = default;
-    virtual ~ProcessorBase() = default;
+    Processor() noexcept = default;
+    virtual ~Processor() noexcept = default;
 
     virtual void setup( System* systemPtr ) = 0;
+
+    virtual bool isIdValid( const util::Id64& id ) const noexcept = 0;
+
+    virtual Component* getPtr( const util::Id64& id ) const noexcept = 0;
+
+    virtual void destroyElement( const util::Id64& id ) noexcept = 0;
+
 //     virtual void onUpdate( float deltaTime ) = 0;
 //    virtual void onFixedUpdate( float deltaTime ) = 0;
 
@@ -62,8 +71,8 @@ public:
 
 
 template< typename CompT >
-class Processor
-: public ProcessorBase
+class Proc
+: public Processor
 {
 
 public:
@@ -71,12 +80,12 @@ public:
     using CompTypeT = CompT;
     using PoolTypeT = util::MemoryPool<CompTypeT>;
 
-    Processor()
-    : ProcessorBase()
+    Proc() noexcept
+    : Processor()
     {
     }
 
-    virtual ~Processor() noexcept
+    virtual ~Proc() noexcept
     {
     }
 
@@ -85,7 +94,7 @@ public:
 //         eventProxy.updateSignal.connect( std::bind( &ProcessorBase::onUpdate, this, std::placeholders::_1 ) );
 //     }
 
-    virtual bool isIdValid( const util::Id64& cId ) const noexcept
+    virtual bool isIdValid( const util::Id64& cId ) const noexcept override final
     {
         return ( mPool.isIdValid( cId ) );
     }
@@ -108,14 +117,14 @@ public:
         }
     }
 
-    inline void destroyElement( const util::Id64& eid )
+    inline virtual void destroyElement( const util::Id64& id ) noexcept override final
     {
-        mPool.destroyElement( eid );
+        mPool.destroyElement( id );
     }
 
-    inline CompTypeT* getPtr( std::uint32_t index ) const noexcept
+    inline virtual CompTypeT* getPtr( const util::Id64& id ) const noexcept override final
     {
-        return ( mPool.getPtr( index ) );
+        return ( mPool.getPtr( id.index() ) );
     }
 
 protected:

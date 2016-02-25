@@ -25,11 +25,42 @@
 */
 
 #include <tktk/ecs/Component.hpp>
+#include <tktk/ecs/Processor.hpp>
 
 namespace tktk
 {
 namespace ecs
 {
+
+
+Component::Handle::Handle( const util::Id64& cId, Processor* procPtr ) noexcept
+: mId{ cId }
+, mProcPtr{ procPtr }
+{
+}
+
+bool Component::Handle::isValid() const noexcept
+{
+    return ( mProcPtr && mProcPtr->isIdValid( mId ) );
+}
+
+void Component::Handle::invalidate() noexcept
+{
+    mId = util::ID64_INVALID;
+    mProcPtr = nullptr;
+}
+
+//         void remove() noexcept;
+
+Component* Component::Handle::operator ->() const noexcept
+{
+    if ( !isValid() )
+    {
+        return ( nullptr );
+    }
+    return ( mProcPtr->getPtr( mId ) );
+}
+
 
 } //namespace ecs
 } //namespace tktk

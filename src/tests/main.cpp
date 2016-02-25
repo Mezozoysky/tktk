@@ -133,11 +133,11 @@ TEST_CASE( "Signal correctness", "[signal]" )
 
 TEST_CASE( "ECS correctness", "[tktk-ecs]" )
 {
-    class Comp
-    : public ecs::Component< Comp >
+    class Comp1
+    : public ecs::Comp< Comp1 >
     {
     public:
-        Comp( const util::Id64& entityId )
+        Comp1( const util::Id64& entityId )
         : BasalType{ entityId }
         {
         }
@@ -146,18 +146,18 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
         std::string name{ "noname" };
     };
 
-    class Proc
-    : public ecs::Processor< Comp >
+    class Proc1
+    : public ecs::Proc< Comp1 >
     {
     public:
         virtual void setup( ecs::System* systemPtr ) override
         {
-            systemPtr->updateSignal.connect( std::bind( &Proc::onUpdate, this, std::placeholders::_1 ) );
+            systemPtr->updateSignal.connect( std::bind( &Proc1::onUpdate, this, std::placeholders::_1 ) );
         }
 
         virtual void onUpdate( float deltaTime )
         {
-            std::cout << "Proc::onUpdate: " << deltaTime << std::endl;
+            std::cout << "Proc1::onUpdate: " << deltaTime << std::endl;
             for ( int i{ 0 }; i < mPool.getSize(); ++i )
             {
                 std::cout << mPool.getPtr( i )->name << std::endl;
@@ -167,7 +167,7 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     };
 
     class Comp2
-    : public ecs::Component< Comp2 >
+    : public ecs::Comp< Comp2 >
     {
     public:
         Comp2( const util::Id64& entityId )
@@ -180,7 +180,7 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     };
 
     class Proc2
-    : public ecs::Processor< Comp2 >
+    : public ecs::Proc< Comp2 >
     {
     public:
         virtual void setup( ecs::System* systemPtr ) override
@@ -202,17 +202,17 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
 
     ecs::System ecs;
 
-    ecs.registerProcessor< Proc >();
+    ecs.registerProcessor< Proc1 >();
     ecs.registerProcessor< Proc2 >();
 
     ecs.setup();
 
-    Proc* proc{ ecs.getProcessor< Proc >() };
+    Proc1* proc1{ ecs.getProcessor< Proc1 >() };
     auto proc2( ecs.getProcessor< Proc2 >() );
 
     ecs::Entity::Handle e1{ ecs.addEntity() };
 
-    Comp::Handle c1( proc->addComponent( e1.getId() ) );
+    Comp1::Handle c1( proc1->addComponent( e1.getId() ) );
     auto c2( proc2->addComponent( e1.getId() ) );
 
     float timeStep{ 0.05f };

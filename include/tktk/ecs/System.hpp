@@ -31,6 +31,7 @@
 #include <type_traits>
 #include <memory>
 #include <algorithm>
+#include <tktk/ecs/Entity.hpp>
 #include <tktk/ecs/Processor.hpp>
 #include <tktk/util/TypeMap.hpp>
 #include <tktk/util/Signal.hpp>
@@ -39,7 +40,6 @@ namespace tktk
 {
 namespace ecs
 {
-
 
 class System
 {
@@ -62,50 +62,19 @@ public:
     /// About entity
     ///
 
-    Entity::Handle addEntity() noexcept
-    {
-        util::Id64 eId{ mEntityPool.createElement() };
-        Entity::Handle handle( eId, this );
-        return ( handle );
-    }
-
-    void removeEntity( Entity::Handle& handle ) noexcept
-    {
-        mEntityPool.destroyElement( handle.getId() );
-        handle.invalidate();
-    }
-
+    Entity::Handle addEntity() noexcept;
+    void removeEntity( Entity::Handle& eHandle ) noexcept;
     // for use from entity handle
-    void removeEntity( const util::Id64& eId  ) noexcept
-    {
-        mEntityPool.destroyElement( eId );
-    }
 
-    bool isEntityValid( const Entity::Handle& handle ) const noexcept
-    {
-        return ( mEntityPool.isIdValid( handle.getId() ) );
-    }
+    void removeEntity( const util::Id64& eId  ) noexcept;
 
+    bool isEntityValid( const Entity::Handle& handle ) const noexcept;
     // for use from entity handle
-    bool isIdValid( const util::Id64& eId ) const noexcept
-    {
-        return ( mEntityPool.isIdValid( eId ) );
-    }
+    bool isIdValid( const util::Id64& eId ) const noexcept;
 
-    Entity* getEntityPtr( const Entity::Handle& handle ) const noexcept
-    {
-        return ( getEntityPtr( handle.getId() ) );
-    }
-
+    Entity* getEntityPtr( const Entity::Handle& handle ) const noexcept;
     // for use from entity handle
-    Entity* getEntityPtr( const util::Id64& eId ) const noexcept
-    {
-        if ( !mEntityPool.isIdValid( eId ) )
-        {
-            return ( nullptr );
-        }
-        return ( mEntityPool.getPtr( eId.index() ) );
-    }
+    Entity* getEntityPtr( const util::Id64& eId ) const noexcept;
 
     ///
     /// About components
@@ -123,7 +92,7 @@ public:
         {
             assert( false && "Type already exists!" );
         }
-        eHandle->map.insert< T >( cHandle.getId() );
+        eHandle->map.insert< T >( cHandle.getUntyped() );
 
         return ( cHandle );
     }
@@ -150,21 +119,12 @@ public:
         else
         {
             ll_trace( "entity has cId for T" );
-            util::Id64 cId{ eHandle->map.find< T >()->second };
-            ll_trace(  "comp id retreived: " << cId.index() );
-            procPtr->destroyElement( cId );
+            Component::Handle ucHandle{ eHandle->map.find< T >()->second };
+            ll_trace(  "comp id retreived: " << ucHandle.getId().index() );
+            procPtr->destroyElement( ucHandle.getId() );
             ll_trace( "component by cId has destroyed" );
             eHandle->map.remove< T >();
             ll_trace( "T removed from entity map" );
-            auto it = eHandle->map.find< T >();
-            if ( it != eHandle->map.end() )
-            {
-                ll_trace(  "entity still has T->cId in map" );
-            }
-            else
-            {
-                ll_trace( "T->cId was successfully removed from entity's map" );
-            }
         }
         ll_trace(  "all done; method out" );
     }
@@ -174,51 +134,55 @@ public:
     {
         typename T::Handle invalidCHandle{};
 
+        if ( !eHandle.isValid() )
+        {
+            return ( invalidCHandle );
+        }
+
         auto it = eHandle->map.find< T >();
         if ( it == eHandle->map.end() )
         {
             return ( invalidCHandle );
         }
-        util::Id64 cId = it->second;
-        //TODO: util::Id64 cId = handle->getComponentId< T >
+        Component::Handle ucHandle{ it->second };
 
-        ecs::Processor< T >* procPtr{ getProcessorForCompType< T >() };
+        Proc< T >* procPtr{ getProcessorForCompType< T >() };
         assert( procPtr && "Processor for given component type is not registered." );
 
-        if ( !procPtr->isIdValid( cId ) )
+        if ( !procPtr->isIdValid( ucHandle.getId() ) )
         {
             return ( invalidCHandle );
         }
 
-        typename T::Handle cHandle{ cId, procPtr };
+        typename T::Handle cHandle{ ucHandle };
         return ( cHandle );
     }
+
 
     ///
     /// About processors
     ///
 
-
     template< typename T, typename... TArgs >
     T* registerProcessor( TArgs&&... args )
     {
         static_assert(
-                      std::is_base_of< ProcessorBase, T >::value
-                      , "T should extend tktk::ecs::ProcessorBase"
+                      std::is_base_of< Processor, T >::value
+                      , "T should extend tktk::ecs::Processor"
         );
 
-        auto procPtr = new T( std::forward< TArgs >( args )... );
-        mProcessors.insert< typename T::CompTypeT >( static_cast< ProcessorBase* >( procPtr ) );
+        Processor* procPtr = new T( std::forward< TArgs >( args )... );
+        mProcessors.insert< typename T::CompTypeT >( procPtr );
 
-        return ( procPtr );
+        return ( static_cast< T* >( procPtr ) );
     }
 
     template< typename T >
     T* getProcessor()
     {
         static_assert(
-                      std::is_base_of< ProcessorBase, T >::value
-                      , "T should extend tktk::ecs::ProcessorBase"
+                      std::is_base_of< Processor, T >::value
+                      , "T should extend tktk::ecs::Processor"
         );
 
         T* procPtr;
@@ -233,19 +197,19 @@ public:
     }
 
     template< typename T >
-    Processor< T >* getProcessorForCompType()
+    Proc< T >* getProcessorForCompType()
     {
         static_assert(
-            std::is_base_of< ComponentBase, T >::value
-            , "T should extend tktk::ecs::ComponentBase"
+            std::is_base_of< Component, T >::value
+            , "T should extend tktk::ecs::Component"
         );
 
-        Processor< T >* procPtr;
+        Proc< T >* procPtr;
 
         auto it = mProcessors.find< T >();
         if ( it != mProcessors.end() )
         {
-            procPtr = static_cast< Processor< T >* >( it->second );
+            procPtr = static_cast< Proc< T >* >( it->second );
         }
 
         return ( procPtr );
@@ -254,7 +218,7 @@ public:
 protected:
     PoolTypeT mEntityPool;
 
-    util::TypeMap< ProcessorBase* > mProcessors;
+    util::TypeMap< Processor* > mProcessors;
 };
 
 } //namespace ecs

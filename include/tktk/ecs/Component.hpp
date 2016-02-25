@@ -28,7 +28,7 @@
 #define TKTK_ECS_COMPONENT_HPP
 
 #include <tktk/Config.hpp>
-#include <tktk/ecs/Entity.hpp>
+#include <tktk/util/MemoryPool.hpp> // for Id64 type
 #include <memory>
 #include <string>
 
@@ -38,78 +38,118 @@ namespace ecs
 {
 
 // forward declarations
-template< typename CompT >
 class Processor;
 
-struct ComponentBase
-{
-    ComponentBase() = default;
-    virtual ~ComponentBase() = default;
+template < typename T >
+class Proc;
 
-    virtual const util::Id64& getEntityId() const noexcept = 0;
-};
-
-template< typename CompT >
 struct Component
-: public ComponentBase
 {
-    using Type = CompT;
-    using BasalType = Component< Type >;
-
-    ///
-    /// Component<T>::Handle
-    ///
+    /// plain Component::Handle
     struct Handle
     {
         Handle()
         {
         }
 
-        Handle( const util::Id64& cId, Processor< Type >* procPtr )
-        : mId{ cId }
-        , mProcPtr{ procPtr }
-        {
-        }
+        Handle( const util::Id64& cId, Processor* procPtr ) noexcept;
 
-        inline bool isValid() const noexcept
-        {
-            return ( mProcPtr && mProcPtr->isIdValid( mId ) );
-        }
-
-        void invalidate() noexcept
-        {
-            mId = util::ID64_INVALID;
-            mProcPtr = nullptr;
-        }
+        bool isValid() const noexcept;
+        void invalidate() noexcept;
 
         inline util::Id64 getId() const noexcept
         {
             return ( mId );
         }
 
+        inline Processor* getProcessor() const noexcept
+        {
+            return ( mProcPtr );
+        }
+
+        //         void remove() noexcept;
+
+        Component* operator ->() const noexcept;
+
+    private:
+        util::Id64 mId { util::ID64_INVALID };
+        Processor* mProcPtr{ nullptr };
+    };
+
+    Component() = default;
+    virtual ~Component() = default;
+
+    virtual const util::Id64& getEntityId() const noexcept = 0;
+};
+
+template< typename CompT >
+struct Comp
+: public Component
+{
+    using Type = CompT;
+    using BasalType = Comp< Type >;
+
+    /// plain Component::Handle
+    struct Handle
+    {
+        Handle()
+        {
+        }
+
+        /// Construct with untyped Component::Handle
+        Handle( const Component::Handle& ucHandle )
+        : mUntypedCHandle{ ucHandle }
+        {
+        }
+
+        Handle( const util::Id64& cId, Processor* procPtr ) noexcept
+        : mUntypedCHandle{ cId, procPtr }
+        {
+//             Component::Handle untracked{ cId, procPtr };
+        }
+
+        inline bool isValid() const noexcept
+        {
+            return ( mUntypedCHandle.isValid() );
+        }
+
+        inline void invalidate() noexcept
+        {
+            mUntypedCHandle.invalidate();
+        }
+
+        inline util::Id64 getId() const noexcept
+        {
+            return ( mUntypedCHandle.getId() );
+        }
+
+        inline Proc< Type >* getProcessor() const noexcept
+        {
+            return ( static_cast< Proc< Type >* >( mUntypedCHandle.getProcessor() ) );
+        }
+
         //         void remove() noexcept;
 
         inline Type* operator ->() const noexcept
         {
-            if ( !isValid() )
-            {
-                return ( nullptr );
-            }
-            return ( mProcPtr->getPtr( mId.index() ) );
+            return ( static_cast< Type* >( mUntypedCHandle.operator->() ) );
+        }
+
+        inline Component::Handle getUntyped() const noexcept
+        {
+            return ( mUntypedCHandle );
         }
 
     private:
-        util::Id64 mId { util::ID64_INVALID };
-        Processor< Type >* mProcPtr{ nullptr };
+        Component::Handle mUntypedCHandle{ util::ID64_INVALID, nullptr };
     };
 
-
-    explicit Component( const util::Id64& entityId ) noexcept
+    explicit Comp( const util::Id64& entityId ) noexcept
     : mEntityId{ entityId }
     {
     }
 
-    virtual ~Component()
+    virtual ~Comp()
     {
     }
 

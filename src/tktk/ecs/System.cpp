@@ -31,31 +31,95 @@ namespace tktk
 namespace ecs
 {
 
-    System::System() noexcept
+System::System() noexcept
+{
+}
+
+System::~System() noexcept
+{
+    // Unregister and destroy processors
+    auto it( mProcessors.begin() );
+    while ( it != mProcessors.end() )
     {
+        auto procPtr( it->second );
+        delete procPtr;
+        mProcessors.remove( it++ );
+    }
+}
+
+void System::setup() noexcept
+{
+    auto it = mProcessors.begin();
+    while ( it != mProcessors.end() )
+    {
+        it->second->setup( this );
+        ++it;
+    }
+}
+
+
+Entity::Handle System::addEntity() noexcept
+{
+    util::Id64 eId{ mEntityPool.createElement() };
+    Entity::Handle handle( eId, this );
+    return ( handle );
+}
+
+void System::removeEntity( Entity::Handle& eHandle ) noexcept
+{
+    //         util::Id64 cId = handle->getComponentId< T >();
+
+    if ( !eHandle.isValid() )
+    {
+        return;
     }
 
-    System::~System() noexcept
+    auto it( eHandle->map.begin() );
+    while ( it != eHandle->map.end() )
     {
-        // Unregister and destroy processors
-        auto it( mProcessors.begin() );
-        while ( it != mProcessors.end() )
+        Component::Handle ucHandle = it->second;
+        if ( ucHandle.isValid() )
         {
-            auto procPtr( it->second );
-            delete procPtr;
-            mProcessors.remove( it++ );
+            ucHandle.getProcessor()->destroyElement( ucHandle.getId() ); //destroy the Component
         }
+        eHandle->map.remove( it++ ); //remove entry from map
     }
 
-    void System::setup() noexcept
+    mEntityPool.destroyElement( eHandle.getId() );
+    eHandle.invalidate();
+}
+
+// for use from entity handle
+void System::removeEntity( const util::Id64& eId  ) noexcept
+{
+    mEntityPool.destroyElement( eId );
+}
+
+bool System::isEntityValid( const Entity::Handle& handle ) const noexcept
+{
+    return ( mEntityPool.isIdValid( handle.getId() ) );
+}
+
+// for use from entity handle
+bool System::isIdValid( const util::Id64& eId ) const noexcept
+{
+    return ( mEntityPool.isIdValid( eId ) );
+}
+
+Entity* System::getEntityPtr( const Entity::Handle& handle ) const noexcept
+{
+    return ( getEntityPtr( handle.getId() ) );
+}
+
+// for use from entity handle
+Entity* System::getEntityPtr( const util::Id64& eId ) const noexcept
+{
+    if ( !mEntityPool.isIdValid( eId ) )
     {
-        auto it = mProcessors.begin();
-        while ( it != mProcessors.end() )
-        {
-            it->second->setup( this );
-            ++it;
-        }
+        return ( nullptr );
     }
+    return ( mEntityPool.getPtr( eId.index() ) );
+}
 
 } //namespace ecs
 } //namespace tktk

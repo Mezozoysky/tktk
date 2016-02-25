@@ -46,12 +46,12 @@ StaticSprite::~StaticSprite()
 {
 }
 
-void StaticSpriteProcessor::setup( ecs::System* systemPtr )
+void StaticSpriteProc::setup( ecs::System* systemPtr )
 {
-    systemPtr->updateSignal.connect( std::bind( &StaticSpriteProcessor::onUpdate, this, std::placeholders::_1 ) );
+    systemPtr->updateSignal.connect( std::bind( &StaticSpriteProc::onUpdate, this, std::placeholders::_1 ) );
 }
 
-void StaticSpriteProcessor::onUpdate( float deltaTime )
+void StaticSpriteProc::onUpdate( float deltaTime )
 {
     ll_trace( "method in; Delta time: " << std::to_string( deltaTime ) << "; Updating: " );
     for ( int i{ 0 }; i < mPool.getSize(); ++i )

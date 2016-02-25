@@ -88,7 +88,7 @@ void Game::run()
 //         auto tf3( e3.addComponent< Transform > );
 //         tf3->position = Transform::Vector2f( 60.0f, 40.0f );
 
-        mECS.removeComponent< Transform >( e2 );
+//         mECS.removeComponent< Transform >( e2 );
 
         auto sprite1( mECS.addComponent< StaticSprite >( e1, "texture0.png", true ) );
         auto sheet1( mECS.addComponent< SpriteSheet >( e1 ) );
@@ -171,9 +171,9 @@ bool Game::setup()
         return ( false );
     }
 
-    auto transformProc( mECS.registerProcessor< TransformProcessor >() );
-    auto staticSpriteProc( mECS.registerProcessor< StaticSpriteProcessor >() );
-    auto spriteSheetProc( mECS.registerProcessor< SpriteSheetProcessor >() );
+    auto transformProc( mECS.registerProcessor< TransformProc >() );
+    auto staticSpriteProc( mECS.registerProcessor< StaticSpriteProc >() );
+    auto spriteSheetProc( mECS.registerProcessor< SpriteSheetProc >() );
     mECS.setup();
 
     return ( true );

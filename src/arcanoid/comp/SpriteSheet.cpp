@@ -39,12 +39,12 @@ SpriteSheet::~SpriteSheet()
 {
 }
 
-void SpriteSheetProcessor::setup( ecs::System* systemPtr )
+void SpriteSheetProc::setup( ecs::System* systemPtr )
 {
-    systemPtr->updateSignal.connect( std::bind( &SpriteSheetProcessor::onUpdate, this, std::placeholders::_1 ) );
+    systemPtr->updateSignal.connect( std::bind( &SpriteSheetProc::onUpdate, this, std::placeholders::_1 ) );
 }
 
-void SpriteSheetProcessor::onUpdate( float deltaTime )
+void SpriteSheetProc::onUpdate( float deltaTime )
 {
     ll_trace( "method in; Delta time: " << std::to_string( deltaTime ) << "; Updating: " );
     for ( int i{ 0 }; i < mPool.getSize(); ++i )

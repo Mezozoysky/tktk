@@ -31,6 +31,8 @@
 #include <cstdint>
 #include <tktk/util/TypeMap.hpp>
 #include <tktk/util/MemoryPool.hpp>
+#include <tktk/ecs/Component.hpp>
+
 
 namespace tktk
 {
@@ -57,6 +59,10 @@ struct Entity
         {
             return ( mId );
         }
+        inline System* getSystem() const noexcept
+        {
+            return ( mSystemPtr );
+        }
         void remove() noexcept;
         Entity* operator ->() const noexcept;
 
@@ -66,7 +72,7 @@ struct Entity
     };
 
 
-    util::TypeMap< util::Id64 > map; //TODO: make if more efficient and more friendly
+    util::TypeMap< Component::Handle > map; //TODO: make if more efficient and more friendly
 };
 
 

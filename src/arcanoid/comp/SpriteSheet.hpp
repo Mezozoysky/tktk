@@ -33,7 +33,7 @@
 using namespace tktk;
 
 struct SpriteSheet
-: public ecs::Component< SpriteSheet >
+: public ecs::Comp< SpriteSheet >
 {
     explicit SpriteSheet( const util::Id64& entityId );
     virtual ~SpriteSheet();
@@ -43,8 +43,8 @@ struct SpriteSheet
 };
 
 
-class SpriteSheetProcessor
-: public ecs::Processor< SpriteSheet >
+class SpriteSheetProc
+: public ecs::Proc< SpriteSheet >
 {
 public:
     virtual void setup( ecs::System* systemPtr ) override;

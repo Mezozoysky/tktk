@@ -33,7 +33,7 @@
 using namespace tktk;
 
 struct Transform
-: public ecs::Component< Transform >
+: public ecs::Comp< Transform >
 {
     struct Vector2f
     {
@@ -57,8 +57,8 @@ struct Transform
 };
 
 
-class TransformProcessor
-: public ecs::Processor< Transform >
+class TransformProc
+: public ecs::Proc< Transform >
 {
 public:
 

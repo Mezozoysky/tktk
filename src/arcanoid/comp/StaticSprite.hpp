@@ -33,7 +33,7 @@
 using namespace tktk;
 
 struct StaticSprite
-: public ecs::Component< StaticSprite >
+: public ecs::Comp< StaticSprite >
 {
     explicit StaticSprite( const util::Id64& entityId );
     explicit StaticSprite( const util::Id64& entityId, const std::string& texture, bool centered );
@@ -44,8 +44,8 @@ struct StaticSprite
 };
 
 
-class StaticSpriteProcessor
-: public ecs::Processor< StaticSprite >
+class StaticSpriteProc
+: public ecs::Proc< StaticSprite >
 {
 public:
     virtual void setup( ecs::System* systemPtr ) override;
