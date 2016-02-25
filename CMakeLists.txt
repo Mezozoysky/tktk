@@ -18,6 +18,13 @@ option(TKTK_BUILD_UNIT_TESTS "Build unit tests for tktk libraries" ON)
 
 option(TKTK_BUILD_ARCANOID "Build arcanoid demo" OFF)
 
+option(TKTK_LL_ENABLED "Build with LibLog" ON)
+if(${TKTK_LL_ENABLED})
+    add_definitions(-DTKTK_LL_ENABLED)
+    set(TKTK_LL_LEVEL 5 CACHE STRING "LibLog severity level; 0: fatal, 1: error, 2: warning, 3: info, 4: debug, 5: trace" ) # option(TKTK_LL_LEVEL "LibLog severity level" 5)
+    add_definitions(-DTKTK_LL_LEVEL=${TKTK_LL_LEVEL})
+endif(${TKTK_LL_ENABLED})
+
 #
 # OS definitions
 #
@@ -53,6 +60,12 @@ endif()
 # TKTK include dirs
 #
 include_directories(include)
+
+# actualy all we need here is LibLog header
+if(${TKTK_LL_ENABLED})
+    include_directories(${CMAKE_SOURCE_DIR}/third-party/include)
+endif(${TKTK_LL_ENABLED})
+
 
 #
 # Enable project folders

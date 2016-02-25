@@ -6,7 +6,6 @@ set(TKTK_UT_SOURCES "")
 # === tktk/tests group ===
 # ========================
 set(GROUP_HEADERS
-    # ${CMAKE_SOURCE_DIR}/src/tests/testapp.hpp
 )
 set(GROUP_SOURCES
     ${CMAKE_SOURCE_DIR}/src/tests/main.cpp

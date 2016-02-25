@@ -1,3 +1,15 @@
+
+set(TKTK_CONFIG_HEADERS "")
+#===================
+# === tktk group ===
+# ==================
+set(GROUP_HEADERS
+    ${CMAKE_SOURCE_DIR}/include/tktk/Config.hpp
+    ${CMAKE_SOURCE_DIR}/include/tktk/LibLog.hpp
+)
+source_group("tktk" FILES ${GROUP_HEADERS})
+set(TKTK_CONFIG_HEADERS ${TKTK_CONFIG_HEADERS} ${GROUP_HEADERS})
+
 set(TKTK_LIB_UTIL_HEADERS "")
 set(TKTK_LIB_UTIL_SOURCES "")
 #========================
@@ -80,21 +92,21 @@ set(TKTK_LIB_PHASE_SOURCES ${TKTK_LIB_PHASE_SOURCES} ${GROUP_SOURCES})
 # Build static libraries!
 #
 add_library(tktk-util STATIC
-   ${TKTK_LIB_UTIL_HEADERS}
+   ${TKTK_LIB_UTIL_HEADERS} ${TKTK_CONFIG_HEADERS}
    ${TKTK_LIB_UTIL_SOURCES}
 )
 set_target_properties(tktk-util PROPERTIES LINKER_LANGUAGE CXX)
 
 add_library(tktk-ecs STATIC
-    ${TKTK_LIB_ECS_HEADERS}
+    ${TKTK_LIB_ECS_HEADERS} ${TKTK_CONFIG_HEADERS}
     ${TKTK_LIB_ECS_SOURCES}
 )
 
 add_library(tktk-scene2d STATIC
-    ${TKTK_LIB_SCENE2D_HEADERS}
+    ${TKTK_LIB_SCENE2D_HEADERS} ${TKTK_CONFIG_HEADERS}
     ${TKTK_LIB_SCENE2D_SOURCES}
 )
 add_library(tktk-phase STATIC
-    ${TKTK_LIB_PHASE_HEADERS}
+    ${TKTK_LIB_PHASE_HEADERS} ${TKTK_CONFIG_HEADERS}
     ${TKTK_LIB_PHASE_SOURCES}
 )
