@@ -88,17 +88,19 @@ void Game::run()
 //         auto tf3( e3.addComponent< Transform > );
 //         tf3->position = Transform::Vector2f( 60.0f, 40.0f );
 
-        mECS.removeComponent< Transform >( e2 );
-//         mECS.removeEntity( e2 );
+//         mECS.removeComponent< Transform >( e2 );
 
         auto sprite1( mECS.addComponent< StaticSprite >( e1, "texture0.png", true ) );
         auto sheet1( mECS.addComponent< SpriteSheet >( e1 ) );
-//         sheet1->texture = "sheet_texture0.png";
-//         sheet1->centered = true;
+        sheet1->texture = "sheet_texture0.png";
+        sheet1->centered = true;
+
 //         auto sprite1( e1.addComponent< StaticSprite >( "texture0.png", true  ) );
 //         auto sheet1( e1.addComponent< SpriteSheet >() );
 //         sheet1->texture = "sheet_texture0.png";
 //         sheet1->centered = true;
+
+        mECS.removeEntity( e2 );
 
 
 //         static_assert(
