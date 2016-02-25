@@ -27,6 +27,7 @@
 #ifndef TKTK_UTIL_MEMORY_POOL_HPP
 #define TKTK_UTIL_MEMORY_POOL_HPP
 
+#include <tktk/Config.hpp>
 #include <cstddef>
 #include <vector>
 #include <cassert>
@@ -103,11 +104,15 @@ public:
     explicit MemoryPool() noexcept
     : mChunkSize{ chunkSizeV }
     {
+        ll_trace( "Memory pool ctor in; chunk size: " << chunkSizeV );
+        ll_trace( "Memory pool ctor out;" );
     }
 
     virtual ~MemoryPool()
     {
+        ll_trace( "Memory pool dtor in;" );
         clear();
+        ll_trace( "Memory pool dtor out;" );
     }
 
     template< typename... Args >

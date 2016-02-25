@@ -27,6 +27,7 @@
 #ifndef TKTK_ECS_PROCESSOR_HPP
 #define TKTK_ECS_PROCESSOR_HPP
 
+#include <tktk/Config.hpp>
 #include <tktk/util/MemoryPool.hpp>
 #include <tktk/ecs/Component.hpp>
 #include <memory>

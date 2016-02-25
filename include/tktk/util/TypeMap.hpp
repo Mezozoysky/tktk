@@ -27,6 +27,7 @@
 #ifndef TKTK_UTIL_TYPE_MAP_HPP
 #define TKTK_UTIL_TYPE_MAP_HPP
 
+#include <tktk/Config.hpp>
 #include <cstdint>
 #include <atomic>
 #include <unordered_map>

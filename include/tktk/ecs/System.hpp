@@ -27,6 +27,7 @@
 #ifndef TKTK_ECS_SYSTEM_HPP
 #define TKTK_ECS_SYSTEM_HPP
 
+#include <tktk/Config.hpp>
 #include <type_traits>
 #include <memory>
 #include <algorithm>

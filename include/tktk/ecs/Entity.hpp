@@ -27,6 +27,7 @@
 #ifndef TKTK_ECS_ENTITY_HPP
 #define TKTK_ECS_ENTITY_HPP
 
+#include <tktk/Config.hpp>
 #include <cstdint>
 #include <tktk/util/TypeMap.hpp>
 #include <tktk/util/MemoryPool.hpp>

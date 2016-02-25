@@ -27,6 +27,7 @@
 #ifndef TKTK_ECS_COMPONENT_HPP
 #define TKTK_ECS_COMPONENT_HPP
 
+#include <tktk/Config.hpp>
 #include <tktk/ecs/Entity.hpp>
 #include <memory>
 #include <string>
