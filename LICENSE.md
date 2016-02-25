@@ -37,7 +37,7 @@ External libraries used by tktk
       See copy of the license text at http://www.boost.org/LICENSE_1_0.txt
       We only need catch to build unit-tests
 
-* liblog in under the zlib/png license as tktk itself
+* liblog is under the zlib/png license as tktk itself
 
       See copy of the license text at the start of this file.
       We only need liblog in order to build library with debug output
