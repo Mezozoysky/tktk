@@ -50,6 +50,7 @@ public:
 //     ecs::EntityManager::Handle addEntity() noexcept;
 //     void removeEntity( ecs::EntityManager::Handle& handle ) noexcept;
 
+/*
     template< typename T, typename... TArgs >
     typename T::Handle addComponent( ecs::Entity::Handle& eHandle, TArgs&&... args )
     {
@@ -68,10 +69,12 @@ public:
 
         return ( cHandle );
     }
-
+*/
+/*
     template< typename T >
     void removeComponent( const ecs::Entity::Handle& eHandle )
     {
+*/
 /*        // find Component index for given Entity corresponding to given component type T
         const uint32_t index{ owner.getEntity().index() };
         const util::TypeMap< std::size_t >& typeMap{ mCompByTypeMapList[ index ] };
@@ -84,7 +87,7 @@ public:
         // remove entry of given component type T for given Entity
         mCompByTypeMapList[ index ].remove< T >();
 */
-
+/*
         ll_trace( "method in;" );
 
         if ( !eHandle.isValid() )
@@ -122,10 +125,12 @@ public:
         }
         ll_trace(  "all done; method out" );
     }
-
+*/
+/*
     template< typename T >
     typename T::Handle getComponent( const ecs::Entity::Handle& eHandle )
     {
+*/
 /*        std::size_t compIndex;
         // find the mapped Component index for given Entity and T
         std::uint32_t index = owner.getEntity().index();
@@ -139,7 +144,8 @@ public:
         ecs::ComponentHandle< T > handle{ compIndex, processor };
         return ( handle );
 */
-        typename T::Handle invalidCHandle{};
+/*
+    typename T::Handle invalidCHandle{};
 
         auto it = eHandle->map.find< T >();
         if ( it == eHandle->map.end() )
@@ -160,7 +166,7 @@ public:
         typename T::Handle cHandle{ cId, procPtr };
         return ( cHandle );
     }
-
+*/
 private:
 
 //     std::vector< util::TypeMap< std::size_t > > mCompByTypeMapList;

@@ -48,31 +48,10 @@ public:
 
     util::Signal< float > updateSignal;
 
-    System() noexcept
-    {
-    }
+    System() noexcept;
+    virtual ~System() noexcept;
 
-    virtual ~System() noexcept
-    {
-        // Unregister and destroy processors
-        auto it( mProcessors.begin() );
-        while ( it != mProcessors.end() )
-        {
-            auto procPtr( it->second );
-            delete procPtr;
-            mProcessors.remove( it++ );
-        }
-    }
-
-    virtual void setup() noexcept
-    {
-        auto it = mProcessors.begin();
-        while ( it != mProcessors.end() )
-        {
-            it->second->setup( this );
-            ++it;
-        }
-    }
+    virtual void setup() noexcept;
 
     virtual void update( float deltaTime ) noexcept
     {
@@ -131,6 +110,89 @@ public:
     ///
     /// About components
     ///
+
+    template< typename T, typename... TArgs >
+    typename T::Handle addComponent( ecs::Entity::Handle& eHandle, TArgs&&... args )
+    {
+        auto procPtr( getProcessorForCompType< T >() );
+        assert( procPtr && "Processor for given component type is not registered." );
+
+        typename T::Handle cHandle{ procPtr->addComponent( eHandle.getId(), std::forward< TArgs >( args )... ) };
+
+        if ( eHandle->map.find< T >() != eHandle->map.end() )
+        {
+            assert( false && "Type already exists!" );
+        }
+        eHandle->map.insert< T >( cHandle.getId() );
+
+        return ( cHandle );
+    }
+
+    template< typename T >
+    void removeComponent( const ecs::Entity::Handle& eHandle )
+    {
+        ll_trace( "method in;" );
+
+        if ( !eHandle.isValid() )
+        {
+            ll_trace( "entity handle is invalid; method out;" );
+            return;
+        }
+        ll_trace( "entity handle is valid" );
+        auto procPtr( getProcessorForCompType< T >() );
+        assert( procPtr && "Processor for given component type is not registered." );
+        ll_trace( "processor retreived" );
+        auto it = eHandle->map.find< T >();
+        if ( it == eHandle->map.end() )
+        {
+            ll_trace( "entity has not cId for type T" );
+        }
+        else
+        {
+            ll_trace( "entity has cId for T" );
+            util::Id64 cId{ eHandle->map.find< T >()->second };
+            ll_trace(  "comp id retreived: " << cId.index() );
+            procPtr->destroyElement( cId );
+            ll_trace( "component by cId has destroyed" );
+            eHandle->map.remove< T >();
+            ll_trace( "T removed from entity map" );
+            auto it = eHandle->map.find< T >();
+            if ( it != eHandle->map.end() )
+            {
+                ll_trace(  "entity still has T->cId in map" );
+            }
+            else
+            {
+                ll_trace( "T->cId was successfully removed from entity's map" );
+            }
+        }
+        ll_trace(  "all done; method out" );
+    }
+
+    template< typename T >
+    typename T::Handle getComponent( const ecs::Entity::Handle& eHandle )
+    {
+        typename T::Handle invalidCHandle{};
+
+        auto it = eHandle->map.find< T >();
+        if ( it == eHandle->map.end() )
+        {
+            return ( invalidCHandle );
+        }
+        util::Id64 cId = it->second;
+        //TODO: util::Id64 cId = handle->getComponentId< T >
+
+        ecs::Processor< T >* procPtr{ getProcessorForCompType< T >() };
+        assert( procPtr && "Processor for given component type is not registered." );
+
+        if ( !procPtr->isIdValid( cId ) )
+        {
+            return ( invalidCHandle );
+        }
+
+        typename T::Handle cHandle{ cId, procPtr };
+        return ( cHandle );
+    }
 
     ///
     /// About processors

@@ -31,5 +31,31 @@ namespace tktk
 namespace ecs
 {
 
+    System::System() noexcept
+    {
+    }
+
+    System::~System() noexcept
+    {
+        // Unregister and destroy processors
+        auto it( mProcessors.begin() );
+        while ( it != mProcessors.end() )
+        {
+            auto procPtr( it->second );
+            delete procPtr;
+            mProcessors.remove( it++ );
+        }
+    }
+
+    void System::setup() noexcept
+    {
+        auto it = mProcessors.begin();
+        while ( it != mProcessors.end() )
+        {
+            it->second->setup( this );
+            ++it;
+        }
+    }
+
 } //namespace ecs
 } //namespace tktk
