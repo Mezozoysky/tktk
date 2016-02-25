@@ -85,42 +85,42 @@ public:
         mCompByTypeMapList[ index ].remove< T >();
 */
 
-        std::cout << "[ECS::removeComponent] " << "get inside" << std::endl;
+        ll_trace( "method in;" );
 
         if ( !eHandle.isValid() )
         {
-            std::cout << "[ECS::removeComponent] " << "entity handle is invalid; returning" << std::endl;
+            ll_trace( "entity handle is invalid; method out;" );
             return;
         }
-        std::cout << "[ECS::removeComponent] " << "entity handle is valid" << std::endl;
+        ll_trace( "entity handle is valid" );
         auto procPtr( getProcessorForCompType< T >() );
         assert( procPtr && "Processor for given component type is not registered." );
-        std::cout << "[ECS::removeComponent] " << "processor retreived" << std::endl;
+        ll_trace( "processor retreived" );
         auto it = eHandle->map.find< T >();
         if ( it == eHandle->map.end() )
         {
-            std::cout << "[ECS::removeComponent] " << "entity has not cId for type T" << std::endl;
+            ll_trace( "entity has not cId for type T" );
         }
         else
         {
-            std::cout << "[ECS::removeComponent] " << "entity has cId for T" << std::endl;
+            ll_trace( "entity has cId for T" );
             util::Id64 cId{ eHandle->map.find< T >()->second };
-            std::cout << "[ECS::removeComponent] " << "comp id retreived: " << ( cId.index() ) << std::endl;
+            ll_trace(  "comp id retreived: " << cId.index() );
             procPtr->destroyElement( cId );
-            std::cout << "[ECS::removeComponent] " << "component by cId has destroyed" << std::endl;
+            ll_trace( "component by cId has destroyed" );
             eHandle->map.remove< T >();
-            std::cout << "[ECS::removeComponent] " << "T removed from entity map" << std::endl;
+            ll_trace( "T removed from entity map" );
             auto it = eHandle->map.find< T >();
             if ( it != eHandle->map.end() )
             {
-                std::cout << "[ECS::removeComponent] " << "entity still has T->cId in map" << std::endl;
+                ll_trace(  "entity still has T->cId in map" );
             }
             else
             {
-                std::cout << "[ECS::removeComponent] " << "T->cId hs removed from entity's map" << std::endl;
+                ll_trace( "T->cId was successfully removed from entity's map" );
             }
         }
-        std::cout << "[ECS::removeComponent] " << "all done; returning" << std::endl;
+        ll_trace(  "all done; method out" );
     }
 
     template< typename T >

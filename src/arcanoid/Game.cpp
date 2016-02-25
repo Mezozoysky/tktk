@@ -151,21 +151,21 @@ bool Game::setup()
 {
     if ( SDL_Init( SDL_INIT_VIDEO ) != 0 )
     {
-        std::cout << "SDL_Init ERROR: " << SDL_GetError() << std::endl;
+        ll_error( "SDL_Init ERROR: " << SDL_GetError() );
         return ( false );
     }
 
     mWindow = SDL_CreateWindow( "Hello!", 100, 100, 1024, 768, SDL_WINDOW_SHOWN );
     if ( mWindow == nullptr )
     {
-        std::cout << "SDL_CreateWindow ERROR: " << SDL_GetError() << std::endl;
+        ll_error( "SDL_CreateWindow ERROR: " << SDL_GetError() );
         return ( false );
     }
 
     mRenderer = SDL_CreateRenderer( mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
     if ( mRenderer == nullptr )
     {
-        std::cout << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
+        ll_error( "SDL_CreateRenderer Error: " << SDL_GetError() );
         return ( false );
     }
 

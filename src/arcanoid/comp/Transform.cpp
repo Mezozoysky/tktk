@@ -47,11 +47,15 @@ void TransformProcessor::setup( ecs::System* systemPtr )
 
 void TransformProcessor::onUpdate( float deltaTime )
 {
-     std::cout << "TRANSFORM PROCESSOR Delta time: " << std::to_string( deltaTime ) << "; Updating: " << std::endl;
+    ll_trace( "method in; Delta time: " << std::to_string( deltaTime ) << "; Updating: " );
     for ( int i{ 0 }; i < mPool.getSize(); ++i )
     {
         if ( !mPool.isAlive( i ) ) continue;
         auto comp = mPool[ i ];
-         std::cout << std::to_string( comp.position.x ) << ", " << std::to_string( comp.position.y ) << std::endl;
+        ll_debug(
+            "Updating Transform comp#" << std::to_string( i )
+            << " position=(" << std::to_string( comp.position.x ) << ", " << std::to_string( comp.position.y )
+        );
     }
+    ll_trace( "method out;" );
 }

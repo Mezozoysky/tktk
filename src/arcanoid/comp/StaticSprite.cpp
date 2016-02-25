@@ -53,11 +53,12 @@ void StaticSpriteProcessor::setup( ecs::System* systemPtr )
 
 void StaticSpriteProcessor::onUpdate( float deltaTime )
 {
-    std::cout << "STATIC SPRITE PROCESSOR Delta time: " << std::to_string( deltaTime ) << "; Updating: " << std::endl;
+    ll_trace( "method in; Delta time: " << std::to_string( deltaTime ) << "; Updating: " );
     for ( int i{ 0 }; i < mPool.getSize(); ++i )
     {
         if ( !mPool.isAlive( i ) ) continue;
         auto comp = mPool[ i ];
-        std::cout << std::to_string( i ) << " texture=" << comp.texture << ", centered=" << std::to_string( comp.centered ) << std::endl;
+        ll_debug( "Updating StaticSprite comp#" << std::to_string( i ) << " texture=" << comp.texture << ", centered=" << std::to_string( comp.centered ) );
     }
+    ll_trace( "method out;" );
 }

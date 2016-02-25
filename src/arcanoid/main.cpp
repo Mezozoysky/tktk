@@ -24,12 +24,11 @@
         source distribution.
 */
 
-#include <iostream>
 #include "Game.hpp"
 
 int main( int argc, char* argv[] )
 {
-    std::cout << "arcanoid" << std::endl;
+    ll_info( "arcanoid" );
 
     Game game;
     game.run();
