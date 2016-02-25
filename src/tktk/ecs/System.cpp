@@ -67,26 +67,36 @@ Entity::Handle System::addEntity() noexcept
 
 void System::removeEntity( Entity::Handle& eHandle ) noexcept
 {
-    //         util::Id64 cId = handle->getComponentId< T >();
-
+    ll_debug( "-> Removing the entity .." );
     if ( !eHandle.isValid() )
     {
+        ll_debug( "Entity handle is invalid. Remove nothing." );
         return;
     }
 
+    ll_debug( "Trying to remove entity's attached components" );
     auto it( eHandle->map.begin() );
     while ( it != eHandle->map.end() )
     {
-        Component::Handle ucHandle = it->second;
+        Component::Handle ucHandle{ it->second };
+        ll_debug( "Found untyped comp handle. id: [" << ucHandle.getId().index() << ", " << ucHandle.getId().version() << "]" );
+        eHandle->map.remove( it++ ); //remove entry from map
+        ll_debug( "Untyped comp handle removed from entity's attached" );
         if ( ucHandle.isValid() )
         {
+            ll_debug( "Untyped comp handle is valid!" );
             ucHandle.getProcessor()->destroyElement( ucHandle.getId() ); //destroy the Component
+            ll_debug( "Untyped comp handle's comp is destroyed." );
         }
-        eHandle->map.remove( it++ ); //remove entry from map
     }
+    ll_debug( "Entityes attached components are removed." );
 
     mEntityPool.destroyElement( eHandle.getId() );
+    ll_debug( "Entity itself is removed." );
+
     eHandle.invalidate();
+    ll_debug( "Entity handle is invelidated." );
+    ll_debug( "<- Done removing the entity." );
 }
 
 // for use from entity handle

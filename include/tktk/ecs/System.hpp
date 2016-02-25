@@ -63,9 +63,9 @@ public:
     ///
 
     Entity::Handle addEntity() noexcept;
+
     void removeEntity( Entity::Handle& eHandle ) noexcept;
     // for use from entity handle
-
     void removeEntity( const util::Id64& eId  ) noexcept;
 
     bool isEntityValid( const Entity::Handle& handle ) const noexcept;
