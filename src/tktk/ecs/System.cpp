@@ -42,8 +42,9 @@ System::~System() noexcept
     while ( it != mProcessors.end() )
     {
         auto procPtr( it->second );
-        delete procPtr;
         mProcessors.remove( it++ );
+        delete procPtr;
+        procPtr = nullptr;
     }
 }
 

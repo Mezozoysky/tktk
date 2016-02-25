@@ -158,13 +158,25 @@ public:
     void destroyElement( std::uint32_t index )
     {
         assert( index < mVersions.size() && "Bad index!" );
+        if ( !isAlive( index ) )
+        {
+            ll_warning( "Trying to destroy dead element. index: " << index );
+            return;
+        }
         std::size_t chunkIndex{ index / mChunkSize };
         std::size_t elementIndex{ index % mChunkSize };
+        ll_debug( "-> destroying element by valid index: " << index << "; chunkIndex: " << chunkIndex << "; elementIndex: " << elementIndex );
+        ll_debug( "before destroying - pool size: " << mVersions.size() << "; pool effective size: " << ( mVersions.size() - mDeadIndices.size() ) );
+//         const auto value = reinterpret_cast< const ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex );
+//         value->~ValueTypeT();
         reinterpret_cast< const ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex )->~ValueTypeT();
         mVersions[ index ]++;
 
         auto it = std::lower_bound( mDeadIndices.begin(), mDeadIndices.end(), index, std::greater< std::size_t >() );
         mDeadIndices.insert( it, index );
+        ll_debug( "index " << index << " is now dead" );
+        ll_debug( "after destroying - pool size: " << mVersions.size() << "; pool effective size: " << ( mVersions.size() - mDeadIndices.size() ) );
+
     }
 
     const ValueTypeT& operator[]( std::uint32_t index ) const noexcept
