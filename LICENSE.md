@@ -27,15 +27,17 @@ it freely, subject to the following restrictions:
 External libraries used by tktk
 -------------------------------
 
-* SFML is under the zlib/png license
+* SDL2 is under the zlib/png license as tktk itself
 
-External libraries used by SFML
--------------------------------
+      See copy of the license text at the start of this file.
+      We only need SDL2 to build demo game: arcanoid.
 
-* OpenAL-Soft is under the LGPL license
-* libjpeg is public domain
-* stb_image and stb_image_write are public domain
-* freetype is under the FreeType license or the GPL license
-* libogg is under the BSD license
-* libvorbis is under the BSD license
-* libflac is under the BSD license
+* catch is under the Boost Software License, Version 1.0
+
+      See copy of the license text at http://www.boost.org/LICENSE_1_0.txt
+      We only need catch to build unit-tests
+
+* liblog in under the zlib/png license as tktk itself
+
+      See copy of the license text at the start of this file.
+      We only need liblog in order to build library with debug output
