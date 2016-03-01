@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 2.8.12)
 
-set(CMAKE_BUILD_TYPE "Debug")
-set(CMAKE_VERBOSE_MAKEFILE 1)
-set(CMAKE_INSTALL_PREFIX "/usr/local")
+set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Project build type")
+set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Install prefix")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib")
 set(CMAKE_MACOSX_RPATH 1)
+set(CMAKE_VERBOSE_MAKEFILE 1)
 
 project(tktk C CXX)
 
