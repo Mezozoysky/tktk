@@ -1,0 +1,66 @@
+System
+{
+
+public methods:
+
+    addEntity() Создает новый или переиспользует "уничтоженный" Entity и возвращает соответствующий ему хэндл Entity::Handle;
+    removeEntity( Entity::Handle& eHandle ) Помещает Entity соответствующий хэндлу eHandle в список "уничтоженных" и инвалидирует хэндл;
+    // isEntityValid( const Entity::Handle& eHandle ) Проверяет валидность Entity соответствующего хэндлу eHandle, если валиден возвращает true, иначе false;
+
+    isIdValid( const util::Id64& eId ) Проверяет валидность Entity по его ID в пуле памяти, если валиден возвращает true, иначе false;
+    getEntityPtr( const util::Id64 ) Возвращает указатель на Entity по его ID в пуле памяти, если Entity валиден, иначе возвращает nullptr;
+
+    registerProc< ProcT >() Регистрирует тип процесора ProcT и создает создает экземпляр этого типа, указатель на который будет доступен через System::getProc< ProcT >();
+    getProc< ProcT >() Возвращает указатель на процессор типа ProcT если этот тип зарегистрирован через System::registerProc< ProcT >(), иначе возвращает nullptr;
+    getProc< CompT >() Возвращает указатель на процессор типа Proc< CompT > если какой-либо тип ProcT, наследующий Proc< CompT > через System::registerProc< ProcT >(), иначе возвращает nullptr;
+};
+
+Proc< CompT >
+{
+
+public types:
+
+    CompTypeT Тип компонентов, которые данный тип процессора процессит, эквивалентен CompT
+
+public methods:
+
+    addComp< ...ArgsT >( ArgsT... args ) Создает новый или переиспользует "уничтоженный" компонент типа CompTypeT (CompT) и возвращает соответствующий ему хэдл типа CompTypeT::Handle;
+    removeComp( const CompTypeT::Handle& cHandle ) Помещает компонент соответствующий хэндлу cHandle в список "уничтоженных" и инвалидирует хэндл;
+
+    isIdValid( const util::Id64& cId ) Проверяет валидность компонента по его ID в пуле памяти, если валиден возвращает true, иначе false;
+    getCompPtr( const util::Id64& cId ) Возвращает указатель на компонент по его ID в пуле памяти, если компонент валиден, иначе возвращает nullptr;
+    destroyElement( const util::Id64& cId ) Перемещает компонент с ID cId в список "уничтоженных";
+};
+
+Entity::Handle
+{
+
+public methods:
+
+    remove() Помещает соответствующий Entity в список "уничтоженных" и инвалидирует хэндл;
+    operator->() Возвращает указатель на соответствующий Entity;
+
+    addComp< CompT, ...ArgsT >( ArgsT... args ) Добавляет компонент к соответствующему Entity и возвращет хэндл типа CompT::Handle "указывающий" на этот компонент
+    removeComp< CompT >() Удаляет компонент заданного типа CompT у соответствующего Entity, если он добавлен;
+    hasComp< CompT >() Возвращает true, если к соответствующему Entity добавлена компонента типа CompT;
+
+    getId() Возвращает Id ентити соответствующего хэндлу;
+    isValid() Проверяет валиден ли хэндл, если валиден - возвращает true, иначае - false;
+    invalidate() Инвалидирует хэндл; После вызова этого метода, вызов Entity::Handle::isValid() гарантированно возвращает false;
+    getSystem() Возвращает указатель на System, породивший данный хэндл;
+}
+
+Comp< CompT >::Handle
+{
+
+public methods:
+
+    operator->() Возвращает указатель на соответствующий компонент
+
+    getId() Возвращает Id компонента соответствующего хэндлу
+    isValid() Проверяет валиден ли хэндл, если валиден - возвращает true, иначае - false;
+    invalidate() Инвалидирует хэндл; После вызова этого метода, вызов Comp< CompT >::isValid() на том же хэндле гарантированно возвращает false;
+    getProc() Возвращает указатель на Proc< CompT >, породивший данный хэндл;
+
+    getUntyped() Возвращает нераметризованный хэндл типа Component::Handle;
+};
