@@ -202,13 +202,13 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
 
     ecs::System ecs;
 
-    ecs.registerProcessor< Proc1 >();
-    ecs.registerProcessor< Proc2 >();
+    ecs.registerProc< Proc1 >();
+    ecs.registerProc< Proc2 >();
 
     ecs.setup();
 
-    Proc1* proc1{ ecs.getProcessor< Proc1 >() };
-    auto proc2( ecs.getProcessor< Proc2 >() );
+    Proc1* proc1{ ecs.getProc< Proc1 >() };
+    auto proc2( ecs.getProc< Proc2 >() );
 
     ecs::Entity::Handle e1{ ecs.addEntity() };
 

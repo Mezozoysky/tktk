@@ -124,9 +124,9 @@ bool Game::setup()
         return ( false );
     }
 
-    auto transformProc( mECS.registerProcessor< TransformProc >() );
-    auto staticSpriteProc( mECS.registerProcessor< StaticSpriteProc >() );
-    auto spriteSheetProc( mECS.registerProcessor< SpriteSheetProc >() );
+    auto transformProc( mECS.registerProc< TransformProc >() );
+    auto staticSpriteProc( mECS.registerProc< StaticSpriteProc >() );
+    auto spriteSheetProc( mECS.registerProc< SpriteSheetProc >() );
     mECS.setup();
 
     return ( true );

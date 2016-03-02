@@ -179,29 +179,29 @@ public:
     /// About processors
     ///
 
-    template< typename T, typename... TArgs >
-    T* registerProcessor( TArgs&&... args )
+    template< typename T, typename... ArgsT >
+    T* registerProc( ArgsT&&... args )
     {
         static_assert(
                       std::is_base_of< Processor, T >::value
                       , "T should extend tktk::ecs::Processor"
         );
 
-        Processor* procPtr = new T( std::forward< TArgs >( args )... );
+        Processor* procPtr{ new T( std::forward< ArgsT >( args )... ) };
         mProcessors.insert< typename T::CompTypeT >( procPtr );
 
         return ( static_cast< T* >( procPtr ) );
     }
 
     template< typename T >
-    T* getProcessor()
+    T* getProc()
     {
         static_assert(
                       std::is_base_of< Processor, T >::value
                       , "T should extend tktk::ecs::Processor"
         );
 
-        T* procPtr;
+        T* procPtr{ nullptr };
 
         auto it = mProcessors.find< typename T::CompTypeT >();
         if ( it != mProcessors.end() )
@@ -212,20 +212,20 @@ public:
         return ( procPtr );
     }
 
-    template< typename T >
-    Proc< T >* getProcForCompType()
+    template< typename CompT >
+    Proc< CompT >* getProcForCompType()
     {
         static_assert(
-            std::is_base_of< Component, T >::value
+            std::is_base_of< Component, CompT >::value
             , "T should extend tktk::ecs::Component"
         );
 
-        Proc< T >* procPtr;
+        Proc< CompT >* procPtr;
 
-        auto it = mProcessors.find< T >();
+        auto it = mProcessors.find< CompT >();
         if ( it != mProcessors.end() )
         {
-            procPtr = static_cast< Proc< T >* >( it->second );
+            procPtr = static_cast< Proc< CompT >* >( it->second );
         }
 
         return ( procPtr );

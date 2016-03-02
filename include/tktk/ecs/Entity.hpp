@@ -92,7 +92,7 @@ struct Entity
         }
         /// Returns true if handle is valid, othervise returns false
         bool isValid() const noexcept;
-        /// Make handle invalid
+        /// Makes handle invalid
         void invalidate() noexcept;
 
 
