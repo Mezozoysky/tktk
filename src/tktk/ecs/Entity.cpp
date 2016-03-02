@@ -38,15 +38,13 @@ Entity::Handle::Handle( const util::Id64& eid, System* systemPtr )
 {
 }
 
-bool Entity::Handle::isValid() const noexcept
+Entity* Entity::Handle::operator ->() const noexcept
 {
-    return ( mSystemPtr && mSystemPtr->isIdValid( mId ) );
-}
-
-void Entity::Handle::invalidate() noexcept
-{
-    mId = util::ID64_INVALID;
-    mSystemPtr = nullptr;
+    if ( !isValid() )
+    {
+        return ( nullptr );
+    }
+    return ( mSystemPtr->getEntityPtr( mId ) );
 }
 
 void Entity::Handle::remove() noexcept
@@ -57,13 +55,15 @@ void Entity::Handle::remove() noexcept
     }
 }
 
-Entity* Entity::Handle::operator ->() const noexcept
+bool Entity::Handle::isValid() const noexcept
 {
-    if ( !isValid() )
-    {
-        return ( nullptr );
-    }
-    return ( mSystemPtr->getEntityPtr( mId ) );
+    return ( mSystemPtr && mSystemPtr->isIdValid( mId ) );
+}
+
+void Entity::Handle::invalidate() noexcept
+{
+    mId = util::ID64_INVALID;
+    mSystemPtr = nullptr;
 }
 
 

@@ -41,6 +41,7 @@ namespace tktk
 namespace ecs
 {
 
+
 class System
 {
 public:
@@ -80,73 +81,59 @@ public:
     /// About components
     ///
 
-    template< typename T, typename... TArgs >
-    typename T::Handle addComponent( ecs::Entity::Handle& eHandle, TArgs&&... args )
+    template< typename T, typename... ArgsT >
+    typename T::Handle addComp( const Entity::Handle& eHandle, ArgsT&&... args )
     {
-        auto procPtr( getProcessorForCompType< T >() );
+        return ( addComp< T >( eHandle.getId() ) );
+    }
+
+    // for use from handle
+    /// Adds component of given type @T with constructor arguments @args to the entity specified by id @eId
+    template< typename T, typename... ArgsT >
+    typename T::Handle addComp( const util::Id64& eId, ArgsT&&... args )
+    {
+        auto procPtr( getProcForCompType< T >() );
         assert( procPtr && "Processor for given component type is not registered." );
 
-        typename T::Handle cHandle{ procPtr->addComponent( eHandle.getId(), std::forward< TArgs >( args )... ) };
+        typename T::Handle cHandle{ procPtr->addComponent( eId, std::forward< ArgsT >( args )... ) };
 
-        if ( eHandle->map.find< T >() != eHandle->map.end() )
+        Entity* ePtr{ getEntityPtr( eId ) };
+        if ( ePtr->map.find< T >() != ePtr->map.end() )
         {
             assert( false && "Type already exists!" );
         }
-        eHandle->map.insert< T >( cHandle.getUntyped() );
+        ePtr->map.insert< T >( cHandle.getUntyped() );
 
         return ( cHandle );
     }
 
     template< typename T >
-    void removeComponent( const ecs::Entity::Handle& eHandle )
+    typename T::Handle getComp( const Entity::Handle& eHandle )
     {
-        ll_trace( "method in;" );
-
-        if ( !eHandle.isValid() )
-        {
-            ll_trace( "entity handle is invalid; method out;" );
-            return;
-        }
-        ll_trace( "entity handle is valid" );
-        auto procPtr( getProcessorForCompType< T >() );
-        assert( procPtr && "Processor for given component type is not registered." );
-        ll_trace( "processor retreived" );
-        auto it = eHandle->map.find< T >();
-        if ( it == eHandle->map.end() )
-        {
-            ll_trace( "entity has not cId for type T" );
-        }
-        else
-        {
-            ll_trace( "entity has cId for T" );
-            Component::Handle ucHandle{ eHandle->map.find< T >()->second };
-            ll_trace(  "comp id retreived: " << ucHandle.getId().index() );
-            procPtr->destroyElement( ucHandle.getId() );
-            ll_trace( "component by cId has destroyed" );
-            eHandle->map.remove< T >();
-            ll_trace( "T removed from entity map" );
-        }
-        ll_trace(  "all done; method out" );
+        return ( getComp< T >( eHandle.getId() ) );
     }
 
+    // for use from handles
+    /// Returns handle for component of givent type @T from entity specified by id @eId; If entity has not component of the given type returned handle will be invalid
     template< typename T >
-    typename T::Handle getComponent( const ecs::Entity::Handle& eHandle )
+    typename T::Handle getComp( const util::Id64& eId )
     {
         typename T::Handle invalidCHandle{};
 
-        if ( !eHandle.isValid() )
+        if ( !isIdValid( eId ) )
         {
             return ( invalidCHandle );
         }
 
-        auto it = eHandle->map.find< T >();
-        if ( it == eHandle->map.end() )
+        Entity* ePtr{ getEntityPtr( eId ) };
+        auto it = ePtr->map.find< T >();
+        if ( it == ePtr->map.end() )
         {
             return ( invalidCHandle );
         }
         Component::Handle ucHandle{ it->second };
 
-        Proc< T >* procPtr{ getProcessorForCompType< T >() };
+        Proc< T >* procPtr{ getProcForCompType< T >() };
         assert( procPtr && "Processor for given component type is not registered." );
 
         if ( !procPtr->isIdValid( ucHandle.getId() ) )
@@ -158,6 +145,35 @@ public:
         return ( cHandle );
     }
 
+    template< typename T >
+    void removeComp( const Entity::Handle& eHandle )
+    {
+        removeComp< T >( eHandle.getId() );
+    }
+
+    // for use from handles
+    /// Removes component of given type @T from the entity specified by id @eId if added.
+    template< typename T >
+    void removeComp( const util::Id64& eId )
+    {
+        if ( !isIdValid( eId ) )
+        {
+            return;
+        }
+        auto procPtr( getProcForCompType< T >() );
+        assert( procPtr && "Processor for given component type is not registered." );
+
+        Entity* ePtr{ getEntityPtr( eId ) };
+        auto it = ePtr->map.find< T >();
+        if ( it == ePtr->map.end() )
+        {
+            return;
+        }
+
+        Component::Handle ucHandle{ ePtr->map.find< T >()->second };
+        procPtr->destroyElement( ucHandle.getId() );
+        ePtr->map.remove( it );
+    }
 
     ///
     /// About processors
@@ -197,7 +213,7 @@ public:
     }
 
     template< typename T >
-    Proc< T >* getProcessorForCompType()
+    Proc< T >* getProcForCompType()
     {
         static_assert(
             std::is_base_of< Component, T >::value
