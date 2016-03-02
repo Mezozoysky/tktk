@@ -10,6 +10,10 @@ public methods:
     isIdValid( const util::Id64& eId ) Проверяет валидность Entity по его ID в пуле памяти, если валиден возвращает true, иначе false;
     getEntityPtr( const util::Id64 ) Возвращает указатель на Entity по его ID в пуле памяти, если Entity валиден, иначе возвращает nullptr;
 
+    addComp< CompT, ...ArgsT >( const util::Id64& eId, ArgsT... args ) Добавляет компонент типа CompT с аргументами конструктора args к Entity с id eId и возвращет хэндл типа CompT::Handle "указывающий" на этот компонент
+    getComp< CompT >( const util::Id64& eId ) Возвращает хэндл для компонента типа CompT, если такой компонент к соответствующему Entity с id eId не добавлен, хэндл будет невалидный;
+    removeComp< CompT >( const util::Id64& eId ) Удаляет компонент заданного типа CompT у  Entity с id eId, если он добавлен;
+
     registerProc< ProcT >() Регистрирует тип процесора ProcT и создает создает экземпляр этого типа, указатель на который будет доступен через System::getProc< ProcT >();
     getProc< ProcT >() Возвращает указатель на процессор типа ProcT если этот тип зарегистрирован через System::registerProc< ProcT >(), иначе возвращает nullptr;
     getProc< CompT >() Возвращает указатель на процессор типа Proc< CompT > если какой-либо тип ProcT, наследующий Proc< CompT > через System::registerProc< ProcT >(), иначе возвращает nullptr;
@@ -41,13 +45,14 @@ public methods:
     operator->() Возвращает указатель на соответствующий Entity;
 
     addComp< CompT, ...ArgsT >( ArgsT... args ) Добавляет компонент к соответствующему Entity и возвращет хэндл типа CompT::Handle "указывающий" на этот компонент
+    getComp< CompT >() Возвращает хэндл для компонента типа CompT, если такой компонент к соответствующему Entity не добавлен, хэндл будет невалидный;
+???    hasComp< CompT >() Возвращает true, если к соответствующему Entity добавлена компонента типа CompT;
     removeComp< CompT >() Удаляет компонент заданного типа CompT у соответствующего Entity, если он добавлен;
-    hasComp< CompT >() Возвращает true, если к соответствующему Entity добавлена компонента типа CompT;
 
     getId() Возвращает Id ентити соответствующего хэндлу;
+    getSystem() Возвращает указатель на System, породивший данный хэндл;
     isValid() Проверяет валиден ли хэндл, если валиден - возвращает true, иначае - false;
     invalidate() Инвалидирует хэндл; После вызова этого метода, вызов Entity::Handle::isValid() гарантированно возвращает false;
-    getSystem() Возвращает указатель на System, породивший данный хэндл;
 }
 
 Comp< CompT >::Handle
