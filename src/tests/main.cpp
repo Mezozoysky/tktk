@@ -138,7 +138,7 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     {
     public:
         Comp1( const util::Id64& entityId )
-        : BasalType{ entityId }
+        : BaseTypeT{ entityId }
         {
         }
 
@@ -171,7 +171,7 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     {
     public:
         Comp2( const util::Id64& entityId )
-        : BasalType{ entityId }
+        : BaseTypeT{ entityId }
         {
         }
 

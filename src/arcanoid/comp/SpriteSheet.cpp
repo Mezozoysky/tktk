@@ -32,7 +32,7 @@ using namespace tktk;
 
 
 SpriteSheet::SpriteSheet( const util::Id64& entityId )
-: BasalType( entityId )
+: BaseTypeT( entityId )
 {
 }
 

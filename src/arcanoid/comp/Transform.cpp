@@ -31,7 +31,7 @@
 using namespace tktk;
 
 Transform::Transform( const util::Id64& entityId, Vector2f position )
-: BasalType( entityId )
+: BaseTypeT( entityId )
 {
     this->position = position;
 }

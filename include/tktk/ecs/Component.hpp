@@ -54,22 +54,20 @@ struct Component
 
         Handle( const util::Id64& cId, Processor* procPtr ) noexcept;
 
-        bool isValid() const noexcept;
-        void invalidate() noexcept;
+        Component* operator ->() const noexcept;
 
         inline util::Id64 getId() const noexcept
         {
             return ( mId );
         }
 
-        inline Processor* getProcessor() const noexcept
+        inline Processor* getProc() const noexcept
         {
             return ( mProcPtr );
         }
 
-        //         void remove() noexcept;
-
-        Component* operator ->() const noexcept;
+        bool isValid() const noexcept;
+        void invalidate() noexcept;
 
     private:
         util::Id64 mId { util::ID64_INVALID };
@@ -86,8 +84,8 @@ template< typename CompT >
 struct Comp
 : public Component
 {
-    using Type = CompT;
-    using BasalType = Comp< Type >;
+    using CompTypeT = CompT;
+    using BaseTypeT = Comp< CompTypeT >;
 
     /// typed Component<CompT>::Handle
     struct Handle
@@ -97,41 +95,45 @@ struct Comp
         }
 
         /// Construct with untyped Component::Handle
-        Handle( const Component::Handle& ucHandle )
+        Handle( const Component::Handle& ucHandle ) noexcept
         : mUntypedCHandle{ ucHandle }
         {
         }
 
+        /// Construct with id and processor pointer
         Handle( const util::Id64& cId, Processor* procPtr ) noexcept
         : mUntypedCHandle{ cId, procPtr }
         {
         }
 
-        inline bool isValid() const noexcept
+        /// Returns the pointer to the handling component handle is valid, returns nullptr othervise
+        inline CompTypeT* operator ->() const noexcept
         {
-            return ( mUntypedCHandle.isValid() );
+            return ( static_cast< CompTypeT* >( mUntypedCHandle.operator->() ) );
         }
 
-        inline void invalidate() noexcept
-        {
-            mUntypedCHandle.invalidate();
-        }
-
+        /// Returns the id of the handling component
         inline util::Id64 getId() const noexcept
         {
             return ( mUntypedCHandle.getId() );
         }
 
-        inline Proc< Type >* getProcessor() const noexcept
+        /// Returns pointer to the processor, which created this handle
+        inline Proc< CompTypeT >* getProc() const noexcept
         {
-            return ( static_cast< Proc< Type >* >( mUntypedCHandle.getProcessor() ) );
+            return ( static_cast< Proc< CompTypeT >* >( mUntypedCHandle.getProc() ) );
         }
 
-        //         void remove() noexcept;
-
-        inline Type* operator ->() const noexcept
+        /// Returns true if handle is valid ("points" to alive component), false othervise
+        inline bool isValid() const noexcept
         {
-            return ( static_cast< Type* >( mUntypedCHandle.operator->() ) );
+            return ( mUntypedCHandle.isValid() );
+        }
+
+        /// Makes handle invalid
+        inline void invalidate() noexcept
+        {
+            mUntypedCHandle.invalidate();
         }
 
         inline Component::Handle getUntyped() const noexcept

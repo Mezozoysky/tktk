@@ -86,7 +86,7 @@ void System::removeEntity( Entity::Handle& eHandle ) noexcept
         if ( ucHandle.isValid() )
         {
             ll_debug( "Untyped comp handle is valid!" );
-            ucHandle.getProcessor()->destroyElement( ucHandle.getId() ); //destroy the Component
+            ucHandle.getProc()->destroyElement( ucHandle.getId() ); //destroy the Component
             ll_debug( "Untyped comp handle's comp is destroyed." );
         }
     }
