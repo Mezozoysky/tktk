@@ -69,9 +69,8 @@ class Proc
 {
 
 public:
-
+    /// Type of processor's components
     using CompTypeT = CompT;
-    using PoolTypeT = util::MemoryPool<CompTypeT>;
 
     Proc() noexcept
     : Processor()
@@ -82,41 +81,46 @@ public:
     {
     }
 
+    /// Adds component with constructructor arguments @args and returns a handle of type CompTypeT::Handle
+    template< typename... ArgsT >
+    typename CompTypeT::Handle addComp( ArgsT&&... args )
+    {
+        util::Id64 cId{ mPool.createElement( std::forward< ArgsT >( args )... ) };
+
+        typename CompTypeT::Handle cHandle( cId, this );
+        return ( cHandle );
+    }
+
+    /// Marks the 'pointed' component as destroyed and invalidates the handle if handle is valid
+    void removeComp( typename CompTypeT::Handle& cHandle )
+    {
+        if ( cHandle.isValid() )
+        {
+            destroyElement( cHandle.getId() );
+            cHandle.invalidate();
+        }
+    }
+
+    /// Returns true if given id is valid
     virtual bool isIdValid( const util::Id64& cId ) const noexcept override final
     {
         return ( mPool.isIdValid( cId ) );
     }
 
-    template< typename... Args >
-    typename CompTypeT::Handle addComponent( Args&&... args )
+    /// Returns raw pointer to the component with id @cId
+    inline virtual CompTypeT* getCompPtr( const util::Id64& cId ) const noexcept override final
     {
-        util::Id64 cId{ mPool.createElement( std::forward< Args >( args )... ) };
-
-        typename CompTypeT::Handle handle( cId, this );
-        return ( handle );
+        return ( mPool.getPtr( cId.index() ) );
     }
 
-    void removeComponent( typename CompTypeT::Handle& handle )
+    /// Marks component with id @cId as 'destroyed'
+    inline virtual void destroyElement( const util::Id64& cId ) noexcept override final
     {
-        if ( handle.isValid() )
-        {
-            destroyElement( handle.getId() );
-            handle.invalidate();
-        }
-    }
-
-    inline virtual void destroyElement( const util::Id64& id ) noexcept override final
-    {
-        mPool.destroyElement( id );
-    }
-
-    inline virtual CompTypeT* getPtr( const util::Id64& id ) const noexcept override final
-    {
-        return ( mPool.getPtr( id.index() ) );
+        mPool.destroyElement( cId );
     }
 
 protected:
-
+    using PoolTypeT = util::MemoryPool<CompTypeT>;
     PoolTypeT mPool;
 };
 
