@@ -57,7 +57,7 @@ public:
 
     virtual bool isIdValid( const util::Id64& id ) const noexcept = 0;
 
-    virtual Component* getPtr( const util::Id64& id ) const noexcept = 0;
+    virtual Component* getCompPtr( const util::Id64& id ) const noexcept = 0;
 
     virtual void destroyElement( const util::Id64& id ) noexcept = 0;
 };

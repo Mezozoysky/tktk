@@ -95,7 +95,7 @@ public:
         auto procPtr( getProcForCompType< T >() );
         assert( procPtr && "Processor for given component type is not registered." );
 
-        typename T::Handle cHandle{ procPtr->addComponent( eId, std::forward< ArgsT >( args )... ) };
+        typename T::Handle cHandle{ procPtr->addComp( eId, std::forward< ArgsT >( args )... ) };
 
         Entity* ePtr{ getEntityPtr( eId ) };
         if ( ePtr->map.find< T >() != ePtr->map.end() )

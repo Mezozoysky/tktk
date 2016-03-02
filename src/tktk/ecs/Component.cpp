@@ -58,7 +58,7 @@ Component* Component::Handle::operator ->() const noexcept
     {
         return ( nullptr );
     }
-    return ( mProcPtr->getPtr( mId ) );
+    return ( mProcPtr->getCompPtr( mId ) );
 }
 
 

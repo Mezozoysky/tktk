@@ -212,8 +212,8 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
 
     ecs::Entity::Handle e1{ ecs.addEntity() };
 
-    Comp1::Handle c1( proc1->addComponent( e1.getId() ) );
-    auto c2( proc2->addComponent( e1.getId() ) );
+    Comp1::Handle c1( proc1->addComp( e1.getId() ) );
+    auto c2( proc2->addComp( e1.getId() ) );
 
     float timeStep{ 0.05f };
     float time{ 0.0f };

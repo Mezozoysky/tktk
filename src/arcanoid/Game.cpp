@@ -54,17 +54,12 @@ void Game::run()
         auto e3( mECS.addEntity() );
 
         mECS.addComp< Transform >( e1, Transform::Vector2f( 100.0f, 75.0f ) );
-//         e1.addComponent< Transform >( Transform::Vector2f( 100.0f, 75.0f ) );
 
         mECS.addComp< Transform >( e2 );
         mECS.getComp< Transform >( e2 )->position = Transform::Vector2f( 15.0f, 100.0f );
-//         e2.addComponent< Transform >();
-//         e2.getComponent< Transform >().position = Transform::Vector2f( 15.0f, 100.0f );
 
         auto tf3( mECS.addComp< Transform >( e3 ) );
         tf3->position = Transform::Vector2f( 60.0f, 40.0f );
-//         auto tf3( e3.addComponent< Transform > );
-//         tf3->position = Transform::Vector2f( 60.0f, 40.0f );
 
         mECS.removeComp< Transform >( e2 );
 
@@ -72,11 +67,6 @@ void Game::run()
         auto sheet1( mECS.addComp< SpriteSheet >( e1 ) );
         sheet1->texture = "sheet_texture0.png";
         sheet1->centered = true;
-
-//         auto sprite1( e1.addComp< StaticSprite >( "texture0.png", true  ) );
-//         auto sheet1( e1.addComp< SpriteSheet >() );
-//         sheet1->texture = "sheet_texture0.png";
-//         sheet1->centered = true;
 
         mECS.removeEntity( e3 );
 
