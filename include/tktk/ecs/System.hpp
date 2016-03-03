@@ -48,45 +48,101 @@ namespace tktk
 namespace ecs
 {
 
-
+/// \brief Represents the 'system' in the 'entity-component system'
+///
+/// System type provides the common functionality of an 'entity-component system':
+/// management of entities, processors/components and their relationships.
+///
+/// Dumb usage example:
+/// \code{.cpp}
+/// #include <tktk/ecs/System.hpp>
+/// ...
+/// using namespace tktk;
+/// ecs::System system;
+/// auto entity{ system.addEntity() };
+/// entity.remove();
+/// ...
+/// \endcode
 class System
 {
 public:
+    /// \brief Alias for actualy used memory pool type
     using PoolTypeT = util::MemoryPool< Entity >;
 
+    /// \brief This signal will be sent to subscribers when somebody call `update(float)` method on instance.
     util::Signal< float > updateSignal;
 
+    /// \brief Default constructor
+    ///
+    /// Does nothing
     System() noexcept;
+
+    /// \brief Virtual destructor for further inheritance
+    ///
+    /// Destroys all the registered processors.
     virtual ~System() noexcept;
 
+    /// \brief Initialises the system's inner state
+    ///
+    /// Calls `ecs::Proc<CompT>::setup( System* )` on the managing processors.
     virtual void setup() noexcept;
 
+    /// \brief Sends `update` signal to all the subscribers
+    /// \param[in] deltaTime seconds elapsed from last frame
+    /// \todo Should this method be defined with base System class?
     virtual void update( float deltaTime ) noexcept
     {
         updateSignal( deltaTime );
     }
 
-    ///
-    /// About entity
-    ///
+    //
+    // About entity
+    //
 
+    /// \brief Adds 'new' entity
+    /// \returns The handle for added entity.
+    ///
+    /// If there is no 'dead' entities in the memory the new entity will be created, othervise first of the 'dead' entities will be reused.
     Entity::Handle addEntity() noexcept;
 
+    /// \brief Removes the given entity
+    /// \param[in,out] eHandle handle specifies the entity to remove
+    ///
+    /// Adds the entity specified with handle to the 'dead-list' and invalidates the handle.
     void removeEntity( Entity::Handle& eHandle ) noexcept;
-    // for use from entity handle
+
+    /// \brief Remove the entity by entity's id
+    /// \param[in] eId Specifies the entity to remove
+    ///
+    /// Adds the entity specified with id to the 'dead-list'.
+    /// \note Unless you are modifying the tktk-ecs library you should not use this method, use Entity::Handle::remove() instead.
     void removeEntity( const util::Id64& eId  ) noexcept;
 
-    bool isEntityValid( const Entity::Handle& handle ) const noexcept;
-    // for use from entity handle
+    /// \brief Tests if handle is valid
+    /// \param[in] eHandle The entity handle to test
+    /// \returns `true` if handle is valid, `false` othervise
+    bool isEntityValid( const Entity::Handle& eHandle ) const noexcept;
+
+    /// \brief Tests if id is valid
+    /// \param[in] eId The id to test
+    /// \returns `true` if id is valid, `false` othervise
+    /// \note Unless you are modifying the tktk-ecs library you should not use this method, use Entity::Handle::isValid() instead.
     bool isIdValid( const util::Id64& eId ) const noexcept;
 
-    Entity* getEntityPtr( const Entity::Handle& handle ) const noexcept;
-    // for use from entity handle
+    /// \brief Gets the raw pointer to the handling entity
+    /// \param[in] eHandle Specifies the entity
+    /// \returns The pointer to the entity's memory
+    Entity* getEntityPtr( const Entity::Handle& eHandle ) const noexcept;
+
+    /// \brief Gets the raw pointer to the entity by entity's id
+    /// \param[in] eId entity's id
+    /// \returns The pointer to the entity's memory
+    /// \note Unless you are modifying the tktk-ecs library you should not use this method, use Entity::Handle::operator->() instead.
     Entity* getEntityPtr( const util::Id64& eId ) const noexcept;
 
-    ///
-    /// About components
-    ///
+    //
+    // About components
+    //
 
     template< typename T, typename... ArgsT >
     typename T::Handle addComp( const Entity::Handle& eHandle, ArgsT&&... args )
@@ -182,9 +238,9 @@ public:
         ePtr->map.remove( it );
     }
 
-    ///
-    /// About processors
-    ///
+    //
+    // About processors
+    //
 
     template< typename T, typename... ArgsT >
     T* registerProc( ArgsT&&... args )

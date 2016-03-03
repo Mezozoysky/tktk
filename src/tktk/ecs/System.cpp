@@ -106,9 +106,9 @@ void System::removeEntity( const util::Id64& eId  ) noexcept
     mEntityPool.destroyElement( eId );
 }
 
-bool System::isEntityValid( const Entity::Handle& handle ) const noexcept
+bool System::isEntityValid( const Entity::Handle& eHandle ) const noexcept
 {
-    return ( mEntityPool.isIdValid( handle.getId() ) );
+    return ( mEntityPool.isIdValid( eHandle.getId() ) );
 }
 
 // for use from entity handle
