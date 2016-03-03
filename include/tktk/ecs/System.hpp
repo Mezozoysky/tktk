@@ -115,7 +115,7 @@ public:
     /// \param[in] eId Specifies the entity to remove
     ///
     /// Adds the entity specified with id to the 'dead-list'.
-    /// \note Unless you are modifying the tktk-ecs library you should not use this method, use Entity::Handle::remove() instead.
+    /// \note Unless you are modifying the tktk-ecs library you should not use this method, use `Entity::Handle::remove()` instead.
     void removeEntity( const util::Id64& eId  ) noexcept;
 
     /// \brief Tests if handle is valid
@@ -126,7 +126,7 @@ public:
     /// \brief Tests if id is valid
     /// \param[in] eId The id to test
     /// \returns `true` if id is valid, `false` othervise
-    /// \note Unless you are modifying the tktk-ecs library you should not use this method, use Entity::Handle::isValid() instead.
+    /// \note Unless you are modifying the tktk-ecs library you should not use this method, use `Entity::Handle::isValid()` instead.
     bool isIdValid( const util::Id64& eId ) const noexcept;
 
     /// \brief Gets the raw pointer to the handling entity
@@ -137,21 +137,28 @@ public:
     /// \brief Gets the raw pointer to the entity by entity's id
     /// \param[in] eId entity's id
     /// \returns The pointer to the entity's memory
-    /// \note Unless you are modifying the tktk-ecs library you should not use this method, use Entity::Handle::operator->() instead.
+    /// \note Unless you are modifying the tktk-ecs library you should not use this method, use `Entity::Handle::operator->()` instead.
     Entity* getEntityPtr( const util::Id64& eId ) const noexcept;
 
     //
     // About components
     //
 
+    /// \brief Adds 'new' component of given type `T` to the entity specified by handle
+    /// \param[in] eHandle Specifies the entity to add component to
+    /// \param[in] args Arguments for `T` constructor
+    /// \returns The handle for the added component
     template< typename T, typename... ArgsT >
     typename T::Handle addComp( const Entity::Handle& eHandle, ArgsT&&... args )
     {
         return ( addComp< T >( eHandle.getId() ) );
     }
 
-    // for use from handle
-    /// Adds component of given type @T with constructor arguments @args to the entity specified by id @eId
+    /// \brief Adds 'new' component of given type `T` to the entity specified by id
+    /// \param[in] eId Specifies the entity to add component to
+    /// \param[in] args Arguments for `T` constructor
+    /// \returns The handle for the added component
+    /// \note Unless you are modifying the tktk-ecs library you should not use this method, use `Entity::Handle::addComp<CompT>(...)` instead.
     template< typename T, typename... ArgsT >
     typename T::Handle addComp( const util::Id64& eId, ArgsT&&... args )
     {
@@ -170,14 +177,19 @@ public:
         return ( cHandle );
     }
 
+    /// \brief Gets the component of given type `T` if specified entity has it added
+    /// \param[in] eHandle Specifies the entity to get component from
+    /// \returns The handle for the component
     template< typename T >
     typename T::Handle getComp( const Entity::Handle& eHandle )
     {
         return ( getComp< T >( eHandle.getId() ) );
     }
 
-    // for use from handles
-    /// Returns handle for component of givent type @T from entity specified by id @eId; If entity has not component of the given type returned handle will be invalid
+    /// \brief Gets the component of given type `T` if specified entity has it added
+    /// \param[in] eId Specifies the entity to get component from
+    /// \returns The handle for the component
+    /// \note Unless you are modifying the tktk-ecs library you should not use this method, use `Entity::Handle::getComp<CompT>()` instead.
     template< typename T >
     typename T::Handle getComp( const util::Id64& eId )
     {
@@ -208,14 +220,21 @@ public:
         return ( cHandle );
     }
 
+    /// \brief Removes the component of given type `T` from the specified entity
+    /// \param[in] eHandle Specifies the entity
+    ///
+    /// If entity has a component of given type `T`, marks component as 'dead', removes entry for `T` from entiti's components, invalidates the handle.
     template< typename T >
     void removeComp( const Entity::Handle& eHandle )
     {
         removeComp< T >( eHandle.getId() );
     }
 
-    // for use from handles
-    /// Removes component of given type @T from the entity specified by id @eId if added.
+    /// \brief Removes the component of given type `T` from the specified entity
+    /// \param[in] eId Specifies the entity
+    ///
+    /// If entity has a component of given type `T`, marks component as 'dead', removes entry for `T` from entity's components.
+    /// \note Unless you are modifying the tktk-ecs library you should not use this method, use `Entity::Handle::removeComp<CompT>()` instead.
     template< typename T >
     void removeComp( const util::Id64& eId )
     {
