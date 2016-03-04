@@ -55,12 +55,15 @@
 
 #endif /* end of include guard: TKTK_CONFIG_HPP */
 
-/// \mainpage Triko Toolkit documentation
+/// \mainpage tktk documentation
 /// \tableofcontents
+/// tktk is a couple of libraries designed to help in solving common game development tasks; it is written in c++.
 /// \section introSec Introduction
-/// Here is the main introduction text
-/// \subsection introFirstSubsec First
-/// Here is the first introduction subsection text
+/// \subsection introNamingSubsec Naming
+/// Letters `tktk` is the abbreviation for 'Triko Toolkit'
 ///
-/// \subsection introEtcSubsec Etc.
-/// And more text...
+/// \subsection introOverviewSubsec Overview
+/// Toolkit consists of several libraries
+/// \li \b tktk-util Provides useful types like memory pools, signal, etc
+/// \li \b tktk-ecs Provides general entity-component system implementation
+/// \li \b tktk-phase Provides phase management for games and interactive applications
