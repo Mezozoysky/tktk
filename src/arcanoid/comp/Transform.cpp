@@ -51,9 +51,9 @@ void TransformProc::onUpdate( float deltaTime )
     {
         if ( !mPool.isAlive( i ) ) continue;
         auto comp = mPool[ i ];
-//         ll_debug(
-//             "Updating Transform comp#" << std::to_string( i )
-//             << " position=(" << std::to_string( comp.position.x ) << ", " << std::to_string( comp.position.y )
-//         );
+        ll_debug(
+            "Updating Transform comp#" << std::to_string( i )
+            << " position=(" << std::to_string( comp.position.x ) << ", " << std::to_string( comp.position.y ) << ")"
+        );
     }
 }

@@ -53,14 +53,20 @@ void Game::run()
         // entity-centric api test
         //
         auto e0( mECS.addEntity() );
+        e0.addComp< Transform >( Transform::Vector2f( 0.5f, 0.5f ) );
         e0.addComp< StaticSprite >( "e0sprite.png", 1 );
         //e0.removeComp< StaticSprite >();
 
         auto e1( mECS.addEntity() );
+        auto t1( e1.addComp< Transform >() );
+        t1->position = Transform::Vector2f( 1.0f, 1.0f );
         auto ss1( e1.addComp< StaticSprite >() );
         ss1->texture = "ss1.png";
 
         auto e2( mECS.addEntity() );
+        e2.addComp< Transform >();
+        auto t2( e2.getComp< Transform >() );
+        t2->position = Transform::Vector2f( 2.0f, 2.0f );
         e2.addComp< StaticSprite >();
         auto ss2( e2.getComp< StaticSprite >() );
         ss2->centered = true;
