@@ -93,7 +93,7 @@ struct Entity
         ///
         /// Adds new component of the given type, 'attachs' it to the entity and returns the 'typed' component handle
         template< typename T, typename... ArgsT >
-        typename T::Handle addComp( ArgsT&&... args );
+        typename T::Handle addComp( ArgsT&&... args ) noexcept;
 
         /// \brief Gets the component handle of the given type if added
         /// \returns Typed component handle
