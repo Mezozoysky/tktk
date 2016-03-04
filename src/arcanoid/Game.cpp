@@ -49,27 +49,38 @@ void Game::run()
 {
     if ( setup() )
     {
+        //
+        // entity-centric api test
+        //
+        auto e0( mECS.addEntity() );
+        e0.addComp< StaticSprite >( "e0sprite.png", 1 );
+        //e0.removeComp< StaticSprite >();
+
         auto e1( mECS.addEntity() );
+        auto ss1( e1.addComp< StaticSprite >() );
+        ss1->texture = "ss1.png";
+
         auto e2( mECS.addEntity() );
+        e2.addComp< StaticSprite >();
+        auto ss2( e2.getComp< StaticSprite >() );
+        ss2->centered = true;
+        ss2->texture = "ss2.png";
+
+        //
+        // system-centric api test
+        //
         auto e3( mECS.addEntity() );
+        mECS.addComp< StaticSprite >( e3, "e3sprite.png", 0 );
 
-        mECS.addComp< Transform >( e1, Transform::Vector2f( 100.0f, 75.0f ) );
+        auto e4( mECS.addEntity() );
+        auto ss4( mECS.addComp< StaticSprite >( e4 ) );
+        ss4->centered = 1;
+        ss4->texture = "ss4texture.png";
 
-        mECS.addComp< Transform >( e2 );
-        mECS.getComp< Transform >( e2 )->position = Transform::Vector2f( 15.0f, 100.0f );
-
-        auto tf3( mECS.addComp< Transform >( e3 ) );
-        tf3->position = Transform::Vector2f( 60.0f, 40.0f );
-
-        mECS.removeComp< Transform >( e2 );
-
-        auto sprite1( mECS.addComp< StaticSprite >( e1, "texture0.png", true ) );
-        auto sheet1( mECS.addComp< SpriteSheet >( e1 ) );
-        sheet1->texture = "sheet_texture0.png";
-        sheet1->centered = true;
-
-        mECS.removeEntity( e3 );
-
+        auto e5( mECS.addEntity() );
+        mECS.addComp< StaticSprite >( e5 );
+        auto ss5( mECS.getComp< StaticSprite >( e5 ) );
+        ss5->texture = "ss5.png";
 
         mIsRunning = true;
         SDL_Event event;

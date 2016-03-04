@@ -56,6 +56,6 @@ void StaticSpriteProc::onUpdate( float deltaTime )
     {
         if ( !mPool.isAlive( i ) ) continue;
         auto comp = mPool[ i ];
-        //ll_debug( "Updating StaticSprite comp#" << std::to_string( i ) << " texture=" << comp.texture << ", centered=" << std::to_string( comp.centered ) );
+        ll_debug( "Updating StaticSprite comp#" << std::to_string( i ) << " texture=" << comp.texture << ", centered=" << std::to_string( comp.centered ) );
     }
 }
