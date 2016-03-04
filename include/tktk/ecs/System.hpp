@@ -51,83 +51,106 @@ namespace tktk
 namespace ecs
 {
 
+/// \brief Represents the 'entity' abstraction
 ///
-/// Entity
-///
+/// Entity is dumb structure which just wraps the map of handles by component types for attached components.
+/// The one can add the new entity into the system by calling `tktk::ecs::System::addEntity()` on the system instance.
 struct Entity
 {
+    /// \brief Handle for entity
     ///
-    /// Entity::Handle
-    ///
+    /// Entities are created and stored in managed memory within `tktk::ecs::System` class, so using the handles to access them.
+    /// Entity::Handle acts like 'value-type pointer' to the entity instance in managed memory.
     struct Handle
     {
-        /// Constructor
-        Handle( const util::Id64& eid, System* mgrPtr );
+        /// \brief Constructor
+        /// \param[in] eId The managed memory block id
+        /// \param[in] systemPtr pointer to the entity's owner system
+        /// \note Unless you are modifying the tktk-ecs library you should not construct handles manually, `System::addEntity()`will do it for you.
+        Handle( const util::Id64& eId, System* systemPtr );
 
-        /// 'Destroys' the entity, invalidates the handle itself
+        /// \brief Removes the entity from owner system
+        ///
+        /// Actually, this method call will mark entity's memory as 'dead' or 'free' and invalidates the handle itself.
         void remove() noexcept;
-        /// Returns the raw pointer to the entity
+        /// \brief Pointer-like access to entity's methods
+        /// \returns The raw pointer to the entity's memory
+        ///
+        /// Example of usage:
+        /// \code{.cpp}
+        /// #include <tktk/ecs/System>
+        /// using namespace tktk;
+        /// ...
+        /// ecs::System system;
+        /// auto handle = system.addEntity();
+        /// auto iter = handle->map.begin() // access to the entity's map via handle's operator->()
+        /// \endcode
         Entity* operator ->() const noexcept;
 
-        /// Adds the component of given type T constructed with given arguments args to th entity
+        /// \brief Adds component of given type T to the entity
+        /// \param[in] args Arguments for component type's constructor
+        /// \returns Typed component handle
+        ///
+        /// Adds new component of the given type, 'attachs' it to the entity and returns the 'typed' component handle
         template< typename T, typename... ArgsT >
         typename T::Handle addComp( ArgsT&&... args );
-        //         {
-        //             return ( mSystemPtr->addComp< T >( mId, std::forward< ArgsT >( args )... ) );
-        //         }
 
-        /// Returns the handle for entity's component of the given type T if added
-        //         template< typename T >
-        //         typename T::Handle getComp() noexcept
-        //         {
-        //             return ( mSystemPtr->getComp< T >() );
-        //         }
+        /// \brief Gets the component handle of the given type if added
+        /// \returns Typed component handle
+        ///
+        /// If entity has not component of type T added component handle will be invalid.
+        template< typename T >
+        typename T::Handle getComp() noexcept;
 
-        /// Removes the component of the given type T from the entity if added
-        //         template< typename T >
-        //         void removeComp() noexcept
-        //         {
-        //             mSystemPtr->removeComp< T >();
-        //         }
+        /// \brief Removes the component of the given type from the entity if added
+        ///
+        /// Removes the component handle from entity's map and marks removed component's memory as 'free' within it's processor.
+        template< typename T >
+        void removeComp() noexcept;
 
-        /// Returns entity's id
+        /// \brief Gets entity's id
         inline util::Id64 getId() const noexcept
         {
             return ( mId );
         }
-        /// Returns pointer to the System instance which created the handle
+
+        /// \brief Gets pointer to the `System` instance which created the handle
         inline System* getSystem() const noexcept
         {
             return ( mSystemPtr );
         }
-        /// Returns true if handle is valid, othervise returns false
+
+        /// \brief Returns true if handle is valid, false othervise
         bool isValid() const noexcept;
-        /// Makes handle invalid
+
+        /// \brief Makes handle invalid
         void invalidate() noexcept;
 
 
 
     private:
-        util::Id64 mId{ util::ID64_INVALID };
-        System* mSystemPtr{ nullptr };
+        util::Id64 mId{ util::ID64_INVALID }; // id with the system
+        System* mSystemPtr{ nullptr }; // pointer to the system
     };
 
-    util::TypeMap< Component::Handle > map; //TODO: make if more efficient and more friendly
+    /// \brief Map for added components: untyped component handles by component types
+    /// \todo make it more efficient and more friendly (meybe bitset)
+    util::TypeMap< Component::Handle > map;
 };
 
 
-/// \brief Represents the 'system' in the 'entity-component system'
+/// \brief Represents the 'entity-component system' as a unit
 ///
 /// System type provides the common functionality of an 'entity-component system':
 /// management of entities, processors/components and their relationships.
 ///
-/// Dumb usage example:
+/// Usage example:
 /// \code{.cpp}
 /// #include <tktk/ecs/System.hpp>
 /// ...
 /// using namespace tktk;
 /// ecs::System system;
-/// auto entity{ system.addEntity() };
+/// auto entity( sysstem.addEntity() );
 /// entity.remove();
 /// ...
 /// \endcode
@@ -398,12 +421,25 @@ protected:
 // Template-methods realisations
 //
 
+// Entity::Handle
+
 template< typename T, typename... ArgsT >
-typename T::Handle Entity::Handle::addComp( ArgsT&&... args )
+typename T::Handle Entity::Handle::addComp( ArgsT&&... args ) noexcept
 {
     return ( mSystemPtr->addComp< T >( mId, std::forward< ArgsT >( args )... ) );
 }
 
+template< typename T >
+typename T::Handle Entity::Handle::getComp() noexcept
+{
+    return ( mSystemPtr->getComp< T >( mId ) );
+}
+
+template< typename T >
+void Entity::Handle::removeComp() noexcept
+{
+    mSystemPtr->removeComp< T >();
+}
 
 } //namespace ecs
 } //namespace tktk

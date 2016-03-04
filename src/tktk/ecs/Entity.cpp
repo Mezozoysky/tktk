@@ -31,8 +31,8 @@ namespace tktk
 namespace ecs
 {
 
-Entity::Handle::Handle( const util::Id64& eid, System* systemPtr )
-: mId{ eid }
+Entity::Handle::Handle( const util::Id64& eId, System* systemPtr )
+: mId{ eId }
 , mSystemPtr{ systemPtr }
 {
 }
