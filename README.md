@@ -8,7 +8,7 @@ So currently tktk provides the entity-component system implementation (tktk-ecs 
 
 License
 -------
-tktk is released under the terms of zlib/png license; see full license text in the LICENSE.md file or at https://opensource.org/licenses/Zlib
+tktk is released under the terms of zlib/png license; see full license text in LICENSE.md file or at https://opensource.org/licenses/Zlib
 
 Build
 -----
