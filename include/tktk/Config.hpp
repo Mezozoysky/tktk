@@ -54,3 +54,13 @@
 
 
 #endif /* end of include guard: TKTK_CONFIG_HPP */
+
+/// \mainpage Triko Toolkit documentation
+/// \tableofcontents
+/// \section introSec Introduction
+/// Here is the main introduction text
+/// \subsection introFirstSubsec First
+/// Here is the first introduction subsection text
+///
+/// \subsection introEtcSubsec Etc.
+/// And more text...
