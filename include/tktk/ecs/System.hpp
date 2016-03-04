@@ -261,6 +261,9 @@ public:
     // About processors
     //
 
+    /// \brief Registers the processor of given type `T` and creates the instance
+    /// \param[in] args Arguments for `T` constructor
+    /// \returns The raw pointer to the instance
     template< typename T, typename... ArgsT >
     T* registerProc( ArgsT&&... args )
     {
@@ -275,6 +278,8 @@ public:
         return ( static_cast< T* >( procPtr ) );
     }
 
+    /// \brief Gets the processor instance of given type `T`
+    /// \returns The raw pointer to the instance if `T` is registered, `nullptr` othervise
     template< typename T >
     T* getProc()
     {
@@ -294,6 +299,8 @@ public:
         return ( procPtr );
     }
 
+    /// \brief Gets the processor instance by given processor's component type `CompT`
+    /// \returns The raw pointer to the instance if according processor type is registered, `nullptr` othervise
     template< typename CompT >
     Proc< CompT >* getProcForCompType()
     {
@@ -314,9 +321,9 @@ public:
     }
 
 protected:
-    PoolTypeT mEntityPool;
+    PoolTypeT mEntityPool; ///< Memory pool for storing entities
 
-    util::TypeMap< Processor* > mProcessors;
+    util::TypeMap< Processor* > mProcessors; ///< Registered processors by accoding component types map
 };
 
 } //namespace ecs
