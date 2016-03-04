@@ -12,7 +12,6 @@ project(tktk C CXX)
 
 option(TKTK_BUILD_ECS "Build tktk-ecs library" ON)
 option(TKTK_BUILD_PHASE "Build tktk-phase library" ON)
-option(TKTK_BUILD_SCENE2D "Build tktk-scene2d library" ON)
 
 option(TKTK_BUILD_UNIT_TESTS "Build unit tests for tktk libraries" ON)
 

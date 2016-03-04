@@ -24,7 +24,6 @@
         source distribution.
 */
 
-#include <tktk/ecs/Entity.hpp>
 #include <tktk/ecs/System.hpp>
 
 namespace tktk

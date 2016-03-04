@@ -25,7 +25,7 @@
 
 
 /// \file
-/// \brief This file provides ecs::System type
+/// \brief This file provides ecs::System and ecs::Entity types
 /// \author Stanislav Demyanovich <stan@angrybubo.com>
 /// \date 2015-2016
 /// \copyright tktk is released under the terms of zlib/png license; see full license text at https://opensource.org/licenses/Zlib
@@ -38,15 +38,83 @@
 #include <type_traits>
 #include <memory>
 #include <algorithm>
-#include <tktk/ecs/Entity.hpp>
+#include <cstdint>
 #include <tktk/ecs/Processor.hpp>
 #include <tktk/util/TypeMap.hpp>
 #include <tktk/util/Signal.hpp>
+#include <tktk/util/MemoryPool.hpp>
+#include <tktk/ecs/Component.hpp>
+#include <tktk/util/Id64.hpp>
 
 namespace tktk
 {
 namespace ecs
 {
+
+///
+/// Entity
+///
+struct Entity
+{
+    ///
+    /// Entity::Handle
+    ///
+    struct Handle
+    {
+        /// Constructor
+        Handle( const util::Id64& eid, System* mgrPtr );
+
+        /// 'Destroys' the entity, invalidates the handle itself
+        void remove() noexcept;
+        /// Returns the raw pointer to the entity
+        Entity* operator ->() const noexcept;
+
+        /// Adds the component of given type T constructed with given arguments args to th entity
+        template< typename T, typename... ArgsT >
+        typename T::Handle addComp( ArgsT&&... args );
+        //         {
+        //             return ( mSystemPtr->addComp< T >( mId, std::forward< ArgsT >( args )... ) );
+        //         }
+
+        /// Returns the handle for entity's component of the given type T if added
+        //         template< typename T >
+        //         typename T::Handle getComp() noexcept
+        //         {
+        //             return ( mSystemPtr->getComp< T >() );
+        //         }
+
+        /// Removes the component of the given type T from the entity if added
+        //         template< typename T >
+        //         void removeComp() noexcept
+        //         {
+        //             mSystemPtr->removeComp< T >();
+        //         }
+
+        /// Returns entity's id
+        inline util::Id64 getId() const noexcept
+        {
+            return ( mId );
+        }
+        /// Returns pointer to the System instance which created the handle
+        inline System* getSystem() const noexcept
+        {
+            return ( mSystemPtr );
+        }
+        /// Returns true if handle is valid, othervise returns false
+        bool isValid() const noexcept;
+        /// Makes handle invalid
+        void invalidate() noexcept;
+
+
+
+    private:
+        util::Id64 mId{ util::ID64_INVALID };
+        System* mSystemPtr{ nullptr };
+    };
+
+    util::TypeMap< Component::Handle > map; //TODO: make if more efficient and more friendly
+};
+
 
 /// \brief Represents the 'system' in the 'entity-component system'
 ///
@@ -325,6 +393,17 @@ protected:
 
     util::TypeMap< Processor* > mProcessors; ///< Registered processors by accoding component types map
 };
+
+//
+// Template-methods realisations
+//
+
+template< typename T, typename... ArgsT >
+typename T::Handle Entity::Handle::addComp( ArgsT&&... args )
+{
+    return ( mSystemPtr->addComp< T >( mId, std::forward< ArgsT >( args )... ) );
+}
+
 
 } //namespace ecs
 } //namespace tktk

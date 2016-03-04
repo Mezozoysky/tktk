@@ -28,7 +28,7 @@
 #define TKTK_UTIL_MEMORY_POOL_HPP
 
 #include <tktk/Config.hpp>
-#include <cstddef>
+#include <tktk/util/Id64.hpp>
 #include <vector>
 #include <cassert>
 #include <type_traits>
@@ -39,34 +39,6 @@ namespace tktk
 {
 namespace util
 {
-
-struct Id64
-{
-    Id64()
-    : mId{ 0 }
-    {
-    }
-    Id64( uint32_t index, uint32_t version )
-    : mId{ uint64_t( index ) | uint64_t( version ) << 32UL }
-    {
-    }
-
-    uint32_t index() const noexcept
-    {
-        return ( mId & 0xffffffffUL );
-    }
-
-    uint32_t version() const noexcept
-    {
-        return ( mId >> 32UL );
-    }
-
-private:
-    uint64_t mId{ 0 };
-};
-
-const Id64 ID64_INVALID{};
-
 
 class MemoryPoolBase
 {
@@ -145,7 +117,7 @@ public:
         return ( id );
     }
 
-    void destroyElement( Id64 id )
+    void destroyElement( const Id64& id )
     {
         if ( !isIdValid( id ) )
         {
