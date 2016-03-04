@@ -54,8 +54,15 @@ void Game::run()
         //
         auto e0( mECS.addEntity() );
         e0.addComp< Transform >( Transform::Vector2f( 0.5f, 0.5f ) );
+        auto t0( e0.getComp< Transform >() );
+        if ( t0.isValid() )
+        {
+            e0.removeComp< Transform >();
+        }
+        t0 = e0.addComp< Transform >( Transform::Vector2f( 0.6f, 0.6f ) );
+        t0->position = Transform::Vector2f( 0.7f, 0.7f );
         e0.addComp< StaticSprite >( "e0sprite.png", 1 );
-        //e0.removeComp< StaticSprite >();
+        e0.removeComp< StaticSprite >();
 
         auto e1( mECS.addEntity() );
         auto t1( e1.addComp< Transform >() );
