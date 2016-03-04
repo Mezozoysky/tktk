@@ -253,6 +253,13 @@ public:
     template< typename T, typename... ArgsT >
     typename T::Handle addComp( const util::Id64& eId, ArgsT&&... args )
     {
+        typename T::Handle invalidCHandle{};
+
+        if ( !isIdValid( eId ) )
+        {
+            return ( invalidCHandle );
+        }
+
         auto procPtr( getProcForCompType< T >() );
         assert( procPtr && "Processor for given component type is not registered." );
 
@@ -261,7 +268,7 @@ public:
         Entity* ePtr{ getEntityPtr( eId ) };
         if ( ePtr->map.find< T >() != ePtr->map.end() )
         {
-            assert( false && "Type already exists!" );
+            return ( invalidCHandle );
         }
         ePtr->map.insert< T >( cHandle.getUntyped() );
 
