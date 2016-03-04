@@ -242,7 +242,7 @@ public:
     template< typename T, typename... ArgsT >
     typename T::Handle addComp( const Entity::Handle& eHandle, ArgsT&&... args )
     {
-        return ( addComp< T >( eHandle.getId() ) );
+        return ( addComp< T >( eHandle.getId(), std::forward< ArgsT >( args )... ) );
     }
 
     /// \brief Adds 'new' component of given type `T` to the entity specified by id
@@ -438,7 +438,7 @@ typename T::Handle Entity::Handle::getComp() noexcept
 template< typename T >
 void Entity::Handle::removeComp() noexcept
 {
-    mSystemPtr->removeComp< T >();
+    mSystemPtr->removeComp< T >( mId );
 }
 
 } //namespace ecs
