@@ -64,14 +64,5 @@ void StaticSpriteProc::onUpdate( float deltaTime )
         if ( !mPool.isAlive( i ) ) continue;
         auto comp = mPool[ i ];
         ll_debug( "Updating StaticSprite comp#" << std::to_string( i ) << " texture=" << comp.texture << ", centered=" << std::to_string( comp.centered ) );
-
-        auto t( mSystemPtr->getComp< Transform >( comp.getEntityId() ) );
-        SDL_Rect rect;
-        rect.w = 24;
-        rect.h = 24;
-        rect.x = t->position.x;
-        rect.y = t->position.y;
-        SDL_SetRenderDrawColor( mRenderer, 255, 0, 0, 255 );
-        SDL_RenderFillRect( mRenderer, &rect );
     }
 }
