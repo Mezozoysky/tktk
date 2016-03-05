@@ -40,6 +40,11 @@ SpriteSheet::~SpriteSheet()
 {
 }
 
+SpriteSheetProc::SpriteSheetProc(ecs::System* systemPtr)
+: Proc< SpriteSheet >(systemPtr)
+{
+}
+
 void SpriteSheetProc::setup( ecs::System* systemPtr )
 {
     systemPtr->updateSignal.connect( std::bind( &SpriteSheetProc::onUpdate, this, std::placeholders::_1 ) );

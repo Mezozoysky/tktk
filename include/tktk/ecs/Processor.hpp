@@ -72,8 +72,9 @@ public:
     /// Type of processor's components
     using CompTypeT = CompT;
 
-    Proc() noexcept
+    Proc( System* systemPtr ) noexcept
     : Processor()
+    , mSystemPtr{ systemPtr }
     {
     }
 
@@ -122,6 +123,7 @@ public:
 protected:
     using PoolTypeT = util::MemoryPool<CompTypeT>;
     PoolTypeT mPool;
+    System* mSystemPtr{ nullptr };
 };
 
 } //namespace ecs

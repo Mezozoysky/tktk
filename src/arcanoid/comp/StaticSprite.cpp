@@ -25,6 +25,7 @@
  */
 
 #include "StaticSprite.hpp"
+#include "Transform.hpp"
 #include <tktk/ecs/System.hpp>
 
 using namespace tktk;
@@ -45,6 +46,12 @@ StaticSprite::~StaticSprite()
 {
 }
 
+StaticSpriteProc::StaticSpriteProc( ecs::System* systemPtr, SDL_Renderer* renderer )
+: Proc< StaticSprite >( systemPtr )
+, mRenderer{ renderer }
+{
+}
+
 void StaticSpriteProc::setup( ecs::System* systemPtr )
 {
     systemPtr->updateSignal.connect( std::bind( &StaticSpriteProc::onUpdate, this, std::placeholders::_1 ) );
@@ -57,5 +64,14 @@ void StaticSpriteProc::onUpdate( float deltaTime )
         if ( !mPool.isAlive( i ) ) continue;
         auto comp = mPool[ i ];
         ll_debug( "Updating StaticSprite comp#" << std::to_string( i ) << " texture=" << comp.texture << ", centered=" << std::to_string( comp.centered ) );
+
+        auto t( mSystemPtr->getComp< Transform >( comp.getEntityId() ) );
+        SDL_Rect rect;
+        rect.w = 24;
+        rect.h = 24;
+        rect.x = t->position.x;
+        rect.y = t->position.y;
+        SDL_SetRenderDrawColor( mRenderer, 255, 0, 0, 255 );
+        SDL_RenderFillRect( mRenderer, &rect );
     }
 }

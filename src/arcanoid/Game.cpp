@@ -53,27 +53,27 @@ void Game::run()
         // entity-centric api test
         //
         auto e0( mECS.addEntity() );
-        e0.addComp< Transform >( Transform::Vector2f( 0.5f, 0.5f ) );
+        e0.addComp< Transform >( Transform::Vector2f( 10.0f, 10.0f ) );
         auto t0( e0.getComp< Transform >() );
         if ( t0.isValid() )
         {
             e0.removeComp< Transform >();
         }
-        t0 = e0.addComp< Transform >( Transform::Vector2f( 0.6f, 0.6f ) );
-        t0->position = Transform::Vector2f( 0.7f, 0.7f );
+        t0 = e0.addComp< Transform >( Transform::Vector2f( 11.0f, 11.0f ) );
+        t0->position = Transform::Vector2f( 12.0f, 12.0f );
         e0.addComp< StaticSprite >( "e0sprite.png", 1 );
         e0.removeComp< StaticSprite >();
 
         auto e1( mECS.addEntity() );
         auto t1( e1.addComp< Transform >() );
-        t1->position = Transform::Vector2f( 1.0f, 1.0f );
+        t1->position = Transform::Vector2f( 100.0f, 100.0f );
         auto ss1( e1.addComp< StaticSprite >() );
         ss1->texture = "ss1.png";
 
         auto e2( mECS.addEntity() );
         e2.addComp< Transform >();
         auto t2( e2.getComp< Transform >() );
-        t2->position = Transform::Vector2f( 2.0f, 2.0f );
+        t2->position = Transform::Vector2f( 200.0f, 200.0f );
         e2.addComp< StaticSprite >();
         auto ss2( e2.getComp< StaticSprite >() );
         ss2->centered = true;
@@ -82,6 +82,7 @@ void Game::run()
         //
         // system-centric api test
         //
+/*
         auto e3( mECS.addEntity() );
         mECS.addComp< StaticSprite >( e3, "e3sprite.png", 0 );
 
@@ -94,7 +95,7 @@ void Game::run()
         mECS.addComp< StaticSprite >( e5 );
         auto ss5( mECS.getComp< StaticSprite >( e5 ) );
         ss5->texture = "ss5.png";
-
+*/
         mIsRunning = true;
         SDL_Event event;
         while ( mIsRunning )
@@ -107,8 +108,9 @@ void Game::run()
                 }
             }
 
-            mECS.update( 1 /*secondsElapsed*/ );
             SDL_RenderClear( mRenderer );
+            mECS.update( 1 /*secondsElapsed*/ );
+            SDL_SetRenderDrawColor( mRenderer, 0, 0, 0, 255 );
             SDL_RenderPresent( mRenderer );
             //std::cout << "FPS: " << std::to_string( 1.0f / secondsElapsed ) << std::endl;
         }
@@ -139,7 +141,7 @@ bool Game::setup()
     }
 
     auto transformProc( mECS.registerProc< TransformProc >() );
-    auto staticSpriteProc( mECS.registerProc< StaticSpriteProc >() );
+    auto staticSpriteProc( mECS.registerProc< StaticSpriteProc >( mRenderer ) );
     auto spriteSheetProc( mECS.registerProc< SpriteSheetProc >() );
     mECS.setup();
 

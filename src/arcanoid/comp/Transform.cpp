@@ -40,6 +40,11 @@ Transform::~Transform()
 {
 }
 
+TransformProc::TransformProc(ecs::System* systemPtr)
+: Proc< Transform >( systemPtr )
+{
+}
+
 void TransformProc::setup( ecs::System* systemPtr )
 {
     systemPtr->updateSignal.connect( std::bind( &TransformProc::onUpdate, this, std::placeholders::_1 ) );

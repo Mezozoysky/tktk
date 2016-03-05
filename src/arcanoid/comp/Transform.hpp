@@ -62,6 +62,7 @@ class TransformProc
 : public ecs::Proc< Transform >
 {
 public:
+    TransformProc( ecs::System* systemPtr );
 
     virtual void setup( ecs::System* systemPtr ) override;
     virtual void onUpdate( float deltaTime );

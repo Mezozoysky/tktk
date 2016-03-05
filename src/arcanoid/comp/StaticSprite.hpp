@@ -29,6 +29,7 @@
 
 #include <tktk/ecs/Component.hpp>
 #include <tktk/ecs/Processor.hpp>
+#include <SDL.h>
 
 using namespace tktk;
 
@@ -49,8 +50,12 @@ class StaticSpriteProc
 : public ecs::Proc< StaticSprite >
 {
 public:
+    StaticSpriteProc( ecs::System* systemPtr, SDL_Renderer* renderer );
     virtual void setup( ecs::System* systemPtr ) override;
     virtual void onUpdate( float deltaTime );
+
+private:
+    SDL_Renderer* mRenderer{ nullptr };
 };
 
 #endif /* end of include guard: ARCANOID_COMP_STATIC_SPRITE_HPP */

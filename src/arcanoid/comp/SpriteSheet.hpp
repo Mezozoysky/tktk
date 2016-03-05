@@ -47,6 +47,8 @@ class SpriteSheetProc
 : public ecs::Proc< SpriteSheet >
 {
 public:
+    SpriteSheetProc(ecs::System* systemPtr);
+
     virtual void setup( ecs::System* systemPtr ) override;
     virtual void onUpdate( float deltaTime );
 };

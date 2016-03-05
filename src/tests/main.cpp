@@ -150,6 +150,11 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     : public ecs::Proc< Comp1 >
     {
     public:
+        Proc1(ecs::System* systemPtr)
+        : ecs::Proc< Comp1 >( systemPtr )
+        {
+        }
+
         virtual void setup( ecs::System* systemPtr ) override
         {
             systemPtr->updateSignal.connect( std::bind( &Proc1::onUpdate, this, std::placeholders::_1 ) );
@@ -183,6 +188,11 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     : public ecs::Proc< Comp2 >
     {
     public:
+        Proc2(ecs::System* systemPtr)
+        : ecs::Proc< Comp2 >( systemPtr )
+        {
+        }
+
         virtual void setup( ecs::System* systemPtr ) override
         {
             systemPtr->updateSignal.connect( std::bind( &Proc2::onUpdate, this, std::placeholders::_1 ) );

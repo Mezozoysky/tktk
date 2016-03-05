@@ -370,7 +370,7 @@ public:
                       , "T should extend tktk::ecs::Processor"
         );
 
-        Processor* procPtr{ new T( std::forward< ArgsT >( args )... ) };
+        Processor* procPtr{ new T( this, std::forward< ArgsT >( args )... ) };
         mProcessors.insert< typename T::CompTypeT >( procPtr );
 
         return ( static_cast< T* >( procPtr ) );
