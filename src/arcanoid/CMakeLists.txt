@@ -81,11 +81,13 @@ set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/src/arcanoid/comp/Transform.hpp
     ${CMAKE_SOURCE_DIR}/src/arcanoid/comp/StaticSprite.hpp
     ${CMAKE_SOURCE_DIR}/src/arcanoid/comp/SpriteSheet.hpp
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/comp/RectShape.hpp
 )
 set(GROUP_SOURCES
     ${CMAKE_SOURCE_DIR}/src/arcanoid/comp/Transform.cpp
     ${CMAKE_SOURCE_DIR}/src/arcanoid/comp/StaticSprite.cpp
     ${CMAKE_SOURCE_DIR}/src/arcanoid/comp/SpriteSheet.cpp
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/comp/RectShape.cpp
 )
 source_group("arcanoid\\comp" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(ARCANOID_HEADERS ${ARCANOID_HEADERS} ${GROUP_HEADERS})

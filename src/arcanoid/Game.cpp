@@ -28,6 +28,7 @@
 #include "comp/Transform.hpp"
 #include "comp/StaticSprite.hpp"
 #include "comp/SpriteSheet.hpp"
+#include "comp/RectShape.hpp"
 #include <iostream>
 #include <type_traits>
 #include <SDL.h>
@@ -63,6 +64,7 @@ void Game::run()
         t0->position = Transform::Vector2f( 12.0f, 12.0f );
         e0.addComp< StaticSprite >( "e0sprite.png", 1 );
         e0.removeComp< StaticSprite >();
+        e0.addComp< RectShape >( 40.0f, 30.0f, SDL_Color{ 0x00, 0xff, 0x00, 0xff } );
 
         auto e1( mECS.addEntity() );
         auto t1( e1.addComp< Transform >() );
@@ -140,9 +142,10 @@ bool Game::setup()
         return ( false );
     }
 
-    auto transformProc( mECS.registerProc< TransformProc >() );
-    auto staticSpriteProc( mECS.registerProc< StaticSpriteProc >( mRenderer ) );
-    auto spriteSheetProc( mECS.registerProc< SpriteSheetProc >() );
+    mECS.registerProc< TransformProc >();
+    mECS.registerProc< StaticSpriteProc >( mRenderer );
+    mECS.registerProc< SpriteSheetProc >();
+    mECS.registerProc< RectShapeProc >( mRenderer );
     mECS.setup();
 
     return ( true );
