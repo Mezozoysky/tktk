@@ -42,27 +42,33 @@ namespace util
 
 struct Id64
 {
-    Id64()
+    inline Id64()
     : mId{ 0 }
     {
     }
-    Id64( uint32_t index, uint32_t version )
-    : mId{ uint64_t( index ) | uint64_t( version ) << 32UL }
+
+    inline Id64( std::uint32_t index, std::uint32_t version )
+    : mId{ std::uint64_t( index ) | std::uint64_t( version ) << 32UL }
     {
     }
 
-    uint32_t index() const noexcept
+    std::uint32_t index() const noexcept
     {
         return ( mId & 0xffffffffUL );
     }
 
-    uint32_t version() const noexcept
+    std::uint32_t version() const noexcept
     {
         return ( mId >> 32UL );
     }
 
+    std::uint64_t id() const noexcept
+    {
+        return ( mId );
+    }
+
 private:
-    uint64_t mId{ 0 };
+    std::uint64_t mId{ 0 };
 };
 
 const Id64 ID64_INVALID{};
