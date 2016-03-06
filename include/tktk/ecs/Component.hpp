@@ -87,7 +87,7 @@ struct Comp
     using CompTypeT = CompT;
     using BaseTypeT = Comp< CompTypeT >;
 
-    /// typed Component<CompT>::Handle
+    /// typed Comp<CompT>::Handle
     struct Handle
     {
         Handle()
