@@ -66,9 +66,15 @@ public:
     {
     }
 
+    template < typename T >
+    void regAssetType() noexcept
+    {
+        mPoolByAssetType.insert< T >( new AssetPool< T >() );
+    }
+
     /// \brief Adds a new asset into the system
     template< typename T, typename... ArgsT >
-    util::Id64 add( ArgsT&&... args )
+    util::Id64 add( ArgsT&&... args ) noexcept
     {
         auto it( mPoolByAssetType.find< T >() );
         if ( it == mPoolByAssetType.end() )
@@ -82,7 +88,7 @@ public:
     }
 
     template < typename T >
-    void remove( const util::Id64& aId )
+    void remove( const util::Id64& aId ) noexcept
     {
         auto it( mPoolByAssetType.find< T >() );
         if ( it == mPoolByAssetType.end() )

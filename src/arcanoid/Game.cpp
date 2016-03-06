@@ -51,8 +51,8 @@ void Game::run()
 {
     if ( setup() )
     {
-        //auto assetId = mAssetS.add< Image >( std::string("textures/first_texture.png"), mRenderer );
-        //std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!! texture name: \"" << assetId.id() << "\"" << std::endl;
+        auto assetId = mAssetS.add< Image >( std::string("textures/first_texture.png"), mRenderer );
+        std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!! asset id: \"" << assetId.id() << "\"" << std::endl;
 
         //
         // entity-centric api test
@@ -145,6 +145,8 @@ bool Game::setup()
         ll_error( "SDL_CreateRenderer Error: " << SDL_GetError() );
         return ( false );
     }
+
+    mAssetS.regAssetType< Image >();
 
     mECS.registerProc< TransformProc >();
     mECS.registerProc< StaticSpriteProc >( mRenderer );

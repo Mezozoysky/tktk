@@ -44,12 +44,14 @@ namespace tktk
 namespace asset
 {
 
+/// \brief Marker "interface" for storing asset pools with std containers
 class AssetPoolBase
 {
 public:
-    AssetPoolBase() noexcept = default;
-    virtual ~AssetPoolBase() noexcept = default;
-
+    /// \brief Virtual destructor for further inheritance
+    virtual ~AssetPoolBase() noexcept
+    {
+    }
 };
 
 /// \brief Represents the storage/management for assets
@@ -67,12 +69,16 @@ public:
     /// \brief Default constructor
     ///
     /// Does nothing
-    AssetPool() noexcept = default;
+    AssetPool() noexcept
+    {
+    }
 
     /// \brief Virtual destructor for further inheritance
     ///
     /// Does nothing
-    virtual ~AssetPool() noexcept = default;
+    virtual ~AssetPool() noexcept
+    {
+    }
 
     /// \brief Adds an asset with constructructor arguments \em args and returns an asset id
     template< typename... ArgsT >
@@ -92,7 +98,7 @@ public:
         {
             return;
         }
-        std::string filename{ mPool[ aId ].getFilename() };
+        std::string filename{ mPool[ aId.index() ].getFilename() };
         mIdByNameMap.erase( filename );
         mPool.destroyElement( aId );
     }
