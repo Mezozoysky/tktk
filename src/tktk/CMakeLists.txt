@@ -66,6 +66,24 @@ source_group("tktk\\phase" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(TKTK_LIB_PHASE_HEADERS ${TKTK_LIB_PHASE_HEADERS} ${GROUP_HEADERS})
 set(TKTK_LIB_PHASE_SOURCES ${TKTK_LIB_PHASE_SOURCES} ${GROUP_SOURCES})
 
+set(TKTK_LIB_ASSET_HEADERS "")
+set(TKTK_LIB_ASSET_SOURCES "")
+# =========================
+# === tktk/resmgr group ===
+# =========================
+set(GROUP_HEADERS
+    ${CMAKE_SOURCE_DIR}/include/tktk/asset/Config.hpp
+    ${CMAKE_SOURCE_DIR}/include/tktk/asset/System.hpp
+    ${CMAKE_SOURCE_DIR}/include/tktk/asset/Asset.hpp
+    ${CMAKE_SOURCE_DIR}/include/tktk/asset/AssetPool.hpp
+)
+set(GROUP_SOURCES
+    ${CMAKE_SOURCE_DIR}/src/tktk/asset/System.cpp
+)
+source_group("tktk\\asset" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
+set(TKTK_LIB_RESMGR_HEADERS ${TKTK_LIB_ASSET_HEADERS} ${GROUP_HEADERS})
+set(TKTK_LIB_RESMGR_SOURCES ${TKTK_LIB_ASSET_SOURCES} ${GROUP_SOURCES})
+
 #
 # Build static libraries!
 #
@@ -75,12 +93,24 @@ add_library(tktk-util STATIC
 )
 set_target_properties(tktk-util PROPERTIES LINKER_LANGUAGE CXX)
 
-add_library(tktk-ecs STATIC
-    ${TKTK_LIB_ECS_HEADERS} ${TKTK_CONFIG_HEADERS}
-    ${TKTK_LIB_ECS_SOURCES}
-)
+if(${TKTK_BUILD_ECS})
+    add_library(tktk-ecs STATIC
+        ${TKTK_LIB_ECS_HEADERS} ${TKTK_CONFIG_HEADERS}
+        ${TKTK_LIB_ECS_SOURCES}
+    )
+endif(${TKTK_BUILD_ECS})
 
-add_library(tktk-phase STATIC
-    ${TKTK_LIB_PHASE_HEADERS} ${TKTK_CONFIG_HEADERS}
-    ${TKTK_LIB_PHASE_SOURCES}
-)
+if(${TKTK_BUILD_PHASE})
+    add_library(tktk-phase STATIC
+        ${TKTK_LIB_PHASE_HEADERS} ${TKTK_CONFIG_HEADERS}
+        ${TKTK_LIB_PHASE_SOURCES}
+    )
+endif(${TKTK_BUILD_PHASE})
+
+if(${TKTK_BUILD_ASSET})
+    add_library(tktk-asset STATIC
+        ${TKTK_LIB_ASSET_HEADERS} ${TKTK_CONFIG_HEADERS}
+        ${TKTK_LIB_ASSET_SOURCES}
+    )
+    set_target_properties(tktk-asset PROPERTIES LINKER_LANGUAGE CXX)
+endif(${TKTK_BUILD_ASSET})

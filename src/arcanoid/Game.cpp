@@ -29,6 +29,7 @@
 #include "comp/StaticSprite.hpp"
 #include "comp/SpriteSheet.hpp"
 #include "comp/RectShape.hpp"
+#include "asset/Image.hpp"
 #include <iostream>
 #include <type_traits>
 #include <SDL.h>
@@ -50,6 +51,9 @@ void Game::run()
 {
     if ( setup() )
     {
+        //auto assetId = mAssetS.add< Image >( std::string("textures/first_texture.png"), mRenderer );
+        //std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!! texture name: \"" << assetId.id() << "\"" << std::endl;
+
         //
         // entity-centric api test
         //

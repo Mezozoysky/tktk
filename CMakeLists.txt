@@ -12,10 +12,11 @@ project(tktk C CXX)
 
 option(TKTK_BUILD_ECS "Build tktk-ecs library" ON)
 option(TKTK_BUILD_PHASE "Build tktk-phase library" ON)
+option(TKTK_BUILD_ASSET "Build tktk-asset library" ON)
 
 option(TKTK_BUILD_UNIT_TESTS "Build unit tests for tktk libraries" ON)
 
-option(TKTK_BUILD_ARCANOID "Build arcanoid demo" OFF)
+option(TKTK_BUILD_ARCANOID "Build arcanoid demo" ON)
 
 option(TKTK_LL_ENABLED "Build with LibLog" ON)
 if(${TKTK_LL_ENABLED})
@@ -59,6 +60,7 @@ endif()
 # TKTK include dirs
 #
 include_directories(include)
+include_directories(src)
 
 # actualy all we need here is LibLog header
 if(${TKTK_LL_ENABLED})

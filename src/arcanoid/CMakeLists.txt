@@ -93,6 +93,32 @@ source_group("arcanoid\\comp" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(ARCANOID_HEADERS ${ARCANOID_HEADERS} ${GROUP_HEADERS})
 set(ARCANOID_SOURCES ${ARCANOID_SOURCES} ${GROUP_SOURCES})
 
+# ==============================
+# ==== arcanoid/asset group ====
+# ==============================
+set(GROUP_HEADERS
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/asset/Image.hpp
+)
+set(GROUP_SOURCES
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/asset/Image.cpp
+)
+source_group("arcanoid\\asset" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
+set(ARCANOID_HEADERS ${ARCANOID_HEADERS} ${GROUP_HEADERS})
+set(ARCANOID_SOURCES ${ARCANOID_SOURCES} ${GROUP_SOURCES})
+
+# ===============================
+# ==== arcanoid/render group ====
+# ===============================
+set(GROUP_HEADERS
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/render/Texture.hpp
+)
+set(GROUP_SOURCES
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/render/Texture.cpp
+)
+source_group("arcanoid\\asset" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
+set(ARCANOID_HEADERS ${ARCANOID_HEADERS} ${GROUP_HEADERS})
+set(ARCANOID_SOURCES ${ARCANOID_SOURCES} ${GROUP_SOURCES})
+
 
 add_executable(arcanoid WIN32 MACOSX_BUNDLE
     ${ARCANOID_HEADERS}
@@ -100,7 +126,7 @@ add_executable(arcanoid WIN32 MACOSX_BUNDLE
 )
 set_target_properties(arcanoid PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(arcanoid tktk-ecs tktk-util)
+target_link_libraries(arcanoid tktk-ecs tktk-asset tktk-util)
 target_link_libraries(arcanoid ${SDL2_LIBRARY})
 target_link_libraries(arcanoid ${OPENGL_LIBRARIES})
 target_link_libraries(arcanoid ${TKTK_OS_SPECIFIC_LIBS})

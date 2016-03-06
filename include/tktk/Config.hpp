@@ -60,10 +60,11 @@
 /// tktk is a couple of libraries designed to help in solving common game development tasks; it is written in c++.
 /// \section introSec Introduction
 /// \subsection introNamingSubsec Naming
-/// Letters `tktk` is the abbreviation for 'Triko Toolkit'
+/// \b `tktk` is the abbreviation for 'Triko Toolkit'
 ///
 /// \subsection introOverviewSubsec Overview
 /// Toolkit consists of several libraries
 /// \li \b tktk-util Provides useful types like memory pools, signal, etc
 /// \li \b tktk-ecs Provides general entity-component system implementation
 /// \li \b tktk-phase Provides phase management for games and interactive applications
+/// \li \b tktk-asset Provides general asset storage/access

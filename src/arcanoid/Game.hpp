@@ -29,6 +29,7 @@
 
 #include <memory>
 #include "ECS.hpp"
+#include <tktk/asset/System.hpp>
 
 // Forward declarations
 class SDL_Window;
@@ -50,6 +51,8 @@ public:
 private:
 
     bool mIsRunning;
+
+    asset::System mAssetS;
 
     SDL_Window* mWindow;
     SDL_Renderer* mRenderer;
