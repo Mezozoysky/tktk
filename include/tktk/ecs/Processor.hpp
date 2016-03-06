@@ -69,7 +69,7 @@ class Proc
 {
 
 public:
-    /// Type of processor's components
+    /// \brief Type of processor's components
     using CompTypeT = CompT;
 
     Proc( System* systemPtr ) noexcept
@@ -82,7 +82,7 @@ public:
     {
     }
 
-    /// Adds component with constructructor arguments @args and returns a handle of type CompTypeT::Handle
+    /// \brief Adds component with constructructor arguments \em args and returns a handle of type CompTypeT::Handle
     template< typename... ArgsT >
     typename CompTypeT::Handle addComp( ArgsT&&... args )
     {
@@ -92,7 +92,7 @@ public:
         return ( cHandle );
     }
 
-    /// Marks the 'pointed' component as destroyed and invalidates the handle if handle is valid
+    /// \brief Marks the 'pointed' component as destroyed and invalidates the handle if handle is valid
     void removeComp( typename CompTypeT::Handle& cHandle )
     {
         if ( cHandle.isValid() )
@@ -102,19 +102,19 @@ public:
         }
     }
 
-    /// Returns true if given id is valid
+    /// \brief Returns true if given id is valid
     virtual bool isIdValid( const util::Id64& cId ) const noexcept override final
     {
         return ( mPool.isIdValid( cId ) );
     }
 
-    /// Returns raw pointer to the component with id @cId
+    /// \brief Returns raw pointer to the component with id \em cId
     inline virtual CompTypeT* getCompPtr( const util::Id64& cId ) const noexcept override final
     {
         return ( mPool.getPtr( cId.index() ) );
     }
 
-    /// Marks component with id @cId as 'destroyed'
+    ///\brief Marks component with id \em cId as 'destroyed'
     inline virtual void destroyElement( const util::Id64& cId ) noexcept override final
     {
         mPool.destroyElement( cId );
