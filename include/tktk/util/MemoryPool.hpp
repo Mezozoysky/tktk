@@ -209,7 +209,7 @@ public:
     {
         for ( std::uint32_t i = 0; i < mVersions.size(); ++i )
         {
-            if ( mVersions[ i ] )
+            if ( mVersions[ i ] ) //TODO: WAAT?
             {
                 destroyElement( i );
             }
