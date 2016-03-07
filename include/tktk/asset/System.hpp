@@ -35,11 +35,10 @@
 #define TKTK_ASSET_SYSTEM_HPP
 
 #include <tktk/asset/Config.hpp>
-#include <tktk/asset/Asset.hpp>
-#include <tktk/asset/AssetPool.hpp>
-#include <tktk/util/Id64.hpp>
+#include <tktk/asset/Manager.hpp>
 #include <tktk/util/TypeMap.hpp>
 #include <cassert>
+#include <type_traits>
 
 namespace tktk
 {
@@ -66,41 +65,110 @@ public:
     {
     }
 
-    template < typename T >
-    void regAssetType() noexcept
+    template < typename MgrT, typename... ArgsT >
+    MgrT* registerMgr( ArgsT&&... args ) noexcept
     {
-        mPoolByAssetType.insert< T >( new AssetPool< T >() );
+        static_assert(
+            std::is_base_of< Mgr< typename MgrT::AssetTypeT >, MgrT >::value
+            , "MgrT should extend tktk::asset::Mgr<>"
+        );
+
+        Manager* mgrPtr{ new MgrT( this, std::forward<ArgsT>( args )... ) };
+        mManagers.insert< typename MgrT::AssetTypeT >( mgrPtr );
+
+        return ( static_cast< MgrT* >( mgrPtr ) );
     }
 
-    /// \brief Adds a new asset into the system
-    template< typename T, typename... ArgsT >
-    util::Id64 add( ArgsT&&... args ) noexcept
+    template < typename MgrT >
+    MgrT* getMgr() const noexcept
     {
-        auto it( mPoolByAssetType.find< T >() );
-        if ( it == mPoolByAssetType.end() )
-        {
-            assert( false && "Asset type T doesnt registered within the asset system" );
-        }
-        auto pool( static_cast< AssetPool< T >* >( it->second ) );
-        auto aId( pool->add( std::forward< ArgsT >( args )... ) );
+        static_assert(
+            std::is_base_of< Mgr< typename MgrT::AssetTypeT >, MgrT >::value
+            , "MgrT should extend tktk::asset::Mgr<>"
+        );
 
-        return ( aId );
+        MgrT* mgrPtr{ nullptr };
+
+        auto it = mManagers.find< typename MgrT::AssetTypeT >();
+        if ( it != mManagers.end() )
+        {
+            mgrPtr = static_cast< MgrT* >( it->second );
+        }
+
+        return ( mgrPtr );
     }
 
-    template < typename T >
-    void remove( const util::Id64& aId ) noexcept
+    template< typename AssetT >
+    Mgr< AssetT >* getMgrForAssetType() const noexcept
     {
-        auto it( mPoolByAssetType.find< T >() );
-        if ( it == mPoolByAssetType.end() )
+        Mgr< AssetT >* mgrPtr;
+
+        auto it = mManagers.find< AssetT >();
+        if ( it != mManagers.end() )
         {
-            assert( false && "Asset type T doesnt registered within the asset system" );
+            mgrPtr = static_cast< Mgr< AssetT >* >( it->second );
         }
-        auto pool( static_cast< AssetPool< T >* >( it->second ) );
-        pool->remove( aId );
+
+        return ( mgrPtr );
+    }
+
+
+    template < typename AssetT >
+    std::shared_ptr< AssetT > load( const std::string& name, bool reload = false ) noexcept
+    {
+        std::shared_ptr< AssetT > shared;
+
+        Mgr< AssetT >* mgrPtr{ getMgrForAssetType< AssetT >() };
+        if ( mgrPtr == nullptr )
+        {
+            assert( false && "Manager for AssetT asset type isnt registered within the system instance." );
+        }
+        else
+        {
+            shared = mgrPtr->load( name, reload );
+        }
+
+        return ( shared );
+    }
+
+    template< typename AssetT >
+    std::shared_ptr< AssetT > get( const std::string& name ) noexcept
+    {
+        std::shared_ptr< AssetT > shared;
+
+        Mgr< AssetT >* mgrPtr{ getMgrForAssetType< AssetT >() };
+        if ( mgrPtr == nullptr )
+        {
+            assert( false && "Manager for AssetT asset type isnt registered within the system instance." );
+        }
+        else
+        {
+            shared = mgrPtr->get( name );
+        }
+
+        return ( shared );
+    }
+
+    template< typename AssetT >
+    std::shared_ptr< AssetT > drop( const std::string& name ) noexcept
+    {
+        std::shared_ptr< AssetT > shared;
+
+        Mgr< AssetT >* mgrPtr{ getMgrForAssetType< AssetT >() };
+        if ( mgrPtr == nullptr )
+        {
+            assert( false && "Manager for AssetT asset type isnt registered within the system instance." );
+        }
+        else
+        {
+            shared = mgrPtr->drop( name );
+        }
+
+        return ( shared );
     }
 
 protected:
-    util::TypeMap< AssetPoolBase* > mPoolByAssetType;
+    util::TypeMap< Manager* > mManagers;
 };
 
 } //namespace asset

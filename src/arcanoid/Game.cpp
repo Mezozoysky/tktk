@@ -29,7 +29,7 @@
 #include "comp/StaticSprite.hpp"
 #include "comp/SpriteSheet.hpp"
 #include "comp/RectShape.hpp"
-#include "asset/Image.hpp"
+#include "asset/TextureMgr.hpp"
 #include <iostream>
 #include <type_traits>
 #include <SDL.h>
@@ -51,8 +51,21 @@ void Game::run()
 {
     if ( setup() )
     {
+        /*
         auto assetId = mAssetS.add< Image >( std::string("textures/first_texture.png"), mRenderer );
         std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!! asset id: \"" << assetId.id() << "\"" << std::endl;
+        std::shared_ptr< Texture > texture{ mAssetS.getData< Image >( assetId ) };
+        if ( texture != nullptr )
+        {
+            std::string fname{ imagePtr->getFilename() };
+            std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!! asset fname: \"" << fname << "\"" << std::endl;
+        }
+        else
+        {
+            std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!! failed to get imagePtr!" << std::endl;
+        }
+        */
+        auto texture( mAssetS.get< Texture >( "texture0.bpm" ) );
 
         //
         // entity-centric api test
@@ -146,13 +159,15 @@ bool Game::setup()
         return ( false );
     }
 
-    mAssetS.regAssetType< Image >();
+    mAssetS.registerMgr< TextureMgr >( mRenderer );
 
     mECS.registerProc< TransformProc >();
     mECS.registerProc< StaticSpriteProc >( mRenderer );
     mECS.registerProc< SpriteSheetProc >();
     mECS.registerProc< RectShapeProc >( mRenderer );
     mECS.setup();
+
+    mAssetS.load< Texture >( "texture0.bpm" );
 
     return ( true );
 }

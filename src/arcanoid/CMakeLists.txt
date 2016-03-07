@@ -97,10 +97,10 @@ set(ARCANOID_SOURCES ${ARCANOID_SOURCES} ${GROUP_SOURCES})
 # ==== arcanoid/asset group ====
 # ==============================
 set(GROUP_HEADERS
-    ${CMAKE_SOURCE_DIR}/src/arcanoid/asset/Image.hpp
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/asset/TextureMgr.hpp
 )
 set(GROUP_SOURCES
-    ${CMAKE_SOURCE_DIR}/src/arcanoid/asset/Image.cpp
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/asset/TextureMgr.cpp
 )
 source_group("arcanoid\\asset" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(ARCANOID_HEADERS ${ARCANOID_HEADERS} ${GROUP_HEADERS})

@@ -22,43 +22,42 @@
 //  3.  This notice may not be removed or altered from any
 //      source distribution.
 
-#ifndef ARCANOID_ASSET_IMAGE_HPP
-#define ARCANOID_ASSET_IMAGE_HPP
+#ifndef ARCANOID_ASSET_TEXTURE_MGR_HPP
+#define ARCANOID_ASSET_TEXTURE_MGR_HPP
 
-#include <tktk/asset/Asset.hpp>
+#include <tktk/asset/Manager.hpp>
 #include <arcanoid/render/Texture.hpp>
 #include <SDL.h>
 
 using namespace tktk;
 
-class Image
-: public asset::Asset< Texture >
+class TextureMgr
+: public asset::Mgr< Texture >
 {
 public:
-    Image( const std::string& filename, SDL_Renderer* renderer ) noexcept
-    : asset::Asset< Texture >( filename )
-    , mRenderPtr{ renderer }
+    TextureMgr( asset::System* systemPtr, SDL_Renderer* rendererPtr ) noexcept
+    : asset::Mgr< Texture >( systemPtr )
+    , mRenderPtr{ rendererPtr }
     {
     }
 
-    virtual ~Image() noexcept
+    virtual ~TextureMgr() noexcept
     {
     }
 
-    virtual bool load() noexcept override
+    virtual SharedAssetTypeT loadAsset( const std::string& name ) noexcept override // TODO: Should be pure virtual
     {
-        SDL_Surface* surface{ SDL_LoadBMP( getFilename().c_str() ) };
-        mData = std::make_shared< Texture >( mRenderPtr, surface );
+        SharedAssetTypeT shared;
+
+        SDL_Surface* surface{ SDL_LoadBMP( name.c_str() ) };
+        SDL_Texture* rawTexture{ SDL_CreateTextureFromSurface( mRenderPtr, surface ) };
         SDL_FreeSurface( surface );
-        if ( mData == nullptr )
-        {
-            return ( false );
-        }
-        return ( true );
+        shared = std::make_shared< Texture >( rawTexture );
+        return ( shared );
     }
 
 private:
     SDL_Renderer* mRenderPtr{ nullptr };
 };
 
-#endif // ARCANOID_ASSET_IMAGE_HPP
+#endif // ARCANOID_ASSET_TEXTURE_MGR_HPP

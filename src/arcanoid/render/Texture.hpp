@@ -32,14 +32,17 @@
 class Texture
 {
 public:
-    Texture( SDL_Renderer* renderer, SDL_Surface* surface ) noexcept
+    Texture( SDL_Texture* rawTexture ) noexcept
+    : mRawTexture{ rawTexture }
     {
-        mRawTexture = SDL_CreateTextureFromSurface( renderer, surface );
     }
 
     virtual ~Texture() noexcept
     {
-        SDL_DestroyTexture( mRawTexture );
+        if ( mRawTexture != nullptr )
+        {
+            SDL_DestroyTexture( mRawTexture );
+        }
     }
 
     inline SDL_Texture* getRawTexture() const noexcept

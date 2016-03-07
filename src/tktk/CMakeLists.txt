@@ -74,8 +74,7 @@ set(TKTK_LIB_ASSET_SOURCES "")
 set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/include/tktk/asset/Config.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/asset/System.hpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/asset/Asset.hpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/asset/AssetPool.hpp
+    ${CMAKE_SOURCE_DIR}/include/tktk/asset/Manager.hpp
 )
 set(GROUP_SOURCES
     ${CMAKE_SOURCE_DIR}/src/tktk/asset/System.cpp
