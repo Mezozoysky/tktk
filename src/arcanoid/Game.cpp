@@ -95,9 +95,33 @@ void Game::run()
                 }
             }
 
-            SDL_RenderClear( mRenderer );
+//             SDL_SetRenderDrawColor( mRenderer, 0, 0, 0, 255 );
+//             SDL_RenderClear( mRenderer );
+// /*
+            {
+                SDL_Color colors[2]{
+                    { 0x66, 0x66, 0x66, 0xff },
+                    { 0x99, 0x99, 0x99, 0xff }
+                };
+                SDL_Rect rect{ 0, 0, 8, 8 };
+                int i;
+                for ( int y = 0; y < 768; y += rect.h)
+                {
+                    for ( int x = 0; x < 1024; x += rect.w)
+                    {
+                        i = (((x ^ y) >> 3) & 1);
+                        SDL_SetRenderDrawColor(mRenderer, colors[i].r, colors[i].g, colors[i].b, colors[i].a);
+
+                        rect.x = x;
+                        rect.y = y;
+                        SDL_RenderFillRect(mRenderer, &rect);
+                    }
+                }
+
+            }
+// */
             mECS.update( 1 /*secondsElapsed*/ );
-            SDL_SetRenderDrawColor( mRenderer, 0, 0, 0, 255 );
+
             SDL_RenderPresent( mRenderer );
             //std::cout << "FPS: " << std::to_string( 1.0f / secondsElapsed ) << std::endl;
         }
