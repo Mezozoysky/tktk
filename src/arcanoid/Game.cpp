@@ -85,13 +85,64 @@ void Game::run()
 
         mIsRunning = true;
         SDL_Event event;
+        float speed{ 0.0f };
         while ( mIsRunning )
         {
             while ( SDL_PollEvent( &event ) )
             {
-                if ( event.type == SDL_QUIT )
+                switch ( event.type )
                 {
-                    mIsRunning = false;
+                    case SDL_QUIT:
+                    {
+                        mIsRunning = false;
+                    }
+                    break;
+                    case SDL_KEYDOWN:
+                    {
+                        switch ( event.key.keysym.sym )
+                        {
+                            case SDLK_LEFT:
+                            {
+                                speed = -5.0f;
+                            }
+                            break;
+                            case SDLK_RIGHT:
+                            {
+                                speed = 5.0f;
+                            }
+                            break;
+                            default:
+                            break;
+                        }
+                    }
+                    break;
+                    case SDL_KEYUP:
+                    {
+                        switch ( event.key.keysym.sym )
+                        {
+                            case SDLK_LEFT:
+                            {
+                                if ( speed < 0.0f )
+                                {
+                                    speed = 0.0f;
+                                }
+                            }
+                            break;
+                            case SDLK_RIGHT:
+                            {
+                                if ( speed > 0.0f )
+                                {
+                                    speed = 0.0f;
+                                }
+                            }
+                            break;
+                            default:
+                            break;
+                        }
+                    }
+                    break;
+                    default:
+                    break;
                 }
             }
 
@@ -120,6 +171,7 @@ void Game::run()
 
             }
 // */
+            t1->position.x += speed;
             mECS.update( 1 /*secondsElapsed*/ );
 
             SDL_RenderPresent( mRenderer );
