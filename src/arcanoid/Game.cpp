@@ -51,25 +51,16 @@ void Game::run()
 {
     if ( setup() )
     {
-        /*
-        auto assetId = mAssetS.add< Image >( std::string("textures/first_texture.png"), mRenderer );
-        std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!! asset id: \"" << assetId.id() << "\"" << std::endl;
-        std::shared_ptr< Texture > texture{ mAssetS.getData< Image >( assetId ) };
-        if ( texture != nullptr )
+        auto texture( mAssetS.get< Texture >( "texture0.bmp" ) );
+        if ( !texture )
         {
-            std::string fname{ imagePtr->getFilename() };
-            std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!! asset fname: \"" << fname << "\"" << std::endl;
+            std::cout << "!!!!!!!!!!!!!!!!!!!!!!!! texture is null!" << std::endl;
         }
         else
         {
-            std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!! failed to get imagePtr!" << std::endl;
+            std::cout << "!!!!!!!!!!!!!!!!!!!!!!! we have a texture!" << std::endl;
         }
-        */
-        auto texture( mAssetS.get< Texture >( "texture0.bpm" ) );
 
-        //
-        // entity-centric api test
-        //
         auto e0( mECS.addEntity() );
         e0.addComp< Transform >( Transform::Vector2f( 10.0f, 10.0f ) );
         auto t0( e0.getComp< Transform >() );
@@ -79,42 +70,19 @@ void Game::run()
         }
         t0 = e0.addComp< Transform >( Transform::Vector2f( 11.0f, 11.0f ) );
         t0->position = Transform::Vector2f( 12.0f, 12.0f );
-        e0.addComp< StaticSprite >( "e0sprite.png", 1 );
-        e0.removeComp< StaticSprite >();
         e0.addComp< RectShape >( 40.0f, 30.0f, SDL_Color{ 0x00, 0xff, 0x00, 0xff } );
 
         auto e1( mECS.addEntity() );
         auto t1( e1.addComp< Transform >() );
         t1->position = Transform::Vector2f( 100.0f, 100.0f );
         auto ss1( e1.addComp< StaticSprite >() );
-        ss1->texture = "ss1.png";
+        ss1->texture = texture;
 
         auto e2( mECS.addEntity() );
         e2.addComp< Transform >();
         auto t2( e2.getComp< Transform >() );
         t2->position = Transform::Vector2f( 200.0f, 200.0f );
-        e2.addComp< StaticSprite >();
-        auto ss2( e2.getComp< StaticSprite >() );
-        ss2->centered = true;
-        ss2->texture = "ss2.png";
 
-        //
-        // system-centric api test
-        //
-/*
-        auto e3( mECS.addEntity() );
-        mECS.addComp< StaticSprite >( e3, "e3sprite.png", 0 );
-
-        auto e4( mECS.addEntity() );
-        auto ss4( mECS.addComp< StaticSprite >( e4 ) );
-        ss4->centered = 1;
-        ss4->texture = "ss4texture.png";
-
-        auto e5( mECS.addEntity() );
-        mECS.addComp< StaticSprite >( e5 );
-        auto ss5( mECS.getComp< StaticSprite >( e5 ) );
-        ss5->texture = "ss5.png";
-*/
         mIsRunning = true;
         SDL_Event event;
         while ( mIsRunning )
@@ -167,7 +135,7 @@ bool Game::setup()
     mECS.registerProc< RectShapeProc >( mRenderer );
     mECS.setup();
 
-    mAssetS.load< Texture >( "texture0.bpm" );
+    mAssetS.load< Texture >( "texture0.bmp" );
 
     return ( true );
 }

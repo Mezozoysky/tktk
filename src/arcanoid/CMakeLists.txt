@@ -130,3 +130,9 @@ target_link_libraries(arcanoid tktk-ecs tktk-asset tktk-util)
 target_link_libraries(arcanoid ${SDL2_LIBRARY})
 target_link_libraries(arcanoid ${OPENGL_LIBRARIES})
 target_link_libraries(arcanoid ${TKTK_OS_SPECIFIC_LIBS})
+
+add_custom_command(
+    TARGET arcanoid POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/assets/arcanoid $<TARGET_FILE_DIR:arcanoid>
+)

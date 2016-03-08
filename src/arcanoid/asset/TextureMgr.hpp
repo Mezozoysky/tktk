@@ -50,9 +50,20 @@ public:
         SharedAssetTypeT shared;
 
         SDL_Surface* surface{ SDL_LoadBMP( name.c_str() ) };
-        SDL_Texture* rawTexture{ SDL_CreateTextureFromSurface( mRenderPtr, surface ) };
-        SDL_FreeSurface( surface );
-        shared = std::make_shared< Texture >( rawTexture );
+        if ( !surface )
+        {
+            std::string error{ SDL_GetError() };
+            ll_error( "Can't load texture: " << error );
+        }
+        else
+        {
+            SDL_Texture* rawTexture{ SDL_CreateTextureFromSurface( mRenderPtr, surface ) };
+            SDL_FreeSurface( surface );
+            if ( rawTexture )
+            {
+                shared = std::make_shared< Texture >( rawTexture );
+            }
+        }
         return ( shared );
     }
 

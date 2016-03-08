@@ -35,7 +35,7 @@ StaticSprite::StaticSprite( const util::Id64& entityId )
 {
 }
 
-StaticSprite::StaticSprite( const util::Id64& entityId, const std::string& texture, bool centered )
+StaticSprite::StaticSprite( const util::Id64& entityId, Texture::VPtr texture, bool centered )
 : BaseTypeT( entityId )
 , texture{ texture }
 , centered{ centered }
@@ -63,6 +63,19 @@ void StaticSpriteProc::onUpdate( float deltaTime )
     {
         if ( !mPool.isAlive( i ) ) continue;
         auto comp = mPool[ i ];
-        ll_debug( "Updating StaticSprite comp#" << std::to_string( i ) << " texture=" << comp.texture << ", centered=" << std::to_string( comp.centered ) );
+        auto texture( comp.texture );
+        if ( !texture )
+        {
+            ll_error( "StaticSprite update: empty texture!" );
+            continue;
+        }
+        int w, h;
+        auto rawTexture( texture->getRawTexture() );
+        SDL_QueryTexture( rawTexture, NULL, NULL, &w, &h );
+        SDL_Rect srcRect{ 0, 0, w, h };
+        auto t( mSystemPtr->getComp< Transform >( comp.getEntityId() ) );
+        SDL_Rect dstRect{ int(t->position.x), int(t->position.y), w, h };
+        SDL_RenderCopy( mRenderer, rawTexture, &srcRect, &dstRect);
+//         ll_debug( "Updating StaticSprite comp#" << std::to_string( i ) << " texture=" << comp.texture << ", centered=" << std::to_string( comp.centered ) );
     }
 }

@@ -64,7 +64,7 @@ void RectShapeProc::onUpdate( float deltaTime )
     {
         if ( !mPool.isAlive( i ) ) continue;
         auto comp = mPool[ i ];
-        ll_debug( "Updating RectShape comp#" << std::to_string( i ) << " width=" << comp.width << ", height=" << comp.height << ", centered=" << std::to_string( comp.centered ) );
+//         ll_debug( "Updating RectShape comp#" << std::to_string( i ) << " width=" << comp.width << ", height=" << comp.height << ", centered=" << std::to_string( comp.centered ) );
 
         auto t( mSystemPtr->getComp< Transform >( comp.getEntityId() ) );
         SDL_Rect rect;

@@ -29,6 +29,7 @@
 
 #include <tktk/ecs/Component.hpp>
 #include <tktk/ecs/Processor.hpp>
+#include <arcanoid/render/Texture.hpp>
 #include <SDL.h>
 
 using namespace tktk;
@@ -38,10 +39,10 @@ struct StaticSprite
 : public ecs::Comp< StaticSprite >
 {
     explicit StaticSprite( const util::Id64& entityId );
-    explicit StaticSprite( const util::Id64& entityId, const std::string& texture, bool centered );
+    explicit StaticSprite( const util::Id64& entityId, Texture::VPtr texture, bool centered );
     virtual ~StaticSprite();
 
-    std::string texture{};
+    Texture::VPtr texture{ nullptr };
     bool centered{ false };
 };
 
