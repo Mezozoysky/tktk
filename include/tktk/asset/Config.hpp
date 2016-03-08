@@ -29,8 +29,6 @@
 /// \date 2016
 /// \copyright tktk is released under the terms of zlib/png license; see full license text at https://opensource.org/licenses/Zlib
 
-#include <tktk/Config.hpp>
-
 /// \namespace asset
 /// \brief Namespace for all the names of tktk-asset library
 ///
@@ -38,5 +36,7 @@
 
 #ifndef TKTK_ASSET_CONFIG_HPP
 #define TKTK_ASSET_CONFIG_HPP
+
+#include <tktk/Config.hpp>
 
 #endif // TKTK_ASSET_CONFIG_HPP
