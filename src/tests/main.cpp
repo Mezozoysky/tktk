@@ -25,7 +25,7 @@
 */
 
 #define CATCH_CONFIG_MAIN
-#include <catch.hpp>
+#include <Catch/catch.hpp>
 
 #include <tktk/util/TypeMap.hpp>
 #include <tktk/util/MemoryPool.hpp>

@@ -27,14 +27,24 @@ it freely, subject to the following restrictions:
 External libraries used by tktk
 -------------------------------
 
+* rapidjson is under the MIT license
+
+    See the copy of the original rapidjson license notice at ./third-party/license/paridjson/license.txt
+    We only need rapidjson to build demo game: arcanoid.
+
 * SDL2 is under the zlib/png license as tktk itself
 
-      See copy of the license text at the start of this file.
+      See the copy of the original SDL2 license notice at ./third-party/license/SDL2/COPYING.txt
       We only need SDL2 to build demo game: arcanoid.
 
-* catch is under the Boost Software License, Version 1.0
+* SDL2_image is under the zlib/png license as tktk itself
 
-      See copy of the license text at http://www.boost.org/LICENSE_1_0.txt
+      See the copy of the original SDL2_image license notice at ./third-party/license/SDL2_image/COPYING.txt
+      We only need SDL2_image to build demo game: arcanoid.
+
+* Catch is under the Boost Software License, Version 1.0
+
+      See the copy of the original Catch license notice at ./third-party/license/Catch/LICENNSE_1_0.txt
       We only need catch to build unit-tests
 
 * liblog is under the zlib/png license as tktk itself
