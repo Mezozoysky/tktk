@@ -28,10 +28,14 @@
 //using namespace tktk;
 
 #include <SDL.h>
+#include <memory>
 
 class Texture
 {
 public:
+
+    using VPtr = std::shared_ptr< Texture >;
+
     Texture( SDL_Texture* rawTexture ) noexcept
     : mRawTexture{ rawTexture }
     {
