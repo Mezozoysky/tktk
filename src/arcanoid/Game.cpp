@@ -35,6 +35,11 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
+#include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+#include <iostream>
+
 using namespace tktk;
 
 Game::Game()
@@ -147,9 +152,9 @@ void Game::run()
                 }
             }
 
-            SDL_SetRenderDrawColor( mRenderer, 0, 0, 0, 255 );
-            SDL_RenderClear( mRenderer );
-/*
+//             SDL_SetRenderDrawColor( mRenderer, 0, 0, 0, 255 );
+//             SDL_RenderClear( mRenderer );
+// /*
             {
                 SDL_Color colors[2]{
                     { 0x66, 0x66, 0x66, 0xff },
@@ -171,7 +176,7 @@ void Game::run()
                 }
 
             }
-*/
+// */
             t1->position.x += speed;
             mECS.update( 1 /*secondsElapsed*/ );
 
@@ -184,6 +189,20 @@ void Game::run()
 
 bool Game::setup()
 {
+    const char* json = "{\"project\":\"tktk\",\"stars\":0}";
+    rapidjson::Document d;
+    d.Parse(json);
+
+    rapidjson::Value& stars{ d["stars"] };
+    stars.SetInt( stars.GetInt() + 1 );
+
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer< rapidjson::StringBuffer > writer(buffer);
+    d.Accept( writer );
+
+    std::cout << "RAPIDJSON OUTPUT: " << buffer.GetString() << std::endl;
+
+
     if ( SDL_Init( SDL_INIT_VIDEO ) != 0 )
     {
         ll_error( "SDL_Init ERROR: " << SDL_GetError() );
