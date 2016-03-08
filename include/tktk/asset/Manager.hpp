@@ -164,6 +164,7 @@ public:
 
             mSharedAssets[ index ] = nullptr;
             mNames[ index ] = name;
+            mIndicesByNames[ name ] = index;
         }
 
         return ( index );
