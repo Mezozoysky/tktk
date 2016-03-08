@@ -33,6 +33,7 @@
 #include <iostream>
 #include <type_traits>
 #include <SDL.h>
+#include <SDL_image.h>
 
 using namespace tktk;
 
@@ -51,7 +52,7 @@ void Game::run()
 {
     if ( setup() )
     {
-        auto texture( mAssetS.get< Texture >( "texture0.bmp" ) );
+        auto texture( mAssetS.get< Texture >( "texture0.png" ) );
         if ( !texture )
         {
             std::cout << "!!!!!!!!!!!!!!!!!!!!!!!! texture is null!" << std::endl;
@@ -146,9 +147,9 @@ void Game::run()
                 }
             }
 
-//             SDL_SetRenderDrawColor( mRenderer, 0, 0, 0, 255 );
-//             SDL_RenderClear( mRenderer );
-// /*
+            SDL_SetRenderDrawColor( mRenderer, 0, 0, 0, 255 );
+            SDL_RenderClear( mRenderer );
+/*
             {
                 SDL_Color colors[2]{
                     { 0x66, 0x66, 0x66, 0xff },
@@ -170,7 +171,7 @@ void Game::run()
                 }
 
             }
-// */
+*/
             t1->position.x += speed;
             mECS.update( 1 /*secondsElapsed*/ );
 
@@ -203,6 +204,12 @@ bool Game::setup()
         return ( false );
     }
 
+    if ( IMG_Init( IMG_INIT_PNG ) & IMG_INIT_PNG != IMG_INIT_PNG )
+    {
+        ll_error( "IMG_Init error: " << SDL_GetError() );
+        return ( false );
+    }
+
     mAssetS.registerMgr< TextureMgr >( mRenderer );
 
     mECS.registerProc< TransformProc >();
@@ -211,7 +218,7 @@ bool Game::setup()
     mECS.registerProc< RectShapeProc >( mRenderer );
     mECS.setup();
 
-    mAssetS.load< Texture >( "texture0.bmp" );
+    mAssetS.load< Texture >( "texture0.png" );
 
     return ( true );
 }

@@ -28,6 +28,7 @@
 #include <tktk/asset/Manager.hpp>
 #include <arcanoid/render/Texture.hpp>
 #include <SDL.h>
+#include <SDL_image.h>
 
 using namespace tktk;
 
@@ -49,20 +50,14 @@ public:
     {
         SharedAssetTypeT shared;
 
-        SDL_Surface* surface{ SDL_LoadBMP( name.c_str() ) };
-        if ( !surface )
+        SDL_Texture* rawTexture{ IMG_LoadTexture( mRenderPtr, name.c_str() ) };
+        if ( !rawTexture )
         {
-            std::string error{ SDL_GetError() };
-            ll_error( "Can't load texture: " << error );
+            //TODO: some logging lib needed
         }
         else
         {
-            SDL_Texture* rawTexture{ SDL_CreateTextureFromSurface( mRenderPtr, surface ) };
-            SDL_FreeSurface( surface );
-            if ( rawTexture )
-            {
-                shared = std::make_shared< Texture >( rawTexture );
-            }
+            shared = std::make_shared< Texture >( rawTexture );
         }
         return ( shared );
     }
