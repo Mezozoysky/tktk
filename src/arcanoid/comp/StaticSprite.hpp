@@ -39,7 +39,7 @@ struct StaticSprite
 : public ecs::Comp< StaticSprite >
 {
     explicit StaticSprite( const util::Id64& entityId );
-    explicit StaticSprite( const util::Id64& entityId, Texture::VPtr texture, bool centered );
+    explicit StaticSprite( const util::Id64& entityId, Texture::VPtr texture, bool centered = false );
     virtual ~StaticSprite();
 
     Texture::VPtr texture{ nullptr };
