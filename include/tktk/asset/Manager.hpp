@@ -35,10 +35,12 @@
 #define TKTK_ASSET_MANAGER_HPP
 
 #include <tktk/asset/Config.hpp>
-#include <tktk/util/MemoryPool.hpp>
+#include <vector>
 #include <unordered_map>
+#include <algorithm>
 #include <memory>
 #include <limits>
+#include <cassert>
 
 namespace tktk
 {
@@ -101,33 +103,6 @@ public:
     {
     }
 
-/*
-    /// \brief Adds an asset with constructructor arguments \em args and returns an asset id
-    template< typename... ArgsT >
-    SharedAssetTypeT add( const std::string& name, ArgsT&&... args ) noexcept
-    {
-        std::uint32_t index;
-
-        if ( mFreeIndices.empty() )
-        {
-            index = mSharedAssets.size();
-
-            mSharedAssets.push_back( nullptr );
-            mNames.push_back( "" );
-        }
-        else
-        {
-            index = mFreeIndices.back();
-            mFreeIndices.pop_back();
-        }
-
-        SharedAssetTypeT shared{ std::make_shared< AssetTypeT >( std::forward< Args >( args )... ) };
-        mSharedAssets[ index ] = shared;
-        mNames[ index ] = name;
-        mIndicesByNames[ name ] = index;
-        return ( shared );
-    }
-*/
     inline std::size_t getIndex( const std::string& name ) const noexcept
     {
         std::size_t index{ INVALID_INDEX };
@@ -141,7 +116,7 @@ public:
         return ( index );
     }
 
-
+    /// \brief Adds an asset by given name and returns asset's index
     std::size_t add( const std::string& name ) noexcept
     {
         std::size_t index{ getIndex( name ) };
