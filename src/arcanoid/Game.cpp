@@ -30,15 +30,11 @@
 #include "comp/SpriteSheet.hpp"
 #include "comp/RectShape.hpp"
 #include "asset/TextureMgr.hpp"
+#include "asset/JsonMgr.hpp"
 #include <iostream>
 #include <type_traits>
 #include <SDL.h>
 #include <SDL_image.h>
-
-#include <rapidjson/document.h>
-#include <rapidjson/writer.h>
-#include <rapidjson/stringbuffer.h>
-#include <iostream>
 
 using namespace tktk;
 
@@ -66,6 +62,20 @@ void Game::run()
         {
             std::cout << "!!!!!!!!!!!!!!!!!!!!!!! we have a texture!" << std::endl;
         }
+
+        auto json( mAssetS.get< JSON >( "json0.json" ) );
+        if ( !json )
+        {
+            std::cout << "!!!!!!!!!!!!!!!!!!!!!!!! json is null!" << std::endl;
+        }
+        else
+        {
+            std::cout << "!!!!!!!!!!!!!!!!!!!!!!!! we have a json!" << std::endl;
+        }
+
+        auto jsName( json->getDocument()[ "name" ].GetString() );
+        auto jsDesc( json->getDocument()[ "description" ].GetString() );
+        std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CONTENTS: name -> \"" << jsName << "\", description -> \"" << jsDesc << "\"" << std::endl;
 
         auto e0( mECS.addEntity() );
         e0.addComp< Transform >( Transform::Vector2f( 10.0f, 10.0f ) );
@@ -189,20 +199,6 @@ void Game::run()
 
 bool Game::setup()
 {
-    const char* json = "{\"project\":\"tktk\",\"stars\":0}";
-    rapidjson::Document d;
-    d.Parse(json);
-
-    rapidjson::Value& stars{ d["stars"] };
-    stars.SetInt( stars.GetInt() + 1 );
-
-    rapidjson::StringBuffer buffer;
-    rapidjson::Writer< rapidjson::StringBuffer > writer(buffer);
-    d.Accept( writer );
-
-    std::cout << "RAPIDJSON OUTPUT: " << buffer.GetString() << std::endl;
-
-
     if ( SDL_Init( SDL_INIT_VIDEO ) != 0 )
     {
         ll_error( "SDL_Init ERROR: " << SDL_GetError() );
@@ -230,6 +226,7 @@ bool Game::setup()
     }
 
     mAssetS.registerMgr< TextureMgr >( mRenderer );
+    mAssetS.registerMgr< JsonMgr >();
 
     mECS.registerProc< TransformProc >();
     mECS.registerProc< StaticSpriteProc >( mRenderer );
@@ -238,6 +235,7 @@ bool Game::setup()
     mECS.setup();
 
     mAssetS.load< Texture >( "texture0.png" );
+    mAssetS.load< JSON >( "json0.json" );
 
     return ( true );
 }
