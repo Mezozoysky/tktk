@@ -32,7 +32,6 @@
 #include "asset/TextureMgr.hpp"
 #include "asset/JsonMgr.hpp"
 #include <iostream>
-#include <type_traits>
 #include <SDL.h>
 #include <SDL_image.h>
 
@@ -54,50 +53,23 @@ void Game::run()
     if ( setup() )
     {
         auto texture( mAssetS.get< Texture >( "texture0.png" ) );
-        if ( !texture )
-        {
-            std::cout << "!!!!!!!!!!!!!!!!!!!!!!!! texture is null!" << std::endl;
-        }
-        else
-        {
-            std::cout << "!!!!!!!!!!!!!!!!!!!!!!! we have a texture!" << std::endl;
-        }
-
         auto json( mAssetS.get< JSON >( "json0.json" ) );
-        if ( !json )
-        {
-            std::cout << "!!!!!!!!!!!!!!!!!!!!!!!! json is null!" << std::endl;
-        }
-        else
-        {
-            std::cout << "!!!!!!!!!!!!!!!!!!!!!!!! we have a json!" << std::endl;
-        }
 
         auto jsName( json->getDocument()[ "name" ].GetString() );
         auto jsDesc( json->getDocument()[ "description" ].GetString() );
         std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CONTENTS: name -> \"" << jsName << "\", description -> \"" << jsDesc << "\"" << std::endl;
 
-        auto e0( mECS.addEntity() );
-        e0.addComp< Transform >( Transform::Vector2f( 10.0f, 10.0f ) );
-        auto t0( e0.getComp< Transform >() );
-        if ( t0.isValid() )
-        {
-            e0.removeComp< Transform >();
-        }
-        t0 = e0.addComp< Transform >( Transform::Vector2f( 11.0f, 11.0f ) );
-        t0->position = Transform::Vector2f( 12.0f, 12.0f );
-        e0.addComp< RectShape >( 40.0f, 30.0f, SDL_Color{ 0x00, 0xff, 0x00, 0xff } );
+        auto e( mECS.addEntity() );
+        auto tfPaddle( e.addComp< Transform >( Transform::Vector2f( 200.0f, 700.0f ) ) );
+        e.addComp< RectShape >( 100.0f, 30.0f, SDL_Color{ 0x5f, 0x5f, 0xaf, 0xff } );
 
-        auto e1( mECS.addEntity() );
-        auto t1( e1.addComp< Transform >() );
-        t1->position = Transform::Vector2f( 100.0f, 100.0f );
-        auto ss1( e1.addComp< StaticSprite >() );
-        ss1->texture = texture;
+        e = mECS.addEntity();
+        e.addComp< Transform >( Transform::Vector2f( 100.0f, 100.0f ) );
+        e.addComp< StaticSprite >( texture );
 
-        auto e2( mECS.addEntity() );
-        e2.addComp< Transform >();
-        auto t2( e2.getComp< Transform >() );
-        t2->position = Transform::Vector2f( 200.0f, 200.0f );
+        e = mECS.addEntity();
+        e.addComp< Transform >( Transform::Vector2f( 10.0f, 10.0f ) );
+        e.addComp< RectShape >( 40.0f, 30.0f, SDL_Color{ 0x5f, 0xaf, 0x5f, 0xff } );
 
         mIsRunning = true;
         SDL_Event event;
@@ -187,7 +159,7 @@ void Game::run()
 
             }
 // */
-            t1->position.x += speed;
+            tfPaddle->position.x += speed;
             mECS.update( 1 /*secondsElapsed*/ );
 
             SDL_RenderPresent( mRenderer );
