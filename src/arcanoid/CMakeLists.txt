@@ -105,9 +105,11 @@ set(ARCANOID_SOURCES ${ARCANOID_SOURCES} ${GROUP_SOURCES})
 # ==============================
 set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/src/arcanoid/asset/TextureMgr.hpp
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/asset/JsonMgr.hpp
 )
 set(GROUP_SOURCES
     ${CMAKE_SOURCE_DIR}/src/arcanoid/asset/TextureMgr.cpp
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/asset/JsonMgr.cpp
 )
 source_group("arcanoid\\asset" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(ARCANOID_HEADERS ${ARCANOID_HEADERS} ${GROUP_HEADERS})
@@ -123,6 +125,19 @@ set(GROUP_SOURCES
     ${CMAKE_SOURCE_DIR}/src/arcanoid/render/Texture.cpp
 )
 source_group("arcanoid\\asset" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
+set(ARCANOID_HEADERS ${ARCANOID_HEADERS} ${GROUP_HEADERS})
+set(ARCANOID_SOURCES ${ARCANOID_SOURCES} ${GROUP_SOURCES})
+
+# =============================
+# ==== arcanoid/json group ====
+# =============================
+set(GROUP_HEADERS
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/json/JSON.hpp
+)
+set(GROUP_SOURCES
+    ${CMAKE_SOURCE_DIR}/src/arcanoid/json/JSON.cpp
+)
+source_group("arcanoid\\json" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(ARCANOID_HEADERS ${ARCANOID_HEADERS} ${GROUP_HEADERS})
 set(ARCANOID_SOURCES ${ARCANOID_SOURCES} ${GROUP_SOURCES})
 
