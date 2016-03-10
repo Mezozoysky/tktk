@@ -29,12 +29,12 @@
 
 using namespace tktk;
 
-RectShape::RectShape( const util::Id64& entityId )
+RectShape::RectShape( const mpool::Id64& entityId )
 : BaseTypeT( entityId )
 {
 }
 
-RectShape::RectShape(const util::Id64& entityId, float width, float height, const SDL_Color& color, bool centered)
+RectShape::RectShape(const mpool::Id64& entityId, float width, float height, const SDL_Color& color, bool centered)
 : Comp< RectShape >(entityId)
 , width{ width }
 , height{ height }

@@ -28,7 +28,7 @@
 #include <Catch/catch.hpp>
 
 #include <tktk/util/TypeMap.hpp>
-#include <tktk/util/MemoryPool.hpp>
+#include <tktk/mpool/MemoryPool.hpp>
 #include <tktk/util/Signal.hpp>
 #include <tktk/ecs/System.hpp>
 #include <string>
@@ -50,12 +50,12 @@ TEST_CASE( "MemoryPool correctness", "[mempool]" )
 {
     using Value = std::string;
 
-    util::MemoryPool< Value, 2 > pool;
+    mpool::MemoryPool< Value, 2 > pool;
 
     CHECK( pool.getCapacity() == 0 );
     CHECK( pool.getSize() == 0 );
 
-    util::Id64 id{ pool.createElement( "zero" ) };
+    mpool::Id64 id{ pool.createElement( "zero" ) };
 
     CHECK( pool.isIdValid( id ) );
     CHECK( pool.getCapacity() == 2 );
@@ -137,7 +137,7 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     : public ecs::Comp< Comp1 >
     {
     public:
-        Comp1( const util::Id64& entityId )
+        Comp1( const mpool::Id64& entityId )
         : BaseTypeT{ entityId }
         {
         }
@@ -175,7 +175,7 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     : public ecs::Comp< Comp2 >
     {
     public:
-        Comp2( const util::Id64& entityId )
+        Comp2( const mpool::Id64& entityId )
         : BaseTypeT{ entityId }
         {
         }

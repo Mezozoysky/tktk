@@ -20,4 +20,4 @@ add_executable(tktk-tests WIN32
 )
 set_target_properties(tktk-tests PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(tktk-tests tktk-ecs tktk-util)
+target_link_libraries(tktk-tests tktk-ecs)

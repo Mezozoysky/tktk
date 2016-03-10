@@ -34,7 +34,7 @@
 #define TKTK_ECS_COMPONENT_HPP
 
 #include <tktk/Config.hpp>
-#include <tktk/util/Id64.hpp>
+#include <tktk/mpool/Id64.hpp>
 #include <memory>
 #include <string>
 
@@ -60,7 +60,7 @@ struct Component
         Handle() noexcept;
 
         /// \brief Constructor from proc and id
-        Handle( const util::Id64& cId, Processor* procPtr ) noexcept;
+        Handle( const mpool::Id64& cId, Processor* procPtr ) noexcept;
 
         /// \brief Access to handling component via pointer
         /// \returns The handling component pointer if handle is valid, nullptr othervise
@@ -77,7 +77,7 @@ struct Component
         Component* operator ->() const noexcept;
 
         /// \brief Returns handling component id
-        inline util::Id64 getId() const noexcept
+        inline mpool::Id64 getId() const noexcept
         {
             return ( mId );
         }
@@ -94,25 +94,25 @@ struct Component
         void invalidate() noexcept;
 
     private:
-        util::Id64 mId { util::ID64_INVALID }; ///< \brief Handling component's id; invalid by default
+        mpool::Id64 mId { mpool::ID64_INVALID }; ///< \brief Handling component's id; invalid by default
         Processor* mProcPtr{ nullptr }; ///< \brief Pointer to the according processor
     };
 
     /// \brief Explitit constructor from entity id
-    explicit Component( const util::Id64& entityId ) noexcept;
+    explicit Component( const mpool::Id64& entityId ) noexcept;
 
     /// \brief Virtual destructor for further inheritance
     virtual ~Component() noexcept;
 
     /// \brief Gets the owner entity id
-    inline const util::Id64& getEntityId() const noexcept
+    inline const mpool::Id64& getEntityId() const noexcept
     {
         return mEntityId;
     }
 
 private:
     /// \brief Owner entity id
-    util::Id64 mEntityId;
+    mpool::Id64 mEntityId;
 };
 
 /// \brief Base class for all component You want
@@ -135,7 +135,7 @@ struct Comp
         Handle( const Component::Handle& ucHandle ) noexcept;
 
         /// \brief Constructor from id and processor pointer
-        Handle( const util::Id64& cId, Processor* procPtr ) noexcept;
+        Handle( const mpool::Id64& cId, Processor* procPtr ) noexcept;
 
         /// \brief Access to handling component via pointer
         /// \returns The handling component pointer if handle is valid, nullptr othervise
@@ -153,7 +153,7 @@ struct Comp
         }
 
         /// \brief Returns the id of the handling component
-        inline util::Id64 getId() const noexcept
+        inline mpool::Id64 getId() const noexcept
         {
             return ( mUntypedCHandle.getId() );
         }
@@ -183,11 +183,11 @@ struct Comp
         }
 
     private:
-        Component::Handle mUntypedCHandle{ util::ID64_INVALID, nullptr }; ///< Plain component handle
+        Component::Handle mUntypedCHandle{ mpool::ID64_INVALID, nullptr }; ///< Plain component handle
     };
 
     /// \brief Excplicit constructor from entity id
-    explicit Comp( const util::Id64& entityId ) noexcept;
+    explicit Comp( const mpool::Id64& entityId ) noexcept;
 
     /// \brief Virtual destructor for further inheritance
     virtual ~Comp() noexcept;
@@ -200,7 +200,7 @@ struct Comp
 // Comp<CompT>
 
 template < typename CompT >
-Comp< CompT >::Comp( const util::Id64& entityId ) noexcept
+Comp< CompT >::Comp( const mpool::Id64& entityId ) noexcept
 : Component{ entityId }
 {
 }
@@ -224,7 +224,7 @@ Comp< CompT >::Handle::Handle( const Component::Handle& ucHandle ) noexcept
 }
 
 template < typename CompT >
-Comp< CompT >::Handle::Handle( const util::Id64& cId, Processor* procPtr ) noexcept
+Comp< CompT >::Handle::Handle( const mpool::Id64& cId, Processor* procPtr ) noexcept
 : mUntypedCHandle{ cId, procPtr }
 {
 }

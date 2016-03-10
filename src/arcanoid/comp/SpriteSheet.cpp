@@ -31,7 +31,7 @@
 using namespace tktk;
 
 
-SpriteSheet::SpriteSheet( const util::Id64& entityId )
+SpriteSheet::SpriteSheet( const mpool::Id64& entityId )
 : BaseTypeT( entityId )
 {
 }

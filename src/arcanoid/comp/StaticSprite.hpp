@@ -38,8 +38,8 @@ using namespace tktk;
 struct StaticSprite
 : public ecs::Comp< StaticSprite >
 {
-    explicit StaticSprite( const util::Id64& entityId );
-    explicit StaticSprite( const util::Id64& entityId, Texture::VPtr texture, bool centered = false );
+    explicit StaticSprite( const mpool::Id64& entityId );
+    explicit StaticSprite( const mpool::Id64& entityId, Texture::VPtr texture, bool centered = false );
     virtual ~StaticSprite();
 
     Texture::VPtr texture{ nullptr };

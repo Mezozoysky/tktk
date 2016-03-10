@@ -30,12 +30,12 @@
 
 using namespace tktk;
 
-StaticSprite::StaticSprite( const util::Id64& entityId )
+StaticSprite::StaticSprite( const mpool::Id64& entityId )
 : BaseTypeT( entityId )
 {
 }
 
-StaticSprite::StaticSprite( const util::Id64& entityId, Texture::VPtr texture, bool centered )
+StaticSprite::StaticSprite( const mpool::Id64& entityId, Texture::VPtr texture, bool centered )
 : BaseTypeT( entityId )
 , texture{ texture }
 , centered{ centered }

@@ -30,7 +30,7 @@
 
 using namespace tktk;
 
-Transform::Transform( const util::Id64& entityId, Vector2f position )
+Transform::Transform( const mpool::Id64& entityId, Vector2f position )
 : BaseTypeT( entityId )
 {
     this->position = position;

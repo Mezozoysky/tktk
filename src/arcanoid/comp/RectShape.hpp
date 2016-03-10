@@ -35,8 +35,8 @@ using namespace tktk;
 struct RectShape
 : public ecs::Comp< RectShape >
 {
-    explicit RectShape( const util::Id64& entityId );
-    explicit RectShape( const util::Id64& entityId, float width, float height, const SDL_Color& color, bool centered = false );
+    explicit RectShape( const mpool::Id64& entityId );
+    explicit RectShape( const mpool::Id64& entityId, float width, float height, const SDL_Color& color, bool centered = false );
     virtual ~RectShape();
 
     float width;

@@ -61,7 +61,7 @@ void System::setup() noexcept
 
 Entity::Handle System::addEntity() noexcept
 {
-    util::Id64 eId{ mEntityPool.createElement() };
+    mpool::Id64 eId{ mEntityPool.createElement() };
     Entity::Handle handle( eId, this );
     return ( handle );
 }
@@ -101,7 +101,7 @@ void System::removeEntity( Entity::Handle& eHandle ) noexcept
 }
 
 // for use from entity handle
-void System::removeEntity( const util::Id64& eId  ) noexcept
+void System::removeEntity( const mpool::Id64& eId  ) noexcept
 {
     mEntityPool.destroyElement( eId );
 }
@@ -112,7 +112,7 @@ bool System::isEntityValid( const Entity::Handle& eHandle ) const noexcept
 }
 
 // for use from entity handle
-bool System::isIdValid( const util::Id64& eId ) const noexcept
+bool System::isIdValid( const mpool::Id64& eId ) const noexcept
 {
     return ( mEntityPool.isIdValid( eId ) );
 }
@@ -123,7 +123,7 @@ Entity* System::getEntityPtr( const Entity::Handle& handle ) const noexcept
 }
 
 // for use from entity handle
-Entity* System::getEntityPtr( const util::Id64& eId ) const noexcept
+Entity* System::getEntityPtr( const mpool::Id64& eId ) const noexcept
 {
     if ( !mEntityPool.isIdValid( eId ) )
     {

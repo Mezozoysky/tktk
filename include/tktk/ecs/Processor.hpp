@@ -28,7 +28,7 @@
 #define TKTK_ECS_PROCESSOR_HPP
 
 #include <tktk/Config.hpp>
-#include <tktk/util/MemoryPool.hpp>
+#include <tktk/mpool/MemoryPool.hpp>
 #include <tktk/ecs/Component.hpp>
 #include <memory>
 
@@ -55,11 +55,11 @@ public:
 
     virtual void setup( System* systemPtr ) = 0;
 
-    virtual bool isIdValid( const util::Id64& id ) const noexcept = 0;
+    virtual bool isIdValid( const mpool::Id64& id ) const noexcept = 0;
 
-    virtual Component* getCompPtr( const util::Id64& id ) const noexcept = 0;
+    virtual Component* getCompPtr( const mpool::Id64& id ) const noexcept = 0;
 
-    virtual void destroyElement( const util::Id64& id ) noexcept = 0;
+    virtual void destroyElement( const mpool::Id64& id ) noexcept = 0;
 };
 
 
@@ -86,7 +86,7 @@ public:
     template< typename... ArgsT >
     typename CompTypeT::Handle addComp( ArgsT&&... args )
     {
-        util::Id64 cId{ mPool.createElement( std::forward< ArgsT >( args )... ) };
+        mpool::Id64 cId{ mPool.createElement( std::forward< ArgsT >( args )... ) };
 
         typename CompTypeT::Handle cHandle( cId, this );
         return ( cHandle );
@@ -103,25 +103,25 @@ public:
     }
 
     /// \brief Returns true if given id is valid
-    virtual bool isIdValid( const util::Id64& cId ) const noexcept override final
+    virtual bool isIdValid( const mpool::Id64& cId ) const noexcept override final
     {
         return ( mPool.isIdValid( cId ) );
     }
 
     /// \brief Returns raw pointer to the component with id \em cId
-    inline virtual CompTypeT* getCompPtr( const util::Id64& cId ) const noexcept override final
+    inline virtual CompTypeT* getCompPtr( const mpool::Id64& cId ) const noexcept override final
     {
         return ( mPool.getPtr( cId.index() ) );
     }
 
     ///\brief Marks component with id \em cId as 'destroyed'
-    inline virtual void destroyElement( const util::Id64& cId ) noexcept override final
+    inline virtual void destroyElement( const mpool::Id64& cId ) noexcept override final
     {
         mPool.destroyElement( cId );
     }
 
 protected:
-    using PoolTypeT = util::MemoryPool<CompTypeT>;
+    using PoolTypeT = mpool::MemoryPool<CompTypeT>;
     PoolTypeT mPool;
     System* mSystemPtr{ nullptr };
 };

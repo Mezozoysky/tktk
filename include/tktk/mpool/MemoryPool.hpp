@@ -24,11 +24,11 @@
  source distribution.
  */
 
-#ifndef TKTK_UTIL_MEMORY_POOL_HPP
-#define TKTK_UTIL_MEMORY_POOL_HPP
+#ifndef TKTK_MPOOL_MEMORY_POOL_HPP
+#define TKTK_MPOOL_MEMORY_POOL_HPP
 
 #include <tktk/Config.hpp>
-#include <tktk/util/Id64.hpp>
+#include <tktk/mpool/Id64.hpp>
 #include <vector>
 #include <cassert>
 #include <type_traits>
@@ -37,7 +37,7 @@
 
 namespace tktk
 {
-namespace util
+namespace mpool
 {
 
 class MemoryPoolBase
@@ -265,7 +265,7 @@ private:
 };
 
 
-} //namespace util
+} //namespace mpool
 } //namespace tktk
 
-#endif /* end of include guard: TKTK_UTIL_MEMORY_POOL_HPP */
+#endif /* end of include guard: TKTK_MPOOL_MEMORY_POOL_HPP */

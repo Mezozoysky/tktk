@@ -17,8 +17,6 @@ set(TKTK_LIB_UTIL_SOURCES "")
 # =======================
 set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/include/tktk/util/TypeMap.hpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/util/Id64.hpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/util/MemoryPool.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/util/Signal.hpp
 )
 set(GROUP_SOURCES
@@ -28,6 +26,21 @@ source_group("tktk\\util" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(TKTK_LIB_UTIL_HEADERS ${TKTK_LIB_UTIL_HEADERS} ${GROUP_HEADERS})
 set(TKTK_LIB_UTIL_SOURCES ${TKTK_LIB_UTIL_SOURCES} ${GROUP_SOURCES})
 
+set(TKTK_LIB_MPOOL_HEADERS "")
+set(TKTK_LIB_MPOOL_SOURCES "")
+#=========================
+# === tktk/mpool group ===
+# ========================
+set(GROUP_HEADERS
+    ${CMAKE_SOURCE_DIR}/include/tktk/mpool/Id64.hpp
+    ${CMAKE_SOURCE_DIR}/include/tktk/mpool/MemoryPool.hpp
+)
+set(GROUP_SOURCES
+    ${CMAKE_SOURCE_DIR}/src/tktk/mpool/MemoryPool.cpp
+)
+source_group("tktk\\mpool" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
+set(TKTK_LIB_MPOOL_HEADERS ${TKTK_LIB_MPOOL_HEADERS} ${GROUP_HEADERS})
+set(TKTK_LIB_MPOOL_SOURCES ${TKTK_LIB_MPOOL_SOURCES} ${GROUP_SOURCES})
 
 set(TKTK_LIB_ECS_HEADERS "")
 set(TKTK_LIB_ECS_SOURCES "")
@@ -68,9 +81,9 @@ set(TKTK_LIB_PHASE_SOURCES ${TKTK_LIB_PHASE_SOURCES} ${GROUP_SOURCES})
 
 set(TKTK_LIB_ASSET_HEADERS "")
 set(TKTK_LIB_ASSET_SOURCES "")
-# =========================
-# === tktk/resmgr group ===
-# =========================
+# ========================
+# === tktk/asset group ===
+# ========================
 set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/include/tktk/asset/Config.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/asset/System.hpp
@@ -80,22 +93,42 @@ set(GROUP_SOURCES
     ${CMAKE_SOURCE_DIR}/src/tktk/asset/System.cpp
 )
 source_group("tktk\\asset" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
-set(TKTK_LIB_RESMGR_HEADERS ${TKTK_LIB_ASSET_HEADERS} ${GROUP_HEADERS})
-set(TKTK_LIB_RESMGR_SOURCES ${TKTK_LIB_ASSET_SOURCES} ${GROUP_SOURCES})
+set(TKTK_LIB_ASSET_HEADERS ${TKTK_LIB_ASSET_HEADERS} ${GROUP_HEADERS})
+set(TKTK_LIB_ASSET_SOURCES ${TKTK_LIB_ASSET_SOURCES} ${GROUP_SOURCES})
 
 #
-# Build static libraries!
+# Build and install libraries!
 #
-add_library(tktk-util STATIC
-   ${TKTK_LIB_UTIL_HEADERS} ${TKTK_CONFIG_HEADERS}
-   ${TKTK_LIB_UTIL_SOURCES}
+
+
+install(
+    FILES ${TKTK_CONFIG_HEADERS}
+    DESTINATION include/tktk
 )
-set_target_properties(tktk-util PROPERTIES LINKER_LANGUAGE CXX)
+
+if(${TKTK_BUILD_MPOOL})
+    install(
+        FILES ${TKTK_LIB_MPOOL_HEADERS}
+        DESTINATION include/tktk/mpool
+    )
+endif(${TKTK_BUILD_MPOOL})
+
+if(${TKTK_BUILD_UTIL})
+    install(
+        FILES ${TKTK_LIB_UTIL_HEADERS}
+        DESTINATION include/tktk/util
+    )
+endif(${TKTK_BUILD_UTIL})
 
 if(${TKTK_BUILD_ECS})
     add_library(tktk-ecs STATIC
         ${TKTK_LIB_ECS_HEADERS} ${TKTK_CONFIG_HEADERS}
         ${TKTK_LIB_ECS_SOURCES}
+    )
+
+    install(
+        FILES ${TKTK_LIB_ECS_HEADERS}
+        DESTINATION include/tktk/ecs
     )
 endif(${TKTK_BUILD_ECS})
 
@@ -103,6 +136,11 @@ if(${TKTK_BUILD_PHASE})
     add_library(tktk-phase STATIC
         ${TKTK_LIB_PHASE_HEADERS} ${TKTK_CONFIG_HEADERS}
         ${TKTK_LIB_PHASE_SOURCES}
+    )
+
+    install(
+        FILES ${TKTK_LIB_PHASE_HEADERS}
+        DESTINATION include/tktk/phase
     )
 endif(${TKTK_BUILD_PHASE})
 
@@ -112,4 +150,8 @@ if(${TKTK_BUILD_ASSET})
         ${TKTK_LIB_ASSET_SOURCES}
     )
     set_target_properties(tktk-asset PROPERTIES LINKER_LANGUAGE CXX)
+    install(
+        FILES ${TKTK_LIB_ASSET_HEADERS}
+        DESTINATION include/tktk/asset
+    )
 endif(${TKTK_BUILD_ASSET})

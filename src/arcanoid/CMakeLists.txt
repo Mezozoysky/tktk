@@ -148,7 +148,7 @@ add_executable(arcanoid WIN32 MACOSX_BUNDLE
 )
 set_target_properties(arcanoid PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(arcanoid tktk-ecs tktk-asset tktk-util)
+target_link_libraries(arcanoid tktk-ecs tktk-asset)
 target_link_libraries(arcanoid ${SDL2_IMAGE_LIBRARY})
 target_link_libraries(arcanoid ${SDL2_LIBRARY})
 target_link_libraries(arcanoid ${OPENGL_LIBRARIES})

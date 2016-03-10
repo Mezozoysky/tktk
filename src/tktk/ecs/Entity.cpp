@@ -31,7 +31,7 @@ namespace tktk
 namespace ecs
 {
 
-Entity::Handle::Handle( const util::Id64& eId, System* systemPtr )
+Entity::Handle::Handle( const mpool::Id64& eId, System* systemPtr )
 : mId{ eId }
 , mSystemPtr{ systemPtr }
 {
@@ -61,7 +61,7 @@ bool Entity::Handle::isValid() const noexcept
 
 void Entity::Handle::invalidate() noexcept
 {
-    mId = util::ID64_INVALID;
+    mId = mpool::ID64_INVALID;
     mSystemPtr = nullptr;
 }
 

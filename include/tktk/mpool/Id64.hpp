@@ -25,19 +25,19 @@
 
 
 /// \file
-/// \brief This file provides util::Id64 type
+/// \brief This file provides mpool::Id64 type
 /// \author Stanislav Demyanovich <stan@angrybubo.com>
 /// \date 2016
 /// \copyright tktk is released under the terms of zlib/png license; see full license text at https://opensource.org/licenses/Zlib
 
 #include <cstddef>
 
-#ifndef TKTK_UTIL_ID64_HPP
-#define TKTK_UTIL_ID64_HPP
+#ifndef TKTK_MPOOL_ID64_HPP
+#define TKTK_MPOOL_ID64_HPP
 
 namespace tktk
 {
-namespace util
+namespace mpool
 {
 
 struct Id64
@@ -73,7 +73,7 @@ private:
 
 const Id64 ID64_INVALID{};
 
-} //namespace util
+} //namespace mpool
 } //namespace tktk
 
-#endif /* end of include guard: TKTK_UTIL_ID64_HPP */
+#endif /* end of include guard: TKTK_MPOOL_ID64_HPP */

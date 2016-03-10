@@ -36,7 +36,7 @@ namespace ecs
 // Component
 //
 
-Component::Component( const util::Id64& entityId ) noexcept
+Component::Component( const mpool::Id64& entityId ) noexcept
 : mEntityId{ entityId }
 {
 }
@@ -54,7 +54,7 @@ Component::Handle::Handle() noexcept
 {
 }
 
-Component::Handle::Handle( const util::Id64& cId, Processor* procPtr ) noexcept
+Component::Handle::Handle( const mpool::Id64& cId, Processor* procPtr ) noexcept
 : mId{ cId }
 , mProcPtr{ procPtr }
 {
@@ -67,7 +67,7 @@ bool Component::Handle::isValid() const noexcept
 
 void Component::Handle::invalidate() noexcept
 {
-    mId = util::ID64_INVALID;
+    mId = mpool::ID64_INVALID;
     mProcPtr = nullptr;
 }
 

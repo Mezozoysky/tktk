@@ -42,9 +42,9 @@
 #include <tktk/ecs/Processor.hpp>
 #include <tktk/util/TypeMap.hpp>
 #include <tktk/util/Signal.hpp>
-#include <tktk/util/MemoryPool.hpp>
+#include <tktk/mpool/MemoryPool.hpp>
 #include <tktk/ecs/Component.hpp>
-#include <tktk/util/Id64.hpp>
+#include <tktk/mpool/Id64.hpp>
 
 namespace tktk
 {
@@ -67,7 +67,7 @@ struct Entity
         /// \param[in] eId The managed memory block id
         /// \param[in] systemPtr pointer to the entity's owner system
         /// \note Unless you are modifying the tktk-ecs library you should not construct handles manually, `System::addEntity()`will do it for you.
-        Handle( const util::Id64& eId, System* systemPtr );
+        Handle( const mpool::Id64& eId, System* systemPtr );
 
         /// \brief Removes the entity from owner system
         ///
@@ -109,7 +109,7 @@ struct Entity
         void removeComp() noexcept;
 
         /// \brief Gets entity's id
-        inline util::Id64 getId() const noexcept
+        inline mpool::Id64 getId() const noexcept
         {
             return ( mId );
         }
@@ -129,7 +129,7 @@ struct Entity
 
 
     private:
-        util::Id64 mId{ util::ID64_INVALID }; // id with the system
+        mpool::Id64 mId{ mpool::ID64_INVALID }; // id with the system
         System* mSystemPtr{ nullptr }; // pointer to the system
     };
 
@@ -158,7 +158,7 @@ class System
 {
 public:
     /// \brief Alias for actualy used memory pool type
-    using PoolTypeT = util::MemoryPool< Entity >;
+    using PoolTypeT = mpool::MemoryPool< Entity >;
 
     /// \brief This signal will be sent to subscribers when somebody call `update(float)` method on instance.
     util::Signal< float > updateSignal;
@@ -207,7 +207,7 @@ public:
     ///
     /// Adds the entity specified with id to the 'dead-list'.
     /// \note Unless you are modifying the tktk-ecs library you should not use this method, use `Entity::Handle::remove()` instead.
-    void removeEntity( const util::Id64& eId  ) noexcept;
+    void removeEntity( const mpool::Id64& eId  ) noexcept;
 
     /// \brief Tests if handle is valid
     /// \param[in] eHandle The entity handle to test
@@ -218,7 +218,7 @@ public:
     /// \param[in] eId The id to test
     /// \returns `true` if id is valid, `false` othervise
     /// \note Unless you are modifying the tktk-ecs library you should not use this method, use `Entity::Handle::isValid()` instead.
-    bool isIdValid( const util::Id64& eId ) const noexcept;
+    bool isIdValid( const mpool::Id64& eId ) const noexcept;
 
     /// \brief Gets the raw pointer to the handling entity
     /// \param[in] eHandle Specifies the entity
@@ -229,7 +229,7 @@ public:
     /// \param[in] eId entity's id
     /// \returns The pointer to the entity's memory
     /// \note Unless you are modifying the tktk-ecs library you should not use this method, use `Entity::Handle::operator->()` instead.
-    Entity* getEntityPtr( const util::Id64& eId ) const noexcept;
+    Entity* getEntityPtr( const mpool::Id64& eId ) const noexcept;
 
     //
     // About components
@@ -251,7 +251,7 @@ public:
     /// \returns The handle for the added component
     /// \note Unless you are modifying the tktk-ecs library you should not use this method, use `Entity::Handle::addComp<CompT>(...)` instead.
     template< typename T, typename... ArgsT >
-    typename T::Handle addComp( const util::Id64& eId, ArgsT&&... args )
+    typename T::Handle addComp( const mpool::Id64& eId, ArgsT&&... args )
     {
         typename T::Handle invalidCHandle{};
 
@@ -289,7 +289,7 @@ public:
     /// \returns The handle for the component
     /// \note Unless you are modifying the tktk-ecs library you should not use this method, use `Entity::Handle::getComp<CompT>()` instead.
     template< typename T >
-    typename T::Handle getComp( const util::Id64& eId )
+    typename T::Handle getComp( const mpool::Id64& eId )
     {
         typename T::Handle invalidCHandle{};
 
@@ -334,7 +334,7 @@ public:
     /// If entity has a component of given type `T`, marks component as 'dead', removes entry for `T` from entity's components.
     /// \note Unless you are modifying the tktk-ecs library you should not use this method, use `Entity::Handle::removeComp<CompT>()` instead.
     template< typename T >
-    void removeComp( const util::Id64& eId )
+    void removeComp( const mpool::Id64& eId )
     {
         if ( !isIdValid( eId ) )
         {

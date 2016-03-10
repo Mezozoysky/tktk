@@ -10,6 +10,8 @@ set(CMAKE_VERBOSE_MAKEFILE 1)
 
 project(tktk C CXX)
 
+option(TKTK_BUILD_MPOOL "Build tktk-mpool library (header-only, so install only)"  ON)
+option(TKTK_BUILD_UTIL "Build tktk-util library (header-only, so install only)"  ON)
 option(TKTK_BUILD_ECS "Build tktk-ecs library" ON)
 option(TKTK_BUILD_PHASE "Build tktk-phase library" ON)
 option(TKTK_BUILD_ASSET "Build tktk-asset library" ON)
@@ -76,3 +78,10 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 
 
 add_subdirectory(src)
+
+# Little help
+message(STATUS "")
+message(STATUS "Your options now:")
+message(STATUS "    make         # To build")
+message(STATUS "    make install # To install")
+message(STATUS "")
