@@ -57,7 +57,7 @@ public:
         }
         else
         {
-            shared = std::make_shared< Texture >( rawTexture );
+            shared = Texture::create( rawTexture );
         }
         return ( shared );
     }

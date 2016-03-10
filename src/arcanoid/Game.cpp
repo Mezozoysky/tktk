@@ -86,7 +86,6 @@ void Game::run()
                         e.addComp< RectShape >( 40.0f, 30.0f, SDL_Color{ 0xaa, 0x55, 0x55, 0xff } );
                         //e.addComp< HPCounter >( 3 );
                     }
-                    //e.addComp< RectShape >
                 }
             }
         }
@@ -235,6 +234,7 @@ bool Game::setup()
 
 void Game::cleanup()
 {
+    IMG_Quit();
     SDL_DestroyRenderer( mRenderer );
     SDL_DestroyWindow( mWindow );
     SDL_Quit();

@@ -36,9 +36,17 @@ public:
 
     using VPtr = std::shared_ptr< Texture >;
 
+    template < typename... ArgsT >
+    inline static VPtr create( ArgsT&&... args ) noexcept
+    {
+        VPtr vp{ std::make_shared< Texture >( std::forward< ArgsT >( args )... ) };
+        return ( vp );
+    }
+
     Texture( SDL_Texture* rawTexture ) noexcept
     : mRawTexture{ rawTexture }
     {
+        query();
     }
 
     virtual ~Texture() noexcept
@@ -54,8 +62,23 @@ public:
         return ( mRawTexture );
     }
 
+protected:
+
+    inline bool query() noexcept
+    {
+        if ( mRawTexture == nullptr )
+        {
+            return ( false );
+        }
+
+        SDL_QueryTexture( mRawTexture, nullptr, nullptr, &mWidth, &mHeight );
+        return ( true );
+    }
+
 private:
     SDL_Texture* mRawTexture{ nullptr };
+    int mWidth{ 1 };
+    int mHeight{ 1 };
 };
 
 #endif // ARCANOID_RENDER_TEXTURE_HPP
