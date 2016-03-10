@@ -32,6 +32,27 @@ namespace tktk
 namespace ecs
 {
 
+//
+// Component
+//
+
+Component::Component( const util::Id64& entityId ) noexcept
+: mEntityId{ entityId }
+{
+}
+
+Component::~Component() noexcept
+{
+}
+
+
+//
+// Component::Handle
+//
+
+Component::Handle::Handle() noexcept
+{
+}
 
 Component::Handle::Handle( const util::Id64& cId, Processor* procPtr ) noexcept
 : mId{ cId }
@@ -49,8 +70,6 @@ void Component::Handle::invalidate() noexcept
     mId = util::ID64_INVALID;
     mProcPtr = nullptr;
 }
-
-//         void remove() noexcept;
 
 Component* Component::Handle::operator ->() const noexcept
 {
