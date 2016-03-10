@@ -4,7 +4,7 @@ tktk is a couple of libraries designed to help in solving common game developmen
 Status
 ------
 The project is in early stages of development.
-So currently tktk provides the entity-component system implementation (tktk-ecs library) and couple of useful types of tktk-util library.
+So currently tktk provides: the asset store/access system ( tktk-asset library ), the entity-component system implementation (tktk-ecs library) and couple of related types of tktk-util library.
 
 License
 -------
