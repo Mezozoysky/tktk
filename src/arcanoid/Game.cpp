@@ -61,15 +61,36 @@ void Game::run()
 
         auto e( mECS.addEntity() );
         auto tfPaddle( e.addComp< Transform >( Transform::Vector2f( 200.0f, 700.0f ) ) );
-        e.addComp< RectShape >( 100.0f, 30.0f, SDL_Color{ 0x5f, 0x5f, 0xaf, 0xff } );
+        e.addComp< RectShape >( 100.0f, 30.0f, SDL_Color{ 0x55, 0x55, 0xaa, 0xff } );
 
         e = mECS.addEntity();
         e.addComp< Transform >( Transform::Vector2f( 100.0f, 100.0f ) );
         e.addComp< StaticSprite >( texture );
 
-        e = mECS.addEntity();
-        e.addComp< Transform >( Transform::Vector2f( 10.0f, 10.0f ) );
-        e.addComp< RectShape >( 40.0f, 30.0f, SDL_Color{ 0x5f, 0xaf, 0x5f, 0xff } );
+
+        for ( int x = 0; x < 13; ++x )
+        {
+            for ( int y = 0; y < 4; ++y )
+            {
+                if ( (int)x % 2 == 0 || (int)y % 2 == 0 )
+                {
+                    e = mECS.addEntity();
+                    e.addComp< Transform >( Transform::Vector2f( 0.0f + x * 40.0f + x * 2, 0.0f + y * 30.0f + y * 2 ) );
+                    if ( (int)y % 2 == 0 )
+                    {
+                        e.addComp< RectShape >( 40.0f, 30.0f, SDL_Color{ 0x55, 0xaa, 0x55, 0xff } );
+                        //e.addComp< HPCounter >( 1 );
+                    }
+                    else
+                    {
+                        e.addComp< RectShape >( 40.0f, 30.0f, SDL_Color{ 0xaa, 0x55, 0x55, 0xff } );
+                        //e.addComp< HPCounter >( 3 );
+                    }
+                    //e.addComp< RectShape >
+                }
+            }
+        }
+
 
         mIsRunning = true;
         SDL_Event event;
