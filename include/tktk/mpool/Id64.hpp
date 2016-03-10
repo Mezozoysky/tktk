@@ -40,35 +40,47 @@ namespace tktk
 namespace mpool
 {
 
+/// \brief Struct-wrapper around 64bit number
+///
+/// 64bit combination of two 32bit numbers, first for the index and second for the 'mark' or 'version', provide the concept of 'index validity'.
 struct Id64
 {
-    inline Id64()
-    : mId{ 0 }
+    /// \brief Default constructor; constructs invalid id
+    inline Id64() noexcept
     {
     }
 
-    inline Id64( std::uint32_t index, std::uint32_t version )
+    /// \brief Constructor from index and version
+    inline Id64( std::uint32_t index, std::uint32_t version ) noexcept
     : mId{ std::uint64_t( index ) | std::uint64_t( version ) << 32UL }
     {
     }
 
-    std::uint32_t index() const noexcept
+    inline explicit Id64( std::uint64_t id ) noexcept
+    : mId{ id }
+    {
+    }
+
+    /// \brief Gets index
+    inline std::uint32_t index() const noexcept
     {
         return ( mId & 0xffffffffUL );
     }
 
-    std::uint32_t version() const noexcept
+    /// \brief Gets version
+    inline std::uint32_t version() const noexcept
     {
         return ( mId >> 32UL );
     }
 
-    std::uint64_t id() const noexcept
+    /// \brief Gets actual id
+    inline std::uint64_t id() const noexcept
     {
         return ( mId );
     }
 
 private:
-    std::uint64_t mId{ 0 };
+    std::uint64_t mId{ 0 }; ///<  Actual id
 };
 
 const Id64 ID64_INVALID{};
