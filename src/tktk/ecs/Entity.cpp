@@ -31,7 +31,11 @@ namespace tktk
 namespace ecs
 {
 
-Entity::Handle::Handle( const mpool::Id64& eId, System* systemPtr )
+Entity::Handle::Handle() noexcept
+{
+}
+
+Entity::Handle::Handle( const mpool::Id64& eId, System* systemPtr ) noexcept
 : mId{ eId }
 , mSystemPtr{ systemPtr }
 {

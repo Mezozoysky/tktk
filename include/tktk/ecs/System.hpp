@@ -44,7 +44,6 @@
 #include <tktk/util/Signal.hpp>
 #include <tktk/mpool/MemoryPool.hpp>
 #include <tktk/ecs/Component.hpp>
-#include <tktk/mpool/Id64.hpp>
 
 namespace tktk
 {
@@ -63,11 +62,14 @@ struct Entity
     /// Entity::Handle acts like 'value-type pointer' to the entity instance in managed memory.
     struct Handle
     {
+        /// \brief Default constructor; creates invalid handle
+        Handle() noexcept;
+
         /// \brief Constructor
         /// \param[in] eId The managed memory block id
         /// \param[in] systemPtr pointer to the entity's owner system
         /// \note Unless you are modifying the tktk-ecs library you should not construct handles manually, `System::addEntity()`will do it for you.
-        Handle( const mpool::Id64& eId, System* systemPtr );
+        explicit Handle( const mpool::Id64& eId, System* systemPtr ) noexcept;
 
         /// \brief Removes the entity from owner system
         ///
