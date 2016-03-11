@@ -10,6 +10,7 @@ set(GROUP_HEADERS
 source_group("tktk" FILES ${GROUP_HEADERS})
 set(TKTK_CONFIG_HEADERS ${TKTK_CONFIG_HEADERS} ${GROUP_HEADERS})
 
+
 set(TKTK_LIB_UTIL_HEADERS "")
 set(TKTK_LIB_UTIL_SOURCES "")
 #========================
@@ -20,11 +21,11 @@ set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/include/tktk/util/Signal.hpp
 )
 set(GROUP_SOURCES
-    ${CMAKE_SOURCE_DIR}/src/tktk/util/MemoryPool.cpp
 )
 source_group("tktk\\util" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(TKTK_LIB_UTIL_HEADERS ${TKTK_LIB_UTIL_HEADERS} ${GROUP_HEADERS})
 set(TKTK_LIB_UTIL_SOURCES ${TKTK_LIB_UTIL_SOURCES} ${GROUP_SOURCES})
+
 
 set(TKTK_LIB_MPOOL_HEADERS "")
 set(TKTK_LIB_MPOOL_SOURCES "")
@@ -36,11 +37,27 @@ set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/include/tktk/mpool/MemoryPool.hpp
 )
 set(GROUP_SOURCES
-    ${CMAKE_SOURCE_DIR}/src/tktk/mpool/MemoryPool.cpp
 )
 source_group("tktk\\mpool" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(TKTK_LIB_MPOOL_HEADERS ${TKTK_LIB_MPOOL_HEADERS} ${GROUP_HEADERS})
 set(TKTK_LIB_MPOOL_SOURCES ${TKTK_LIB_MPOOL_SOURCES} ${GROUP_SOURCES})
+
+
+set(TKTK_LIB_TYPEMAP_HEADERS "")
+set(TKTK_LIB_TYPEMAP_SOURCES "")
+#===========================
+# === tktk/typemap group ===
+# ==========================
+set(GROUP_HEADERS
+    ${CMAKE_SOURCE_DIR}/include/tktk/typemap/Config.hpp
+    ${CMAKE_SOURCE_DIR}/include/tktk/typemap/TypeMap.hpp
+)
+set(GROUP_SOURCES
+)
+source_group("tktk\\typemap" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
+set(TKTK_LIB_TYPEMAP_HEADERS ${TKTK_LIB_TYPEMAP_HEADERS} ${GROUP_HEADERS})
+set(TKTK_LIB_TYPEMAP_SOURCES ${TKTK_LIB_TYPEMAP_SOURCES} ${GROUP_SOURCES})
+
 
 set(TKTK_LIB_ECS_HEADERS "")
 set(TKTK_LIB_ECS_SOURCES "")
@@ -96,10 +113,10 @@ source_group("tktk\\asset" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(TKTK_LIB_ASSET_HEADERS ${TKTK_LIB_ASSET_HEADERS} ${GROUP_HEADERS})
 set(TKTK_LIB_ASSET_SOURCES ${TKTK_LIB_ASSET_SOURCES} ${GROUP_SOURCES})
 
+
 #
 # Build and install libraries!
 #
-
 
 install(
     FILES ${TKTK_CONFIG_HEADERS}
@@ -112,6 +129,13 @@ if(${TKTK_BUILD_MPOOL})
         DESTINATION include/tktk/mpool
     )
 endif(${TKTK_BUILD_MPOOL})
+
+if(${TKTK_BUILD_TYPEMAP})
+    install(
+        FILES ${TKTK_LIB_TYPEMAP_HEADERS}
+        DESTINATION include/tktk/typemap
+    )
+endif(${TKTK_BUILD_TYPEMAP})
 
 if(${TKTK_BUILD_UTIL})
     install(

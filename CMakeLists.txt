@@ -11,6 +11,7 @@ set(CMAKE_VERBOSE_MAKEFILE 1)
 project(tktk C CXX)
 
 option(TKTK_BUILD_MPOOL "Build tktk-mpool library (header-only, so install only)"  ON)
+option(TKTK_BUILD_TYPEMAP "Build tktk-typemap library (header-only, so install only)"  ON)
 option(TKTK_BUILD_UTIL "Build tktk-util library (header-only, so install only)"  ON)
 option(TKTK_BUILD_ECS "Build tktk-ecs library" ON)
 option(TKTK_BUILD_PHASE "Build tktk-phase library" ON)

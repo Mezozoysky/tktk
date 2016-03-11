@@ -28,6 +28,7 @@
 #include <Catch/catch.hpp>
 
 #include <tktk/util/TypeMap.hpp>
+#include <tktk/typemap/TypeMap.hpp>
 #include <tktk/mpool/MemoryPool.hpp>
 #include <tktk/util/Signal.hpp>
 #include <tktk/ecs/System.hpp>
@@ -35,6 +36,41 @@
 #include <iostream>
 
 using namespace tktk;
+
+TEST_CASE( "Vector TypeMap correctness", "[typemap]" )
+{
+    using Value = std::string;
+
+    typemap::TypeMap< Value > typeMap( "" );
+    CHECK( typeMap.getInvalid() == "" );
+    CHECK( typeMap.getSize() == 0 );
+    CHECK( typeMap.getElementsCount() == 0 );
+
+    typeMap.set< int >( "integer type" );
+    CHECK( typeMap.get< int >() == "integer type" );
+    CHECK( typeMap.getSize() == 1 );
+    CHECK( typeMap.getElementsCount() == 1 );
+
+    typeMap.set< long >( "long integer type" );
+    CHECK( typeMap.get< long >() == "long integer type" );
+    CHECK( typeMap.getSize() == 2 );
+    CHECK( typeMap.getElementsCount() == 2 );
+
+    CHECK( typeMap.get< std::string >() == typeMap.getInvalid() );
+    CHECK( typeMap.getSize() == 3 );
+    CHECK( typeMap.getElementsCount() == 2 );
+
+    typeMap.set< std::string >( "std library string" );
+    CHECK( typeMap.get< std::string >() == "std library string" );
+    CHECK( typeMap.getSize() == 3 );
+    CHECK( typeMap.getElementsCount() == 3 );
+
+    typeMap.erase< long >();
+    CHECK( typeMap.get< long >() == typeMap.getInvalid() );
+    CHECK( typeMap.getSize() == 3 );
+    CHECK( typeMap.getElementsCount() == 2 );
+
+}
 
 TEST_CASE( "TypeMap correctness", "[typemap]" )
 {
@@ -45,6 +81,7 @@ TEST_CASE( "TypeMap correctness", "[typemap]" )
 
     CHECK( typeMap.find< int >()->second == "integer type" );
 }
+
 
 TEST_CASE( "MemoryPool correctness", "[mempool]" )
 {
