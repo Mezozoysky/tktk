@@ -51,6 +51,8 @@ Component::~Component() noexcept
 //
 
 Component::Handle::Handle() noexcept
+: mId{ mpool::ID64_INVALID }
+, mProcPtr{ nullptr }
 {
 }
 
@@ -62,7 +64,15 @@ Component::Handle::Handle( const mpool::Id64& cId, Processor* procPtr ) noexcept
 
 bool Component::Handle::isValid() const noexcept
 {
-    return ( mProcPtr && mProcPtr->isIdValid( mId ) );
+//     return ( mProcPtr != nullptr && mProcPtr->isIdValid( mId ) );
+    if ( mProcPtr != NULL )
+    {
+        if ( mProcPtr->isIdValid( mId ) )
+        {
+            return ( true );
+        }
+    }
+    return ( false );
 }
 
 void Component::Handle::invalidate() noexcept

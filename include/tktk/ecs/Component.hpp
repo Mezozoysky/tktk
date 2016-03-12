@@ -62,6 +62,22 @@ struct Component
         /// \brief Constructor from proc and id
         Handle( const mpool::Id64& cId, Processor* procPtr ) noexcept;
 
+        bool operator ==( const Component::Handle& rhs  ) const noexcept
+        {
+            if ( mProcPtr == rhs.mProcPtr )
+            {
+                if ( mId == rhs.mId )
+                {
+                    return ( true );
+                }
+            }
+            return ( false );
+        }
+        bool operator !=( const Component::Handle& rhs ) const noexcept
+        {
+            return ( !( *this == rhs ) );
+        }
+
         /// \brief Access to handling component via pointer
         /// \returns The handling component pointer if handle is valid, nullptr othervise
         /// Behaves like an std smart pointers operator->()
