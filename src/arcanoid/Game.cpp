@@ -55,9 +55,12 @@ void Game::run()
         auto texture( mAssetS.get< Texture >( "texture0.png" ) );
         auto json( mAssetS.get< JSON >( "json0.json" ) );
 
-        auto jsName( json->getDocument()[ "name" ].GetString() );
-        auto jsDesc( json->getDocument()[ "description" ].GetString() );
-        std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CONTENTS: name -> \"" << jsName << "\", description -> \"" << jsDesc << "\"" << std::endl;
+        if ( json != nullptr )
+        {
+            auto jsName( json->getDocument()[ "name" ].GetString() );
+            auto jsDesc( json->getDocument()[ "description" ].GetString() );
+            std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CONTENTS: name -> \"" << jsName << "\", description -> \"" << jsDesc << "\"" << std::endl;
+        }
 
         auto e( mECS.addEntity() );
         auto tfPaddle( e.addComp< Transform >( Transform::Vector2f( 200.0f, 700.0f ) ) );
