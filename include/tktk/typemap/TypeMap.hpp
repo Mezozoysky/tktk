@@ -41,6 +41,9 @@
 #include <tktk/typemap/Config.hpp>
 #include <vector>
 #include <cstddef>
+#include <atomic>
+#include <algorithm>
+#include <functional>
 
 namespace tktk
 {
@@ -105,6 +108,12 @@ public:
         }
 
         return ( mTypes[ index ] );
+    }
+
+    //template < typename FuncT >
+    inline void forEach( const std::function< void(ValueTypeT&) >& func )
+    {
+        std::for_each( mTypes.begin(), mTypes.end(), func );
     }
 
     inline const ValueTypeT& getInvalid() const noexcept
