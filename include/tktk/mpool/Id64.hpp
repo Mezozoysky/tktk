@@ -79,6 +79,15 @@ struct Id64
         return ( mId );
     }
 
+    inline bool operator ==( const Id64& rhs  ) const noexcept
+    {
+        return ( mId == rhs.mId );
+    }
+    bool operator !=( const Id64& rhs ) const noexcept
+    {
+        return ( !( *this == rhs ) );
+    }
+
 private:
     std::uint64_t mId{ 0 }; ///<  Actual id
 };
