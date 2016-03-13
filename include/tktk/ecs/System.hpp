@@ -152,7 +152,7 @@ struct Entity
 /// ...
 /// using namespace tktk;
 /// ecs::System system;
-/// auto entity( sysstem.addEntity() );
+/// auto entity( system.addEntity() );
 /// entity.remove();
 /// ...
 /// \endcode
