@@ -63,6 +63,15 @@ public:
     /// Does nothing
     virtual ~System() noexcept
     {
+        // Unregister and destroy processors
+        auto it( mManagers.begin() );
+        while ( it != mManagers.end() )
+        {
+            auto mgrPtr( it->second );
+            it = mManagers.erase( it );
+            delete mgrPtr;
+            mgrPtr = nullptr;
+        }
     }
 
     template < typename MgrT, typename... ArgsT >
@@ -72,6 +81,12 @@ public:
             std::is_base_of< Mgr< typename MgrT::AssetTypeT >, MgrT >::value
             , "MgrT should extend tktk::asset::Mgr<>"
         );
+
+        if ( mManagers.count< typename MgrT::AssetTypeT >() == 1 )
+        {
+            ll_error( "Trying to register Manager which is already registered!" );
+            return ( nullptr );
+        }
 
         Manager* mgrPtr{ new MgrT( this, std::forward<ArgsT>( args )... ) };
         mManagers.insert< typename MgrT::AssetTypeT >( mgrPtr );
@@ -87,14 +102,29 @@ public:
             , "MgrT should extend tktk::asset::Mgr<>"
         );
 
-        Manager* mgrPtr{ mManagers.at< typename MgrT::AssetTypeT >() };
-        return ( static_cast< MgrT* >( mgrPtr ) );
+        auto it( mManagers.find< MgrT::AssetTypeT >() );
+        if ( it != mManagers.end() )
+        {
+            Manager* mgrPtr{ it->second };
+            return ( static_cast< MgrT* >( mgrPtr ) );
+        }
+
+        return ( nullptr );
     }
 
     template< typename AssetT >
     Mgr< AssetT >* getMgrForAssetType() noexcept
     {
-        Manager* mgrPtr{ mManagers.at< AssetT >() };
+        static_assert(
+            std::is_base_of< Manager , Mgr< AssetT > >::value
+            , "Mgr< AssetT > type derived from Manager doesnt exist for given AssetT"
+        );
+        auto it( mManagers.find< AssetT >() );
+        if ( it == mManagers.end() )
+        {
+            return ( nullptr );
+        }
+        Manager* mgrPtr{ it->second };
         return ( static_cast< Mgr< AssetT >* >( mgrPtr ) );
     }
 
