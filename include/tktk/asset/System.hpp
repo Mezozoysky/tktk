@@ -87,29 +87,15 @@ public:
             , "MgrT should extend tktk::asset::Mgr<>"
         );
 
-        MgrT* mgrPtr{ nullptr };
-
-        auto it = mManagers.find< typename MgrT::AssetTypeT >();
-        if ( it != mManagers.end() )
-        {
-            mgrPtr = static_cast< MgrT* >( it->second );
-        }
-
-        return ( mgrPtr );
+        Manager* mgrPtr{ mManagers.at< typename MgrT::AssetTypeT >() };
+        return ( static_cast< MgrT* >( mgrPtr ) );
     }
 
     template< typename AssetT >
-    Mgr< AssetT >* getMgrForAssetType() const noexcept
+    Mgr< AssetT >* getMgrForAssetType() noexcept
     {
-        Mgr< AssetT >* mgrPtr;
-
-        auto it = mManagers.find< AssetT >();
-        if ( it != mManagers.end() )
-        {
-            mgrPtr = static_cast< Mgr< AssetT >* >( it->second );
-        }
-
-        return ( mgrPtr );
+        Manager* mgrPtr{ mManagers.at< AssetT >() };
+        return ( static_cast< Mgr< AssetT >* >( mgrPtr ) );
     }
 
 

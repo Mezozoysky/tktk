@@ -43,22 +43,6 @@ set(TKTK_LIB_MPOOL_HEADERS ${TKTK_LIB_MPOOL_HEADERS} ${GROUP_HEADERS})
 set(TKTK_LIB_MPOOL_SOURCES ${TKTK_LIB_MPOOL_SOURCES} ${GROUP_SOURCES})
 
 
-set(TKTK_LIB_TYPEMAP_HEADERS "")
-set(TKTK_LIB_TYPEMAP_SOURCES "")
-#===========================
-# === tktk/typemap group ===
-# ==========================
-set(GROUP_HEADERS
-    ${CMAKE_SOURCE_DIR}/include/tktk/typemap/Config.hpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/typemap/TypeMap.hpp
-)
-set(GROUP_SOURCES
-)
-source_group("tktk\\typemap" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
-set(TKTK_LIB_TYPEMAP_HEADERS ${TKTK_LIB_TYPEMAP_HEADERS} ${GROUP_HEADERS})
-set(TKTK_LIB_TYPEMAP_SOURCES ${TKTK_LIB_TYPEMAP_SOURCES} ${GROUP_SOURCES})
-
-
 set(TKTK_LIB_ECS_HEADERS "")
 set(TKTK_LIB_ECS_SOURCES "")
 # ======================

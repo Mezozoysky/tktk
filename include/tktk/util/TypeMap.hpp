@@ -27,10 +27,11 @@
 #ifndef TKTK_UTIL_TYPE_MAP_HPP
 #define TKTK_UTIL_TYPE_MAP_HPP
 
-#include <tktk/Config.hpp>
+#include <tktk/util/Config.hpp>
 #include <cstdint>
 #include <atomic>
 #include <unordered_map>
+#include <algorithm>
 
 namespace tktk
 {
@@ -48,6 +49,51 @@ public:
     using Iterator = typename MapImpl::iterator;
     using ConstIterator = typename MapImpl::const_iterator;
     using ValueType = typename MapImpl::value_type;
+
+    template< typename TypeKey >
+    inline void insert( const ValueTypeT& value ) noexcept
+    {
+        mMap.insert( std::make_pair( getUniqueTypeId< TypeKey >(), value ) );
+    }
+
+    template< typename TypeKey >
+    inline ValueTypeT& at()
+    {
+        return ( mMap.at( getUniqueTypeId< TypeKey >() ) );
+    }
+
+    template< typename TypeKey >
+    inline const ValueTypeT& at() const
+    {
+        return ( mMap.at( getUniqueTypeId< TypeKey >() ) );
+    }
+
+    template< typename TypeKey >
+    inline std::size_t count() const noexcept
+    {
+        return ( mMap.count( getUniqueTypeId< TypeKey >() ) );
+    }
+
+    template< typename TypeKey >
+    inline std::size_t erase() noexcept
+    {
+        return ( mMap.erase( getUniqueTypeId< TypeKey >() ) );
+    }
+
+    inline Iterator erase( ConstIterator pos )
+    {
+        return ( mMap.erase( pos ) );
+    }
+
+    inline Iterator erase( ConstIterator first, ConstIterator last)
+    {
+        return ( mMap.erase( first, last ) );
+    }
+
+    inline void forEach( const std::function< void(ValueTypeT&) >& func )
+    {
+        std::for_each( mMap.begin(), mMap.end(), func );
+    }
 
     inline ConstIterator begin() const noexcept
     {
@@ -70,41 +116,25 @@ public:
     }
 
     template < typename TypeKey >
-    Iterator find() noexcept
+    inline Iterator find() noexcept
     {
         return ( mMap.find( getUniqueTypeId< TypeKey >() ) );
     }
 
     template < typename TypeKey >
-    ConstIterator find() const noexcept
+    inline ConstIterator find() const noexcept
     {
         return ( mMap.find( getUniqueTypeId< TypeKey >() ) );
     }
 
-    template < typename TypeKey >
-    void insert( const ValueTypeT& value ) noexcept
-    {
-        mMap[ getUniqueTypeId< TypeKey >() ] = value;
-    }
-
-    template < typename TypeKey >
-    void remove()
-    {
-        ConstIterator cit = mMap.find( getUniqueTypeId< TypeKey >() );
-        if ( cit != mMap.end() )
-        {
-            mMap.erase( cit );
-        }
-    }
-
-    void remove( Iterator it )
-    {
-        mMap.erase( it );
-    }
-
-    void clear() noexcept
+    inline void clear() noexcept
     {
         mMap.clear();
+    }
+
+    inline std::size_t size() const noexcept
+    {
+        return ( mMap.size() );
     }
 
 private:
@@ -112,17 +142,17 @@ private:
     template< typename TypeKey >
     inline static int getUniqueTypeId() noexcept
     {
-        static const int id = mNextTypeId++;
+        static const std::size_t id = mNextTypeId++;
         return id;
     }
 
 private:
-    static std::atomic_int mNextTypeId;
+    static std::atomic_size_t mNextTypeId;
     MapImpl mMap;
 };
 
 template< typename ValueTypeT >
-std::atomic_int TypeMap< ValueTypeT >::mNextTypeId{ 0 };
+std::atomic_size_t TypeMap< ValueTypeT >::mNextTypeId{ 0 };
 
 
 } //namespace util

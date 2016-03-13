@@ -42,7 +42,7 @@ System::~System() noexcept
     while ( it != mProcessors.end() )
     {
         auto procPtr( it->second );
-        mProcessors.remove( it++ );
+        it = mProcessors.erase( it );
         delete procPtr;
         procPtr = nullptr;
     }
@@ -81,7 +81,7 @@ void System::removeEntity( Entity::Handle& eHandle ) noexcept
     {
         Component::Handle ucHandle{ it->second };
         ll_debug( "Found untyped comp handle. id: [" << ucHandle.getId().index() << ", " << ucHandle.getId().version() << "]" );
-        eHandle->map.remove( it++ ); //remove entry from map
+        it = eHandle->map.erase( it ); //remove entry from map
         ll_debug( "Untyped comp handle removed from entity's attached" );
         if ( ucHandle.isValid() )
         {

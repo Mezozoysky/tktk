@@ -28,7 +28,6 @@
 #include <Catch/catch.hpp>
 
 #include <tktk/util/TypeMap.hpp>
-#include <tktk/typemap/TypeMap.hpp>
 #include <tktk/mpool/MemoryPool.hpp>
 #include <tktk/util/Signal.hpp>
 #include <tktk/ecs/System.hpp>
@@ -37,6 +36,7 @@
 
 using namespace tktk;
 
+/*
 TEST_CASE( "Vector TypeMap correctness", "[typemap]" )
 {
     using Value = std::string;
@@ -71,6 +71,7 @@ TEST_CASE( "Vector TypeMap correctness", "[typemap]" )
     CHECK( typeMap.getElementsCount() == 2 );
 
 }
+*/
 
 TEST_CASE( "TypeMap correctness", "[typemap]" )
 {

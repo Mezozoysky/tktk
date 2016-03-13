@@ -354,7 +354,7 @@ public:
 
         Component::Handle ucHandle{ ePtr->map.find< T >()->second };
         procPtr->destroyElement( ucHandle.getId() );
-        ePtr->map.remove( it );
+        ePtr->map.erase( it );
     }
 
     //

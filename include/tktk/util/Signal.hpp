@@ -27,7 +27,7 @@
 #ifndef TKTK_UTIL_SIGNAL_HPP
 #define TKTK_UTIL_SIGNAL_HPP
 
-#include <tktk/Config.hpp>
+#include <tktk/util/Config.hpp>
 #include <functional>
 #include <list>
 

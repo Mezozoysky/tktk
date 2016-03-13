@@ -24,13 +24,13 @@
 
 
 /// \file
-/// \brief This file provides configuration defines for tktk-typemap library
+/// \brief This file provides configuration defines for tktk-util library
 /// \author Stanislav Demyanovich <stan@angrybubo.com>
 /// \date 2016
 /// \copyright tktk is released under the terms of zlib/png license; see full license text at https://opensource.org/licenses/Zlib
 
-/// \namespace typemap
-/// \brief Namespace for all the names of tktk-typemap library
+/// \namespace util
+/// \brief Namespace for all the names of tktk-util library
 ///
 /// Description stub for `namespace typemap`
 
