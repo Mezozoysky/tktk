@@ -365,12 +365,18 @@ public:
     /// \param[in] args Arguments for `T` constructor
     /// \returns The raw pointer to the instance
     template< typename T, typename... ArgsT >
-    T* registerProc( ArgsT&&... args )
+    T* registerProc( ArgsT&&... args ) noexcept
     {
         static_assert(
-                      std::is_base_of< Processor, T >::value
-                      , "T should extend tktk::ecs::Processor"
+                      std::is_base_of< Proc< typename T::CompTypeT >, T >::value
+                      , "T should extend tktk::ecs::Proc<> template"
         );
+
+        if ( mProcessors.count< typename T::CompTypeT >() == 1 )
+        {
+            ll_error( "Trying to register Processor which is already registered!" );
+            return ( nullptr );
+        }
 
         Processor* procPtr{ new T( this, std::forward< ArgsT >( args )... ) };
         mProcessors.insert< typename T::CompTypeT >( procPtr );
@@ -381,43 +387,39 @@ public:
     /// \brief Gets the processor instance of given type `T`
     /// \returns The raw pointer to the instance if `T` is registered, `nullptr` othervise
     template< typename T >
-    T* getProc()
+    T* getProc() noexcept
     {
         static_assert(
-                      std::is_base_of< Processor, T >::value
-                      , "T should extend tktk::ecs::Processor"
+                      std::is_base_of< Proc< typename T::CompTypeT >, T >::value
+                      , "T should extend tktk::ecs::Proc<> template"
         );
-
-        T* procPtr{ nullptr };
 
         auto it = mProcessors.find< typename T::CompTypeT >();
         if ( it != mProcessors.end() )
         {
-            procPtr = static_cast< T* >( it->second );
+            return ( static_cast< T* >( it->second ) );
         }
 
-        return ( procPtr );
+        return ( nullptr );
     }
 
     /// \brief Gets the processor instance by given processor's component type `CompT`
     /// \returns The raw pointer to the instance if according processor type is registered, `nullptr` othervise
     template< typename CompT >
-    Proc< CompT >* getProcForCompType()
+    Proc< CompT >* getProcForCompType() noexcept
     {
         static_assert(
-            std::is_base_of< Component, CompT >::value
-            , "T should extend tktk::ecs::Component"
+            std::is_base_of< Processor, Proc< CompT > >::value
+            , "Proc< CompT > type derived from Processor doesnt exist for given CompT"
         );
 
-        Proc< CompT >* procPtr;
-
-        auto it = mProcessors.find< CompT >();
-        if ( it != mProcessors.end() )
+        auto it( mProcessors.find< CompT >() );
+        if ( it == mProcessors.end() )
         {
-            procPtr = static_cast< Proc< CompT >* >( it->second );
+            return ( nullptr );
         }
 
-        return ( procPtr );
+        return ( static_cast< Proc< CompT >* >( it->second ) );
     }
 
 protected:

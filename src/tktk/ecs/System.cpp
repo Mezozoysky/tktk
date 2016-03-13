@@ -53,7 +53,7 @@ void System::setup() noexcept
     auto it = mProcessors.begin();
     while ( it != mProcessors.end() )
     {
-        it->second->setup( this ); ///< \todo argument this is obsolete
+        it->second->setup( this ); ///< \todo argument 'this' is obsolete
         ++it;
     }
 }
