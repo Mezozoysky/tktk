@@ -67,7 +67,9 @@ public:
 
 
 /// \brief Pool for contiguous managed memory allocation
-/// \tparam 
+/// \tparam ValueT The data type to manage memory for
+/// \tparam chunkSizeV Number of \em ValueT per memory chunk
+///
 /// Usage example:
 /// \code{.cpp}
 /// #include <tktk/mpool/MemoryPool.hpp>
