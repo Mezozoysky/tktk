@@ -18,7 +18,7 @@ set(TKTK_LIB_UTIL_SOURCES "")
 # =======================
 set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/include/tktk/util/TypeMap.hpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/util/TypeSet.hpp
+    ${CMAKE_SOURCE_DIR}/include/tktk/util/TypeMask.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/util/Signal.hpp
 )
 set(GROUP_SOURCES

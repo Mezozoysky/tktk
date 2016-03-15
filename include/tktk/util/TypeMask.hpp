@@ -24,13 +24,13 @@
 
 
 /// \file
-/// \brief This file provides TypeSet type
+/// \brief This file provides TypeMask type
 /// \author Stanislav Demyanovich <stan@angrybubo.com>
 /// \date 2016
 /// \copyright tktk is released under the terms of zlib/png license; see full license text at https://opensource.org/licenses/Zlib
 
-#ifndef TKTK_UTIL_TYPE_SET_HPP
-#define TKTK_UTIL_TYPE_SET_HPP
+#ifndef TKTK_UTIL_TYPE_MASK_HPP
+#define TKTK_UTIL_TYPE_MASK_HPP
 
 #include <tktk/util/Config.hpp>
 #include <bitset>
@@ -42,7 +42,7 @@ namespace util
 {
 
 template < std::size_t sizeV = 64 >
-class TypeSet
+class TypeMask
 {
     using SetImpl = std::bitset< sizeV >;
 
@@ -51,42 +51,42 @@ public:
     static const std::size_t setSizeV{ sizeV };
 
 
-    TypeSet< sizeV >& set() noexcept
+    TypeMask< sizeV >& set() noexcept
     {
         mSet.set();
         return ( *this );
     }
 
     template< typename TypeKey >
-    TypeSet< sizeV >& set( bool value = true )
+    TypeMask< sizeV >& set( bool value = true )
     {
         std::size_t pos{ getUniqueTypeId< TypeKey >() };
         mSet.set( pos, value );
         return ( *this );
     }
 
-    TypeSet< sizeV >& reset() noexcept
+    TypeMask< sizeV >& reset() noexcept
     {
         mSet.reset();
         return ( *this );
     }
 
     template< typename TypeKey >
-    TypeSet< sizeV >& reset()
+    TypeMask< sizeV >& reset()
     {
         std::size_t pos{ getUniqueTypeId< TypeKey >() };
         mSet.reset( pos );
         return ( *this );
     }
 
-    TypeSet< sizeV >& flip() noexcept
+    TypeMask< sizeV >& flip() noexcept
     {
         mSet.flip();
         return ( *this );
     }
 
     template< typename TypeKey >
-    TypeSet< sizeV >& flip()
+    TypeMask< sizeV >& flip()
     {
         std::size_t pos{ getUniqueTypeId< TypeKey >() };
         mSet.flip( pos );
@@ -115,16 +115,9 @@ private:
     SetImpl mSet;
 };
 
-//
-// Template members definition
-//
-
-// template< std::size_t sizeV >
-// std::atomic_size_t TypeSet< sizeV >::mNextTypeId{ 0 };
-
 
 } // namespace util
 } // namespace tktk
 
 
-#endif // TKTK_UTIL_TYPE_SET_HPP
+#endif // TKTK_UTIL_TYPE_MASK_HPP

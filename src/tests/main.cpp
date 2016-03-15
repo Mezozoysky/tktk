@@ -28,7 +28,7 @@
 #include <Catch/catch.hpp>
 
 #include <tktk/util/TypeMap.hpp>
-#include <tktk/util/TypeSet.hpp>
+#include <tktk/util/TypeMask.hpp>
 #include <tktk/mpool/MemoryPool.hpp>
 #include <tktk/util/Signal.hpp>
 #include <tktk/ecs/System.hpp>
@@ -84,9 +84,9 @@ TEST_CASE( "TypeMap correctness", "[typemap]" )
     CHECK( typeMap.find< int >()->second == "integer type" );
 }
 
-TEST_CASE( "TypeSet correctness", "[typeset]" )
+TEST_CASE( "TypeMask correctness", "[typemask]" )
 {
-    util::TypeSet< 2 > typeSet;
+    util::TypeMask< 2 > typeSet;
     typeSet.reset().set< int >().set< std::string >();
 
     CHECK( typeSet.test< int >() == true );
@@ -94,7 +94,7 @@ TEST_CASE( "TypeSet correctness", "[typeset]" )
     typeSet.reset< int >();
     CHECK( typeSet.test< int >() == false );
 
-    util::TypeSet< 2 > typeSet2;
+    util::TypeMask< 2 > typeSet2;
     typeSet2.reset().set< unsigned long >().set< char[] >();
 
     CHECK( typeSet2.test< unsigned long >() == true );
