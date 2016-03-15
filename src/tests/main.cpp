@@ -28,6 +28,7 @@
 #include <Catch/catch.hpp>
 
 #include <tktk/util/TypeMap.hpp>
+#include <tktk/util/TypeSet.hpp>
 #include <tktk/mpool/MemoryPool.hpp>
 #include <tktk/util/Signal.hpp>
 #include <tktk/ecs/System.hpp>
@@ -83,6 +84,16 @@ TEST_CASE( "TypeMap correctness", "[typemap]" )
     CHECK( typeMap.find< int >()->second == "integer type" );
 }
 
+TEST_CASE( "TypeSet correctness", "[typeset]" )
+{
+    util::TypeSet< 2 > typeSet;
+    typeSet.reset().set< int >().set< std::string >();
+
+    CHECK( typeSet.test< int >() == true );
+    CHECK( typeSet.test< std::string >() == true );
+    typeSet.reset< int >();
+    CHECK( typeSet.test< int >() == false );
+}
 
 TEST_CASE( "MemoryPool correctness", "[mempool]" )
 {
