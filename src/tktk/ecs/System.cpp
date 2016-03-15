@@ -61,7 +61,7 @@ void System::setup() noexcept
 
 Entity::Handle System::addEntity() noexcept
 {
-    mpool::Id64 eId{ mEntityPool.createElement() };
+    mpool::Id64 eId{ mEntityPool.alloc() };
     Entity::Handle handle( eId, this );
     return ( handle );
 }
@@ -92,7 +92,7 @@ void System::removeEntity( Entity::Handle& eHandle ) noexcept
     }
     ll_debug( "Entityes attached components are removed." );
 
-    mEntityPool.destroyElement( eHandle.getId() );
+    mEntityPool.free( eHandle.getId() );
     ll_debug( "Entity itself is removed." );
 
     eHandle.invalidate();
@@ -103,7 +103,7 @@ void System::removeEntity( Entity::Handle& eHandle ) noexcept
 // for use from entity handle
 void System::removeEntity( const mpool::Id64& eId  ) noexcept
 {
-    mEntityPool.destroyElement( eId );
+    mEntityPool.free( eId );
 }
 
 bool System::isEntityValid( const Entity::Handle& eHandle ) const noexcept
@@ -129,7 +129,7 @@ Entity* System::getEntityPtr( const mpool::Id64& eId ) const noexcept
     {
         return ( nullptr );
     }
-    return ( mEntityPool.getPtr( eId.index() ) );
+    return ( mEntityPool.getPtr( eId ) );
 }
 
 } //namespace ecs

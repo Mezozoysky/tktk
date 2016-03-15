@@ -60,19 +60,22 @@ void RectShapeProc::setup( ecs::System* systemPtr )
 
 void RectShapeProc::onUpdate( float deltaTime )
 {
-    for ( int i{ 0 }; i < mPool.getSize(); ++i )
-    {
-        if ( !mPool.isAlive( i ) ) continue;
-        auto comp = mPool[ i ];
-//         ll_debug( "Updating RectShape comp#" << std::to_string( i ) << " width=" << comp.width << ", height=" << comp.height << ", centered=" << std::to_string( comp.centered ) );
-
-        auto t( mSystemPtr->getComp< Transform >( comp.getEntityId() ) );
-        SDL_Rect rect;
-        rect.w = comp.width;
-        rect.h = comp.height;
-        rect.x = t->position.x;
-        rect.y = t->position.y;
-        SDL_SetRenderDrawColor( mRenderer, comp.color.r, comp.color.g, comp.color.b, comp.color.a );
-        SDL_RenderFillRect( mRenderer, &rect );
-    }
+    mPool.forEach(
+        [&] ( RectShape& shape )
+        {
+            auto t( mSystemPtr->getComp< Transform >( shape.getEntityId() ) );
+            SDL_Rect rect;
+            rect.w = shape.width;
+            rect.h = shape.height;
+            rect.x = t->position.x;
+            rect.y = t->position.y;
+            SDL_SetRenderDrawColor( mRenderer, shape.color.r, shape.color.g, shape.color.b, shape.color.a );
+            SDL_RenderFillRect( mRenderer, &rect );
+//             ll_debug( "Updating RectShape comp;"
+//                 << " width=" << shape.width
+//                 << ", height=" << shape.height
+//                 << ", centered=" << std::to_string( shape.centered )
+//             );
+        }
+    );
 }

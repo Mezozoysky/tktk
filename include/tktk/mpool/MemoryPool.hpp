@@ -1,33 +1,38 @@
-/**
- tktk
- 
- tktk - Copyright (C) 2015 Stanislav Demyanovich <stan@angrybubo.com>
- 
- This software is provided 'as-is', without any express or
- implied warranty. In no event will the authors be held
- liable for any damages arising from the use of this software.
- 
- Permission is granted to anyone to use this software for any purpose,
- including commercial applications, and to alter it and redistribute
- it freely, subject to the following restrictions:
- 
- 1.  The origin of this software must not be misrepresented;
- you must not claim that you wrote the original software.
- If you use this software in a product, an acknowledgment
- in the product documentation would be appreciated but
- is not required.
- 
- 2.  Altered source versions must be plainly marked as such,
- and must not be misrepresented as being the original software.
- 
- 3.  This notice may not be removed or altered from any
- source distribution.
- */
+//  tktk
+//
+//  tktk - Copyright (C) 2015 Stanislav Demyanovich <stan@angrybubo.com>
+//
+//  This software is provided 'as-is', without any express or
+//  implied warranty. In no event will the authors be held
+//  liable for any damages arising from the use of this software.
+//
+//  Permission is granted to anyone to use this software for any purpose,
+//  including commercial applications, and to alter it and redistribute
+//  it freely, subject to the following restrictions:
+//
+//  1.  The origin of this software must not be misrepresented;
+//      you must not claim that you wrote the original software.
+//      If you use this software in a product, an acknowledgment
+//      in the product documentation would be appreciated but
+//      is not required.
+//
+//  2.  Altered source versions must be plainly marked as such,
+//      and must not be misrepresented as being the original software.
+//
+//  3.  This notice may not be removed or altered from any
+//      source distribution.
+
+
+/// \file
+/// \brief This file provides MemoryPool type
+/// \author Stanislav Demyanovich <stan@angrybubo.com>
+/// \date 2015-2016
+/// \copyright tktk is released under the terms of zlib/png license; see full license text at https://opensource.org/licenses/Zlib
 
 #ifndef TKTK_MPOOL_MEMORY_POOL_HPP
 #define TKTK_MPOOL_MEMORY_POOL_HPP
 
-#include <tktk/Config.hpp>
+#include <tktk/mpool/Config.hpp>
 #include <tktk/mpool/Id64.hpp>
 #include <vector>
 #include <cassert>
@@ -40,6 +45,7 @@ namespace tktk
 namespace mpool
 {
 
+/// \brief Abstract base for MemoryPool
 class MemoryPoolBase
 {
 public:
@@ -50,7 +56,7 @@ public:
     virtual std::uint32_t getCapacity() const noexcept = 0;
     virtual std::uint32_t getChunksNumber() const noexcept = 0;
     virtual std::uint32_t getChunkCapacity() const noexcept = 0;
-    virtual std::uint32_t getDeadSize() const noexcept = 0;
+    virtual std::uint32_t getFreeSize() const noexcept = 0;
     virtual std::size_t getElementSize() const noexcept = 0;
 
     virtual void clear() noexcept = 0;
@@ -60,39 +66,62 @@ public:
 };
 
 
-template < typename ValueTypeT, std::uint32_t chunkSizeV = 256 >
+/// \brief Pool for contiguous managed memory allocation
+/// \tparam 
+/// Usage example:
+/// \code{.cpp}
+/// #include <tktk/mpool/MemoryPool.hpp>
+/// #include <cassert>
+/// using namespace tktk::mpool;
+/// struct Some
+/// {
+///     Some( int i, const std::string& s )
+///     : idata{ i }
+///     , sdata{ s }
+///     {
+///     }
+///     int idata{0};
+///     std::string sdata{""};
+/// };
+/// MemoryPool< Some, 32 > pool;
+/// Id64 id{ pool.alloc( 8, "aubergine" ) };
+/// assert( pool.isIdValid( id ) && "Bug in mpool!" );
+/// \endcode
+template < typename ValueT, std::uint32_t chunkSizeV = 256 >
 class MemoryPool
 : public MemoryPoolBase
 {
 public:
 
-    using AlignedType = typename std::aligned_storage< sizeof( ValueTypeT ), alignof( ValueTypeT ) >::type;
+    /// \brief Wrap-type for managing value type
+    using ValueTypeT = ValueT;
+    /// \brief Wrap-type for underlaying aligned_storage template
+    using AlignedTypeT = typename std::aligned_storage< sizeof( ValueTypeT ), alignof( ValueTypeT ) >::type;
 
+    /// \brief Represents one chunk of allocated memory
     struct Chunk
     {
-        AlignedType data[ chunkSizeV ];
+        AlignedTypeT data[ chunkSizeV ]; ///< Array of aligned memory
     };
 
-    explicit MemoryPool() noexcept
-    : mChunkSize{ chunkSizeV }
+    /// \brief Default constructor
+    MemoryPool() noexcept
     {
-        ll_trace( "Memory pool ctor in; chunk size: " << chunkSizeV );
-        ll_trace( "Memory pool ctor out;" );
     }
 
+    /// \brief Virtual destructor for further inheritance
     virtual ~MemoryPool()
     {
-        ll_trace( "Memory pool dtor in;" );
         clear();
-        ll_trace( "Memory pool dtor out;" );
     }
 
+    /// \brief Allocate one element with constructor \em args
     template< typename... Args >
-    Id64 createElement( Args&&... args )
+    Id64 alloc( Args&&... args )
     {
         std::uint32_t index;
 
-        if ( mDeadIndices.empty() )
+        if ( mFreeIndices.empty() )
         {
             index = mVersions.size();
 
@@ -105,114 +134,116 @@ public:
         }
         else
         {
-            index = mDeadIndices.back();
-            mDeadIndices.pop_back();
+            index = mFreeIndices.back();
+            mFreeIndices.pop_back();
         }
 
-        std::size_t chunkIndex{ index / mChunkSize };
-        std::size_t elementIndex{ index % mChunkSize };
+        std::size_t chunkIndex{ index / chunkSizeV };
+        std::size_t elementIndex{ index % chunkSizeV };
         new( mChunks[ chunkIndex ].data + elementIndex ) ValueTypeT( std::forward< Args >( args )... );
 
         Id64 id{ index, mVersions[ index ] };
         return ( id );
     }
 
-    void destroyElement( const Id64& id )
+    /// \brief Free memory block by given id
+    void free( Id64 id )
     {
         if ( !isIdValid( id ) )
         {
             return;
         }
-
-        destroyElement( id.index() );
+        free( id.index() );
     }
 
-    void destroyElement( std::uint32_t index )
+    /// \brief Gets pointer to memory block
+    ValueTypeT* getPtr( Id64 id ) const noexcept
     {
-        assert( index < mVersions.size() && "Bad index!" );
-        if ( !isAlive( index ) )
+        if ( !isIdValid( id ) )
         {
-            ll_warning( "Trying to destroy dead element. index: " << index );
-            return;
+            return ( nullptr );
         }
-        std::size_t chunkIndex{ index / mChunkSize };
-        std::size_t elementIndex{ index % mChunkSize };
-        ll_debug( "-> destroying element by valid index: " << index << "; chunkIndex: " << chunkIndex << "; elementIndex: " << elementIndex );
-        ll_debug( "before destroying - pool size: " << mVersions.size() << "; pool effective size: " << ( mVersions.size() - mDeadIndices.size() ) );
-//         const auto value = reinterpret_cast< const ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex );
-//         value->~ValueTypeT();
-        reinterpret_cast< const ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex )->~ValueTypeT();
-        mVersions[ index ]++;
-
-        auto it = std::lower_bound( mDeadIndices.begin(), mDeadIndices.end(), index, std::greater< std::size_t >() );
-        mDeadIndices.insert( it, index );
-        ll_debug( "index " << index << " is now dead" );
-        ll_debug( "after destroying - pool size: " << mVersions.size() << "; pool effective size: " << ( mVersions.size() - mDeadIndices.size() ) );
-
+        std::uint32_t index{ id.index() };
+        assert( index < mVersions.size() && "Bad index!" );
+        std::size_t chunkIndex{ index / chunkSizeV };
+        std::size_t elementIndex{ index % chunkSizeV };
+        return ( const_cast< ValueTypeT* >( reinterpret_cast< const ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex ) ) ); //fuck!
     }
 
-    const ValueTypeT& operator[]( std::uint32_t index ) const noexcept
+    /// \brief Gets const reference to memory block
+    const ValueTypeT& operator[]( Id64 id ) const
     {
+        if ( !isIdValid( id ) )
+        {
+            throw std::range_error( "MemoryPool element access violation" );
+        }
+        std::uint32_t index{ id.index() };
         assert( index < mVersions.size() && "Bad index!" );
-        std::uint32_t chunkIndex{ index / mChunkSize };
-        std::uint32_t elementIndex{ index % mChunkSize };
+        std::uint32_t chunkIndex{ index / chunkSizeV };
+        std::uint32_t elementIndex{ index % chunkSizeV };
         return ( *reinterpret_cast< const ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex ) );
     }
 
-    ValueTypeT& operator[]( std::uint32_t index ) noexcept
+    /// \brief Gets reference to memory block
+    ValueTypeT& operator[]( Id64 id )
     {
+        if ( !isIdValid( id ) )
+        {
+            throw std::range_error( "MemoryPool element access violation" );
+        }
+        std::uint32_t index{ id.index() };
         assert( index < mVersions.size() && "Bad index!" );
-        std::uint32_t chunkIndex{ index / mChunkSize };
-        std::uint32_t elementIndex{ index % mChunkSize };
+        std::uint32_t chunkIndex{ index / chunkSizeV };
+        std::uint32_t elementIndex{ index % chunkSizeV };
         return ( *reinterpret_cast< ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex ) );
     }
 
-    ValueTypeT* getPtr( std::size_t index ) const noexcept
-    {
-        assert( index < mVersions.size() && "Bad index!" );
-        std::size_t chunkIndex{ index / mChunkSize };
-        std::size_t elementIndex{ index % mChunkSize };
-        return ( const_cast< ValueTypeT* >( reinterpret_cast< const ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex ) ) ); // fuck
-    }
-
+    /// \brief Pool size
     virtual std::uint32_t getSize() const noexcept final
     {
         return ( mVersions.size() );
     }
 
+    /// \brief Pool capacity (memory footprint)
     virtual std::uint32_t getCapacity() const noexcept final
     {
         return ( mCapacity );
     }
 
+    /// \brief Number of chunks used
     virtual std::uint32_t getChunksNumber() const noexcept final
     {
         return ( mChunks.size() );
     }
 
+    /// \brief Getter for chunk capacity
     virtual std::uint32_t getChunkCapacity() const noexcept final
     {
-        return ( mChunkSize );
+        return ( chunkSizeV );
     }
 
-    virtual std::uint32_t getDeadSize() const noexcept final
+    /// \brief Number of free elements contained
+    virtual std::uint32_t getFreeSize() const noexcept final
     {
-        return ( mDeadIndices.size() );
+        return ( mFreeIndices.size() );
     }
 
+    /// \brief Memory block size in bytes
     virtual std::size_t getElementSize() const noexcept final
     {
         return ( sizeof( ValueTypeT ) );
     }
 
+    /// \brief Calls destructor for each alive element, deallocates the chunks
     virtual void clear() noexcept final
     {
         for ( std::uint32_t i = 0; i < mVersions.size(); ++i )
         {
-            if ( mVersions[ i ] ) //TODO: WAAT?
+            if ( !isAlive( i ) )
             {
-                destroyElement( i );
+                continue;
             }
+            free( i );
         }
 
         while ( !mChunks.empty() )
@@ -221,6 +252,7 @@ public:
         }
     }
 
+    /// \brief Reserves capacity >= \em cap
     virtual void reserve( std::uint32_t cap ) noexcept final
     {
         while ( mCapacity < cap )
@@ -229,7 +261,8 @@ public:
         }
     }
 
-    virtual bool isIdValid( const Id64& id  ) const noexcept final
+    /// \brief Test if id valid
+    virtual bool isIdValid( Id64 id  ) const noexcept final
     {
         std::uint32_t index{ id.index() };
         if ( index < mVersions.size() && mVersions[ index ] == id.version() )
@@ -239,29 +272,60 @@ public:
         return ( false );
     }
 
-    virtual bool isAlive( std::uint32_t index ) const noexcept final
+    /// \brief Calls given function for every element
+    bool forEach( std::function< void( ValueTypeT& value ) > func )
     {
-        assert( index < mVersions.size() && "Bad index!" );
-        auto it( std::find_if( mDeadIndices.begin(), mDeadIndices.end(), [index]( std::uint32_t dead ) { return ( dead == index ); } ) );
-        return ( it == mDeadIndices.end() );
+        for ( std::uint32_t index{ 0 }; index < getSize(); ++index )
+        {
+            if ( !isAlive( index ) ) continue;
+            std::uint32_t chunkIndex{ index / chunkSizeV };
+            std::uint32_t elementIndex{ index % chunkSizeV };
+            func ( *reinterpret_cast< ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex ) );
+        }
     }
 
 private:
 
+    /// \brief Adds new chunk of memory onto the field
     void addChunk()
     {
         mChunks.emplace_back();
-        mCapacity += mChunkSize;
+        mCapacity += chunkSizeV;
         mVersions.reserve( mCapacity );
     }
 
-private:
-    std::uint32_t mChunkSize;
-    std::uint32_t mCapacity{ 0 };
+    /// \brief Mark the memory block as free
+    void free( std::uint32_t index )
+    {
+        std::size_t chunkIndex{ index / chunkSizeV };
+        std::size_t elementIndex{ index % chunkSizeV };
+        ll_debug( "-> destroying element by valid index: " << index << "; chunkIndex: " << chunkIndex << "; elementIndex: " << elementIndex );
+        ll_debug( "before destroying - pool size: " << mVersions.size() << "; pool effective size: " << ( mVersions.size() - mFreeIndices.size() ) );
+        reinterpret_cast< const ValueTypeT* >( mChunks[ chunkIndex ].data + elementIndex )->~ValueTypeT();
+        mVersions[ index ]++;
 
-    std::vector< Chunk > mChunks;
-    std::vector< std::uint32_t > mVersions;
-    std::vector< std::uint32_t > mDeadIndices;
+        auto it = std::lower_bound( mFreeIndices.begin(), mFreeIndices.end(), index, std::greater< std::size_t >() );
+        mFreeIndices.insert( it, index );
+        ll_debug( "index " << index << " is now free" );
+        ll_debug( "after destroying - pool size: " << mVersions.size() << "; pool effective size: " << ( mVersions.size() - mFreeIndices.size() ) );
+    }
+
+    /// \brief Test if the index not in the free-list
+    virtual bool isAlive( std::uint32_t index ) const noexcept final
+    {
+        assert( index < mVersions.size() && "Bad index!" );
+        auto it( std::find_if( mFreeIndices.begin(), mFreeIndices.end(), [index]( std::uint32_t dead ) { return ( dead == index ); } ) );
+        return ( it == mFreeIndices.end() );
+    }
+
+private:
+
+//     std::uint32_t mChunkSize;
+    std::uint32_t mCapacity{ 0 }; ///< Current pool capacity
+
+    std::vector< Chunk > mChunks; ///< Actual chunks of our managed memory.
+    std::vector< std::uint32_t > mVersions; ///< Vector of current versions for memory blocks.
+    std::vector< std::uint32_t > mFreeIndices; ///< Vector of free-marked elements' indexes. Keeping sorted.
 };
 
 

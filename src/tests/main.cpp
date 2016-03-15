@@ -112,49 +112,49 @@ TEST_CASE( "MemoryPool correctness", "[mempool]" )
     CHECK( pool.getCapacity() == 0 );
     CHECK( pool.getSize() == 0 );
 
-    mpool::Id64 id{ pool.createElement( "zero" ) };
+    mpool::Id64 id{ pool.alloc( "zero" ) };
 
     CHECK( pool.isIdValid( id ) );
     CHECK( pool.getCapacity() == 2 );
     CHECK( pool.getSize() == 1 );
-    CHECK( *pool.getPtr( id.index() ) == std::string( "zero" ) );
+    CHECK( *pool.getPtr( id ) == std::string( "zero" ) );
 
-    id = pool.createElement( "one" );
+    auto id1( pool.alloc( "one" ) );
 
-    CHECK( pool.isIdValid( id ) );
+    CHECK( pool.isIdValid( id1 ) );
     CHECK( pool.getCapacity() == 2 );
     CHECK( pool.getSize() == 2 );
-    CHECK( pool[ id.index() ] == "one" );
+    CHECK( pool[ id1 ] == "one" );
 
-    id = pool.createElement( "two" );
+    id = pool.alloc( "two" );
 
     CHECK( pool.isIdValid( id ) );
     CHECK( pool.getCapacity() == 4 );
     CHECK( pool.getSize() == 3 );
-    CHECK( pool[ id.index() ] == "two" );
+    CHECK( pool[ id ] == "two" );
 
-    id = pool.createElement( "three" );
+    auto id3 = pool.alloc( "three" );
 
-    CHECK( pool.isIdValid( id ) );
+    CHECK( pool.isIdValid( id3 ) );
     CHECK( pool.getCapacity() == 4 );
     CHECK( pool.getSize() == 4 );
-    CHECK( pool[ id.index() ] == "three" );
+    CHECK( pool[ id3 ] == "three" );
 
-    id = pool.createElement( "four" );
+    id = pool.alloc( "four" );
 
     CHECK( pool.isIdValid( id ) );
     CHECK( pool.getCapacity() == 6 );
     CHECK( pool.getSize() == 5 );
-    CHECK( pool[ id.index() ] == "four" );
+    CHECK( pool[ id ] == "four" );
 
-    pool.destroyElement( 1 );
-    pool.destroyElement( 3 );
+    pool.free( id1 );
+    pool.free( id3 );
 
-    id = pool.createElement( "nova" );
+    id = pool.alloc( "nova" );
     CHECK( pool.isIdValid( id ) );
     CHECK( id.index() == 1 );
 
-    id = pool.createElement( "super nova" );
+    id = pool.alloc( "super nova" );
     CHECK( id.index() == 3 );
 }
 
@@ -220,10 +220,16 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
         virtual void onUpdate( float deltaTime )
         {
             std::cout << "Proc1::onUpdate: " << deltaTime << std::endl;
-            for ( int i{ 0 }; i < mPool.getSize(); ++i )
-            {
-                std::cout << mPool.getPtr( i )->name << std::endl;
-            }
+//             for ( int i{ 0 }; i < mPool.getSize(); ++i )
+//             {
+//                 std::cout << mPool.getPtr( i )->name << std::endl;
+//             }
+            mPool.forEach(
+                [&] ( Comp1& c )
+                {
+                    std::cout << c.name << std::endl;
+                }
+            );
         }
 
     };
@@ -258,12 +264,17 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
         virtual void onUpdate( float deltaTime )
         {
             std::cout << "Proc2::onUpdate: " << deltaTime << std::endl;
-            for ( int i{ 0 }; i < mPool.getSize(); ++i )
-            {
-                std::cout << mPool.getPtr( i )->number << std::endl;
-            }
+//             for ( int i{ 0 }; i < mPool.getSize(); ++i )
+//             {
+//                 std::cout << mPool.getPtr( i )->number << std::endl;
+//             }
+            mPool.forEach(
+                [&] ( Comp2& c )
+                {
+                    std::cout << c.number << std::endl;
+                }
+            );
         }
-
     };
 
 

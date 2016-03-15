@@ -17,6 +17,7 @@ set(TKTK_LIB_UTIL_SOURCES "")
 # === tktk/util group ===
 # =======================
 set(GROUP_HEADERS
+    ${CMAKE_SOURCE_DIR}/include/tktk/util/Config.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/util/TypeMap.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/util/TypeMask.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/util/Signal.hpp
@@ -34,6 +35,7 @@ set(TKTK_LIB_MPOOL_SOURCES "")
 # === tktk/mpool group ===
 # ========================
 set(GROUP_HEADERS
+    ${CMAKE_SOURCE_DIR}/include/tktk/mpool/Config.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/mpool/Id64.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/mpool/MemoryPool.hpp
 )

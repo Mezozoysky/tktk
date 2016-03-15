@@ -59,23 +59,26 @@ void StaticSpriteProc::setup( ecs::System* systemPtr )
 
 void StaticSpriteProc::onUpdate( float deltaTime )
 {
-    for ( int i{ 0 }; i < mPool.getSize(); ++i )
-    {
-        if ( !mPool.isAlive( i ) ) continue;
-        auto comp = mPool[ i ];
-        auto texture( comp.texture );
-        if ( !texture )
+    mPool.forEach(
+        [&] ( StaticSprite& ss )
         {
-            ll_error( "StaticSprite update: empty texture!" );
-            continue;
+            auto texture( ss.texture );
+            if ( !texture )
+            {
+                ll_error( "StaticSprite update: empty texture!" );
+                return;
+            }
+            int w, h;
+            auto rawTexture( texture->getRawTexture() );
+            SDL_QueryTexture( rawTexture, NULL, NULL, &w, &h );
+            SDL_Rect srcRect{ 0, 0, w, h };
+            auto t( mSystemPtr->getComp< Transform >( ss.getEntityId() ) );
+            SDL_Rect dstRect{ int(t->position.x), int(t->position.y), w, h };
+            SDL_RenderCopy( mRenderer, rawTexture, &srcRect, &dstRect);
+//             ll_debug( "Updating StaticSprite comp;"
+//                 << " texture=" << ss.texture
+//                 << ", centered=" << std::to_string( ss.centered )
+//             );
         }
-        int w, h;
-        auto rawTexture( texture->getRawTexture() );
-        SDL_QueryTexture( rawTexture, NULL, NULL, &w, &h );
-        SDL_Rect srcRect{ 0, 0, w, h };
-        auto t( mSystemPtr->getComp< Transform >( comp.getEntityId() ) );
-        SDL_Rect dstRect{ int(t->position.x), int(t->position.y), w, h };
-        SDL_RenderCopy( mRenderer, rawTexture, &srcRect, &dstRect);
-//         ll_debug( "Updating StaticSprite comp#" << std::to_string( i ) << " texture=" << comp.texture << ", centered=" << std::to_string( comp.centered ) );
-    }
+    );
 }

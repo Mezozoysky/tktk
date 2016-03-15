@@ -86,7 +86,7 @@ public:
     template< typename... ArgsT >
     typename CompTypeT::Handle addComp( ArgsT&&... args )
     {
-        mpool::Id64 cId{ mPool.createElement( std::forward< ArgsT >( args )... ) };
+        mpool::Id64 cId{ mPool.alloc( std::forward< ArgsT >( args )... ) };
 
         typename CompTypeT::Handle cHandle( cId, this );
         return ( cHandle );
@@ -111,13 +111,13 @@ public:
     /// \brief Returns raw pointer to the component with id \em cId
     inline virtual CompTypeT* getCompPtr( const mpool::Id64& cId ) const noexcept override final
     {
-        return ( mPool.getPtr( cId.index() ) );
+        return ( mPool.getPtr( cId ) );
     }
 
     ///\brief Marks component with id \em cId as 'destroyed'
     inline virtual void destroyElement( const mpool::Id64& cId ) noexcept override final
     {
-        mPool.destroyElement( cId );
+        mPool.free( cId );
     }
 
 protected:
