@@ -103,14 +103,15 @@ public:
 private:
 
     template< typename TypeKey >
-    inline static std::size_t getUniqueTypeId() noexcept
+    inline std::size_t getUniqueTypeId() const noexcept
     {
-        static const std::size_t id = mNextTypeId++;
+        static std::size_t nextTypeId{ 0 };
+        static const std::size_t id = nextTypeId++;
         return id;
     }
 
 private:
-    static std::atomic_size_t mNextTypeId;
+
     SetImpl mSet;
 };
 
@@ -118,8 +119,8 @@ private:
 // Template members definition
 //
 
-template< std::size_t sizeV >
-std::atomic_size_t TypeSet< sizeV >::mNextTypeId{ 0 };
+// template< std::size_t sizeV >
+// std::atomic_size_t TypeSet< sizeV >::mNextTypeId{ 0 };
 
 
 } // namespace util

@@ -93,6 +93,14 @@ TEST_CASE( "TypeSet correctness", "[typeset]" )
     CHECK( typeSet.test< std::string >() == true );
     typeSet.reset< int >();
     CHECK( typeSet.test< int >() == false );
+
+    util::TypeSet< 2 > typeSet2;
+    typeSet2.reset().set< unsigned long >().set< char[] >();
+
+    CHECK( typeSet2.test< unsigned long >() == true );
+    CHECK( typeSet2.test< char[] >() == true );
+    typeSet2.reset< unsigned long >();
+    CHECK( typeSet2.test< unsigned long >() == false );
 }
 
 TEST_CASE( "MemoryPool correctness", "[mempool]" )
