@@ -34,7 +34,7 @@
 #ifndef TKTK_ECS_SYSTEM_HPP
 #define TKTK_ECS_SYSTEM_HPP
 
-#include <tktk/Config.hpp>
+#include <tktk/ecs/Config.hpp>
 #include <type_traits>
 #include <memory>
 #include <algorithm>
@@ -136,7 +136,7 @@ struct Entity
     };
 
     /// \brief Map for added components: untyped component handles by component types
-    /// \todo make it more efficient and more friendly (meybe bitset)
+    /// \todo make it more efficient and more friendly
     util::TypeMap< Component::Handle > map;
 };
 

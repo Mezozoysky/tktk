@@ -33,7 +33,7 @@
 #ifndef TKTK_ECS_COMPONENT_HPP
 #define TKTK_ECS_COMPONENT_HPP
 
-#include <tktk/Config.hpp>
+#include <tktk/ecs/Config.hpp>
 #include <tktk/mpool/Id64.hpp>
 #include <memory>
 #include <string>

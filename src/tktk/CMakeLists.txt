@@ -52,6 +52,7 @@ set(TKTK_LIB_ECS_SOURCES "")
 # === tktk/ecs group ===
 # ======================
 set(GROUP_HEADERS
+    ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Config.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/System.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Component.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Processor.hpp
