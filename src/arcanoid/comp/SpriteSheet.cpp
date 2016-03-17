@@ -45,9 +45,9 @@ SpriteSheetProc::SpriteSheetProc(ecs::System* systemPtr)
 {
 }
 
-void SpriteSheetProc::setup( ecs::System* systemPtr )
+void SpriteSheetProc::setup()
 {
-    systemPtr->updateSignal.connect( std::bind( &SpriteSheetProc::onUpdate, this, std::placeholders::_1 ) );
+    mSystemPtr->updateSignal.connect( std::bind( &SpriteSheetProc::onUpdate, this, std::placeholders::_1 ) );
 }
 
 void SpriteSheetProc::onUpdate( float deltaTime )

@@ -45,9 +45,9 @@ TransformProc::TransformProc(ecs::System* systemPtr)
 {
 }
 
-void TransformProc::setup( ecs::System* systemPtr )
+void TransformProc::setup()
 {
-    systemPtr->updateSignal.connect( std::bind( &TransformProc::onUpdate, this, std::placeholders::_1 ) );
+    mSystemPtr->updateSignal.connect( std::bind( &TransformProc::onUpdate, this, std::placeholders::_1 ) );
 }
 
 void TransformProc::onUpdate( float deltaTime )

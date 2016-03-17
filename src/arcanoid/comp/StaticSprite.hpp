@@ -52,7 +52,7 @@ class StaticSpriteProc
 {
 public:
     StaticSpriteProc( ecs::System* systemPtr, SDL_Renderer* renderer );
-    virtual void setup( ecs::System* systemPtr ) override;
+    virtual void setup() override;
     virtual void onUpdate( float deltaTime );
 
 private:

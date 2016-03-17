@@ -52,9 +52,9 @@ StaticSpriteProc::StaticSpriteProc( ecs::System* systemPtr, SDL_Renderer* render
 {
 }
 
-void StaticSpriteProc::setup( ecs::System* systemPtr )
+void StaticSpriteProc::setup()
 {
-    systemPtr->updateSignal.connect( std::bind( &StaticSpriteProc::onUpdate, this, std::placeholders::_1 ) );
+    mSystemPtr->updateSignal.connect( std::bind( &StaticSpriteProc::onUpdate, this, std::placeholders::_1 ) );
 }
 
 void StaticSpriteProc::onUpdate( float deltaTime )

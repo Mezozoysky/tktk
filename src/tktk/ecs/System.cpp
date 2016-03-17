@@ -41,10 +41,10 @@ System::~System() noexcept
     auto it( mProcessors.begin() );
     while ( it != mProcessors.end() )
     {
-        auto procPtr( it->second );
-        it = mProcessors.erase( it );
+        auto procPtr( *it );
         delete procPtr;
         procPtr = nullptr;
+        it = mProcessors.erase( it );
     }
 }
 
@@ -53,7 +53,7 @@ void System::setup() noexcept
     auto it = mProcessors.begin();
     while ( it != mProcessors.end() )
     {
-        it->second->setup( this ); ///< \todo argument 'this' is obsolete
+        ( *it )->setup(); ///< \todo argument 'this' is obsolete
         ++it;
     }
 }

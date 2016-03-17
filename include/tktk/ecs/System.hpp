@@ -372,14 +372,15 @@ public:
                       , "T should extend tktk::ecs::Proc<> template"
         );
 
-        if ( mProcessors.count< typename T::CompTypeT >() == 1 )
+        if ( mProcsByType.count< typename T::CompTypeT >() == 1 )
         {
             ll_error( "Trying to register Processor which is already registered!" );
             return ( nullptr );
         }
 
         Processor* procPtr{ new T( this, std::forward< ArgsT >( args )... ) };
-        mProcessors.insert< typename T::CompTypeT >( procPtr );
+        mProcessors.push_back( procPtr );
+        mProcsByType.insert< typename T::CompTypeT >( mProcessors.size() - 1 );
 
         return ( static_cast< T* >( procPtr ) );
     }
@@ -394,13 +395,18 @@ public:
                       , "T should extend tktk::ecs::Proc<> template"
         );
 
-        auto it = mProcessors.find< typename T::CompTypeT >();
-        if ( it != mProcessors.end() )
+        static std::int32_t cachedProcIndex{ -1 };
+        T* procPtr{ nullptr };
+        if ( cachedProcIndex < 0 /*|| shouldRecacheIndices */ )
         {
-            return ( static_cast< T* >( it->second ) );
+            auto it( mProcsByType.find< typename T::CompTypeT >() );
+            if ( it == mProcsByType.end() )
+            {
+                return ( procPtr ); //nullptr
+            }
+            cachedProcIndex = it->second;
         }
-
-        return ( nullptr );
+        return ( static_cast< T* >( mProcessors[ cachedProcIndex ] ) );
     }
 
     /// \brief Gets the processor instance by given processor's component type `CompT`
@@ -413,19 +419,25 @@ public:
             , "Proc< CompT > type derived from Processor doesnt exist for given CompT"
         );
 
-        auto it( mProcessors.find< CompT >() );
-        if ( it == mProcessors.end() )
+        static std::int32_t cachedProcIndex{ -1 };
+        Proc<CompT>* procPtr{ nullptr };
+        if ( cachedProcIndex < 0 /*|| shouldRecacheIndices */ )
         {
-            return ( nullptr );
+            auto it( mProcsByType.find< CompT >() );
+            if ( it == mProcsByType.end() )
+            {
+                return ( procPtr );
+            }
+            cachedProcIndex = it->second;
         }
-
-        return ( static_cast< Proc< CompT >* >( it->second ) );
+        return ( static_cast< Proc< CompT >* >( mProcessors[ cachedProcIndex ] ) );
     }
 
 protected:
     PoolTypeT mEntityPool; ///< Memory pool for storing entities
 
-    util::TypeMap< Processor* > mProcessors; ///< Registered processors by accoding component types map
+    std::vector< Processor* > mProcessors; ///< Registered processors in registering order
+    util::TypeMap< std::size_t > mProcsByType; ///< Processors' indexes by accoding component types map
 };
 
 //

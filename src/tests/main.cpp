@@ -212,9 +212,9 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
         {
         }
 
-        virtual void setup( ecs::System* systemPtr ) override
+        virtual void setup() override
         {
-            systemPtr->updateSignal.connect( std::bind( &Proc1::onUpdate, this, std::placeholders::_1 ) );
+            mSystemPtr->updateSignal.connect( std::bind( &Proc1::onUpdate, this, std::placeholders::_1 ) );
         }
 
         virtual void onUpdate( float deltaTime )
@@ -256,9 +256,9 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
         {
         }
 
-        virtual void setup( ecs::System* systemPtr ) override
+        virtual void setup() override
         {
-            systemPtr->updateSignal.connect( std::bind( &Proc2::onUpdate, this, std::placeholders::_1 ) );
+            mSystemPtr->updateSignal.connect( std::bind( &Proc2::onUpdate, this, std::placeholders::_1 ) );
         }
 
         virtual void onUpdate( float deltaTime )

@@ -53,9 +53,9 @@ RectShapeProc::RectShapeProc( ecs::System* systemPtr, SDL_Renderer* renderer )
 {
 }
 
-void RectShapeProc::setup( ecs::System* systemPtr )
+void RectShapeProc::setup()
 {
-    systemPtr->updateSignal.connect( std::bind( &RectShapeProc::onUpdate, this, std::placeholders::_1 ) );
+    mSystemPtr->updateSignal.connect( std::bind( &RectShapeProc::onUpdate, this, std::placeholders::_1 ) );
 }
 
 void RectShapeProc::onUpdate( float deltaTime )

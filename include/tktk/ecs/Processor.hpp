@@ -53,7 +53,7 @@ public:
     Processor() noexcept = default;
     virtual ~Processor() noexcept = default;
 
-    virtual void setup( System* systemPtr ) = 0;
+    virtual void setup() = 0;
 
     virtual bool isIdValid( const mpool::Id64& id ) const noexcept = 0;
 
