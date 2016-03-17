@@ -214,7 +214,7 @@ bool Game::setup()
         return ( false );
     }
 
-    if ( IMG_Init( IMG_INIT_PNG ) & IMG_INIT_PNG != IMG_INIT_PNG )
+    if ( ( IMG_Init( IMG_INIT_PNG ) & IMG_INIT_PNG ) != IMG_INIT_PNG )
     {
         ll_error( "IMG_Init error: " << SDL_GetError() );
         return ( false );
@@ -242,4 +242,3 @@ void Game::cleanup()
     SDL_DestroyWindow( mWindow );
     SDL_Quit();
 }
-
