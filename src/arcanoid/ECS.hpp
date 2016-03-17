@@ -28,6 +28,7 @@
 #define ARCANOID_ECS_HPP
 
 #include <tktk/ecs/System.hpp>
+#include <tktk/ecs/SystemB.hpp>
 
 using namespace tktk;
 

@@ -56,6 +56,7 @@ set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/System.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Component.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Processor.hpp
+    ${CMAKE_SOURCE_DIR}/include/tktk/ecs/SystemB.hpp
 )
 set(GROUP_SOURCES
     ${CMAKE_SOURCE_DIR}/src/tktk/ecs/System.cpp
