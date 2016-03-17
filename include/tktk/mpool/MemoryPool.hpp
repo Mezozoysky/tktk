@@ -275,7 +275,7 @@ public:
     }
 
     /// \brief Calls given function for every element
-    bool forEach( std::function< void( ValueTypeT& value ) > func )
+    void forEach( std::function< void( ValueTypeT& value ) > func )
     {
         for ( std::uint32_t index{ 0 }; index < getSize(); ++index )
         {
