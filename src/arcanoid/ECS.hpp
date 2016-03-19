@@ -28,9 +28,14 @@
 #define ARCANOID_ECS_HPP
 
 #include <tktk/ecs/System.hpp>
-#include <tktk/ecs/SystemB.hpp>
+#include <tktk/ecs/Ecs.hpp>
 
 using namespace tktk;
+
+class myEcs
+: public ecs::Ecs
+{
+};
 
 class ECS
 : public ecs::System

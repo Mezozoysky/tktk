@@ -45,7 +45,7 @@ namespace ecs
 // Forward declarations
 struct Entity;
 
-using EntityMgr MPoolBasedMgr< Entity >;
+using EntityMgr = MPoolBasedMgr< Entity >;
 // class EntityMgr
 // : public MPoolBasedMgr< Entity >
 // {

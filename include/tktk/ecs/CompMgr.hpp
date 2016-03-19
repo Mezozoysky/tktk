@@ -47,7 +47,7 @@ class CompMgr
 : protected MPoolBasedMgr< CompT >
 {
     CompMgr() noexcept
-    : MPoolBasedMgr< DataTypeT >
+    : MPoolBasedMgr< CompT >()
     {
     }
 

@@ -47,8 +47,10 @@ template< typename DataT >
 class MPoolBasedMgr
 : public Mgr< DataT >
 {
+public:
+
     MPoolBasedMgr() noexcept
-    : Mgr< DataTypeT >
+    : Mgr< DataT >()
     {
     }
 
@@ -70,20 +72,20 @@ class MPoolBasedMgr
     }
 
     /// \brief Returns true if given id is valid
-    inline bool isIdValid( mpool::Id64& id ) const noexcept
+    inline bool isIdValid( mpool::Id64 id ) const noexcept
     {
-        return ( mPool.isIdValid( cId ) );
+        return ( mPool.isIdValid( id ) );
     }
 
     /// \brief Returns raw pointer to the data by given \em id
-    inline DataTypeT* getDataPtr( mpool::Id64 id ) const noexcept
+    inline DataT* getDataPtr( mpool::Id64 id ) const noexcept
     {
         return ( mPool.getPtr( id ) );
     }
 
 
 private:
-    using PoolTypeT = mpool::MemoryPool<DataTypeT>;
+    using PoolTypeT = mpool::MemoryPool<DataT>;
     PoolTypeT mPool;
 
 };

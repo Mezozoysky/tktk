@@ -25,7 +25,7 @@
 
 
 /// \file
-/// \brief This file provides ecs::System and ecs::Entity types
+/// \brief This file provides ecs::SystemB type
 /// \author Stanislav Demyanovich <stan@angrybubo.com>
 /// \date 2015-2016
 /// \copyright tktk is released under the terms of zlib/png license; see full license text at https://opensource.org/licenses/Zlib
@@ -35,6 +35,7 @@
 #define TKTK_ECS_SYSTEM_B_HPP
 
 #include <tktk/ecs/Config.hpp>
+#include <tktk/ecs/Mgr.hpp>
 #include <type_traits>
 #include <cassert>
 #include <memory>
@@ -46,10 +47,6 @@ namespace tktk
 namespace ecs
 {
 
-class Manager;
-
-template< typename DataT >
-class Mgr;
 
 template < std::size_t maxDataTypesV = 64 >
 class SystemB
@@ -60,7 +57,7 @@ public:
 
     /// \brief Default constructor
     ///
-    /// Does nothing
+    /// Fills mgrs array with nullptr
     SystemB() noexcept
     {
         mMgrs.fill( nullptr );
@@ -69,7 +66,17 @@ public:
     /// \brief Virtual destructor for further inheritance
     ///
     /// Destroys all the registered Managers.
-    virtual ~SystemB() noexcept;
+    virtual ~SystemB() noexcept
+    {
+        for ( std::size_t index = 0; index < mMgrs.size(); ++ index )
+        {
+            if ( mMgrs[ index ] != nullptr )
+            {
+                delete mMgrs[ index ];
+                mMgrs[ index ] = nullptr;
+            }
+        }
+    }
 
     template< typename DataT, typename MgrT, typename... MgrArgsT >
     std::size_t regDataType( MgrArgsT&&... args ) noexcept
@@ -85,7 +92,7 @@ public:
             return ( DT_INDEX_INVALID );
         }
 
-        std::size_t index{ mNextRegIndex++ };
+        std::size_t index{ mNextTypeIndex++ };
         assert( index < maxDataTypesV && "Manager index >= maxDataTypesV !!!" );
         if ( index >= maxDataTypesV )
         {
@@ -128,6 +135,11 @@ public:
         return ( static_cast< MgrT* >( mMgrs[ cachedMgrIndex ] ) );
     }
 
+//     Manager* getMgrPtr( std::size_t index ) noexcept
+//     {
+//         return ( mMgrs[ index ] );
+//     }
+
     template< typename DataT >
     Mgr< DataT >* getMgrPtrForDataType() noexcept
     {
@@ -152,7 +164,7 @@ public:
 
 private:
     std::array< Manager*, maxDataTypesV > mMgrs; ///< Registered managers in registering order
-    std::size_t mNextRegIndex{ 0 };
+    std::size_t mNextTypeIndex{ 0 };
     util::TypeMap< std::size_t > mMgrsByType; ///< Managers' indexes by accoding component types map
 };
 

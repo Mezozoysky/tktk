@@ -24,21 +24,47 @@
 
 
 /// \file
-/// \brief This file provides configuration defines for tktk-ecs library
+/// \brief This file contains definitions of Ecs, EntityHandle, CompHandle, etc
 /// \author Stanislav Demyanovich <stan@angrybubo.com>
 /// \date 2016
 /// \copyright tktk is released under the terms of zlib/png license; see full license text at https://opensource.org/licenses/Zlib
 
-/// \namespace ecs
-/// \brief Namespace for all the names of ecs-asset library
-///
-/// Description stub for `namespace ecs`
+#include <tktk/ecs/Ecs.hpp>
 
-#ifndef TKTK_ECS_CONFIG_HPP
-#define TKTK_ECS_CONFIG_HPP
+namespace tktk
+{
+namespace ecs
+{
 
-#include <tktk/Config.hpp>
+EntityHandle::EntityHandle()
+{
+}
 
-#define TKTK_ECS_CONFIG_COMPS_PER_ENTITY 16
+EntityHandle::EntityHandle( mpool::Id64 id, Ecs* ecs )
+: mId{ id }
+, mEcs{ ecs }
+{
+}
 
-#endif // TKTK_ECS_CONFIG_HPP
+void EntityHandle::drop()
+{
+    if ( isValid() )
+    {
+        mEcs->drop( mId );
+    }
+    invalidate();
+}
+
+bool EntityHandle::isValid()
+{
+    return ( mEcs && mEcs->isIdValid( mId ) );
+}
+
+void EntityHandle::invalidate()
+{
+    mId = mpool::ID64_INVALID;
+    mEcs = nullptr;
+}
+
+} // namespace ecs
+} // namaspace tktk
