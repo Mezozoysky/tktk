@@ -41,9 +41,9 @@ Component::Component( const mpool::Id64& entityId ) noexcept
 {
 }
 
-Component::~Component() noexcept
-{
-}
+// Component::~Component() noexcept
+// {
+// }
 
 
 //

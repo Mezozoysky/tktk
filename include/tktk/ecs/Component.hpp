@@ -118,7 +118,7 @@ struct Component
     explicit Component( const mpool::Id64& entityId ) noexcept;
 
     /// \brief Virtual destructor for further inheritance
-    virtual ~Component() noexcept;
+    //virtual ~Component() noexcept;
 
     /// \brief Gets the owner entity id
     inline const mpool::Id64& getEntityId() const noexcept
@@ -206,11 +206,11 @@ struct Comp
     explicit Comp( const mpool::Id64& entityId ) noexcept;
 
     /// \brief Virtual destructor for further inheritance
-    virtual ~Comp() noexcept;
+//     virtual ~Comp() noexcept;
 };
 
 //
-// Template-methods realisations
+// Template-methods definitions
 //
 
 // Comp<CompT>
@@ -221,10 +221,10 @@ Comp< CompT >::Comp( const mpool::Id64& entityId ) noexcept
 {
 }
 
-template < typename CompT >
-Comp< CompT >::~Comp() noexcept
-{
-}
+// template < typename CompT >
+// Comp< CompT >::~Comp() noexcept
+// {
+// }
 
 // Comp<CompT>::Handle
 
