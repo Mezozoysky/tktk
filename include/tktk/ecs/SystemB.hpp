@@ -135,10 +135,29 @@ public:
         return ( static_cast< MgrT* >( mMgrs[ cachedMgrIndex ] ) );
     }
 
-//     Manager* getMgrPtr( std::size_t index ) noexcept
-//     {
-//         return ( mMgrs[ index ] );
-//     }
+    Manager* getMgrPtr( std::size_t index ) const noexcept
+    {
+        if ( index >= DT_INDEX_INVALID )
+        {
+            return ( nullptr );
+        }
+        return ( mMgrs[ index ] );
+    }
+
+    template< typename DataT >
+    inline std::size_t getDataTypeIndex() noexcept
+    {
+        static std::size_t cachedMgrIndex{ DT_INDEX_INVALID };
+        if ( cachedMgrIndex >= DT_INDEX_INVALID /*|| shouldRecacheIndices */ )
+        {
+            auto it( mMgrsByType.find< DataT >() );
+            if ( it != mMgrsByType.end() )
+            {
+                cachedMgrIndex = it->second;
+            }
+        }
+        return ( cachedMgrIndex );
+    }
 
     template< typename DataT >
     Mgr< DataT >* getMgrPtrForDataType() noexcept
@@ -148,18 +167,13 @@ public:
             , "Mgr< DataT > type derived from Manager doesnt exist for given DataT"
         );
 
-        static std::size_t cachedMgrIndex{ DT_INDEX_INVALID };
+        static std::size_t dtIndex{ getDataTypeIndex< DataT >() };
         Mgr<DataT>* mgrPtr{ nullptr };
-        if ( cachedMgrIndex >= DT_INDEX_INVALID /*|| shouldRecacheIndices */ )
+        if ( dtIndex < DT_INDEX_INVALID )
         {
-            auto it( mMgrsByType.find< DataT >() );
-            if ( it == mMgrsByType.end() )
-            {
-                return ( mgrPtr );
-            }
-            cachedMgrIndex = it->second;
+            mgrPtr = static_cast< Mgr< DataT >* >( mMgrs[ dtIndex ] );
         }
-        return ( static_cast< Mgr< DataT >* >( mMgrs[ cachedMgrIndex ] ) );
+        return ( mgrPtr );
     }
 
 private:

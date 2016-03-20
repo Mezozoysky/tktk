@@ -51,13 +51,13 @@ struct EntityHandle
 {
     EntityHandle() noexcept;
 
-    EntityHandle( mpool::Id64 id, Ecs* ecs );
+    explicit EntityHandle( mpool::Id64 id, Ecs* ecs ) noexcept;
 
-    void drop();
+    void drop() noexcept;
 
-    inline bool isValid();
+    inline bool isValid() const noexcept;
 
-    inline void invalidate();
+    inline void invalidate() noexcept;
 
 private:
 
@@ -65,6 +65,32 @@ private:
     Ecs* mEcs{ nullptr };
 };
 
+template< typename CompT >
+struct CompHandle
+{
+
+    CompHandle() noexcept
+    {
+    }
+
+    explicit CompHandle( mpool::Id64 eId, Ecs* ecs ) noexcept
+    : mEId{ eId }
+    , mEcs{ ecs }
+    {
+    }
+
+    CompT* operator->() noexcept;
+
+
+    inline bool isValid() const noexcept;
+
+    inline void invalidate() noexcept;
+
+private:
+
+    mpool::Id64 mEId{ mpool::ID64_INVALID };
+    Ecs* mEcs{ nullptr };
+};
 
 class Ecs
 : protected SystemB< TKTK_ECS_CONFIG_COMPS_PER_ENTITY >
@@ -79,6 +105,7 @@ public:
     Ecs() noexcept
     : SystemB()
     {
+        mCompArraysByEntityIndex.reserve( mEntityMgr.getCapacity() );
     }
 
     /// \brief Virtual destructor
@@ -87,7 +114,7 @@ public:
     }
 
     template< typename CompT, typename MgrT, typename... MgrArgsT >
-    inline bool regCompType( MgrArgsT&&... args ) noexcept
+    bool regCompType( MgrArgsT&&... args ) noexcept
     {
         static_assert(
             std::is_base_of< CompMgr< CompT >, MgrT >::value
@@ -108,9 +135,26 @@ public:
     /// \returns The handle for added entity.
     ///
     /// If there is no 'dead' entities in the memory the new entity will be created, othervise first of the 'dead' entities will be reused.
-    inline EntityHandle add() noexcept
+    EntityHandle add() noexcept
     {
         mpool::Id64 id{ mEntityMgr.add() };
+        assert( mEntityMgr.isIdValid( id ) && "Newly allocated entity id is invalid" );
+
+        // Provide the entity->components mapping consistency
+        if ( mCompArraysByEntityIndex.capacity() < mEntityMgr.getCapacity() )
+        {
+            mCompArraysByEntityIndex.reserve( mEntityMgr.getCapacity() );
+        }
+        if ( mCompArraysByEntityIndex.size() == id.index() )
+        {
+            mCompArraysByEntityIndex.resize( id.index() + 1 );
+        }
+        else if ( mCompArraysByEntityIndex.size() < id.index() ) // just for debug
+        {
+            assert( false && "New entity index isnt accord with entity-component mapping (<)" );
+        }
+        mCompArraysByEntityIndex[ id.index() ].fill( mpool::ID64_INVALID );
+
         EntityHandle handle( id, this );
         return ( handle );
     }
@@ -125,11 +169,11 @@ public:
         mEntityMgr.drop( id );
     }
 
-    /// \brief Tests if id is valid
+    /// \brief Tests if entity id is valid
     /// \param[in] eId The id to test
     /// \returns `true` if id is valid, `false` othervise
     /// \note Unless you are modifying the tktk-ecs library you should not use this method, use `Entity::Handle::isValid()` instead.
-    inline bool isIdValid( mpool::Id64 id ) const noexcept
+    inline bool isValid( mpool::Id64 id ) const noexcept
     {
         return ( mEntityMgr.isIdValid( id ) );
     }
@@ -143,14 +187,71 @@ public:
         return ( mEntityMgr.getDataPtr( id ) );
     }
 
+    template< typename CompT >
+    inline CompT* getCompPtr( mpool::Id64 id ) const noexcept
+    {
+        assert( isValid( id ) && "Trying to get comp ptr from invalid entity" );
+
+        std::size_t cIndex{ getDataTypeIndex< CompT >() };
+        mpool::Id64 cId{ mCompArraysByEntityIndex[ id.index() ][ cIndex ] };
+
+        CompMgr< CompT >* mgrPtr{ static_cast< CompMgr< CompT >* >( SystemT::getMgrPtr( cIndex ) ) };
+        assert( mgrPtr != nullptr && "Trying to get comp ptr of comp type which is not registered." );
+
+        if ( !mgrPtr->isIdValid( cId ) )
+        {
+            return ( nullptr );
+        }
+        return ( mgrPtr->getDataPtr( cId ) );
+    }
+
+    template< typename CompT >
+    inline bool isCompValid( mpool::Id64 id ) const noexcept
+    {
+        assert( isValid( id ) && "Trying to check comp validity from invalid entity" );
+        std::size_t cIndex{ getDataTypeIndex< CompT >() };
+        mpool::Id64 cId{ mCompArraysByEntityIndex[ id.index() ][ cIndex ] };
+
+        CompMgr< CompT >* mgrPtr{ static_cast< CompMgr< CompT >* >( getMgrPtr( cIndex ) ) };
+        assert( mgrPtr != nullptr && "Trying to check validity of comp which type is not registered." );
+
+        return ( mgrPtr->isIdValid( cId ) );
+    }
+
 private:
 
+    using CompArrayT = std::array< mpool::Id64, TKTK_ECS_CONFIG_COMPS_PER_ENTITY >;
     EntityMgr mEntityMgr;
+    std::vector< CompArrayT > mCompArraysByEntityIndex;
 };
 
 //
 // Template-methods realisations
 //
+
+template< typename CompT >
+CompT* CompHandle< CompT >::operator->() noexcept
+{
+    if ( !isValid() )
+    {
+        return ( nullptr );
+    }
+    return ( mEcs->getCompPtr< CompT >( mEId ) );
+}
+
+template< typename CompT >
+inline bool CompHandle< CompT >::isValid() const noexcept
+{
+    return ( mEcs != nullptr && mEcs->isValid( mEId ) && mEcs->isCompValid< CompT >( mEId ) );
+}
+
+template< typename CompT >
+inline void CompHandle< CompT >::invalidate() noexcept
+{
+    mEId = mpool::ID64_INVALID;
+    mEcs = nullptr;
+}
+
 
 } //namespace ecs
 } //namespace tktk

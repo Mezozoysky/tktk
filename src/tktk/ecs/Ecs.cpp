@@ -57,7 +57,7 @@ void EntityHandle::drop()
 
 bool EntityHandle::isValid()
 {
-    return ( mEcs && mEcs->isIdValid( mId ) );
+    return ( mEcs != nullptr && mEcs->isValid( mId ) );
 }
 
 void EntityHandle::invalidate()

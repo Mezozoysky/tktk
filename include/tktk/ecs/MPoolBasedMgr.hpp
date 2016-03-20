@@ -52,6 +52,7 @@ public:
     MPoolBasedMgr() noexcept
     : Mgr< DataT >()
     {
+        mPool.reserve( 1 );
     }
 
     virtual ~MPoolBasedMgr() noexcept
@@ -83,6 +84,10 @@ public:
         return ( mPool.getPtr( id ) );
     }
 
+    inline std::size_t getCapacity() const noexcept
+    {
+        return ( mPool.getCapacity() );
+    }
 
 private:
     using PoolTypeT = mpool::MemoryPool<DataT>;
