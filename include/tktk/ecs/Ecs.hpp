@@ -47,6 +47,11 @@ namespace ecs
 // Forwad declarations
 class Ecs;
 
+template< typename CompT >
+struct CompHandle;
+
+
+
 struct EntityHandle
 {
     EntityHandle() noexcept;
@@ -55,10 +60,15 @@ struct EntityHandle
 
     void drop() noexcept;
 
-    inline bool isValid() const noexcept;
+    bool isValid() const noexcept;
 
     inline void invalidate() noexcept;
 
+    template< typename CompT, typename... CompArgsT >
+    inline CompHandle< CompT > addComp( CompArgsT&&... args ) noexcept;
+
+    template< typename CompT >
+    inline CompHandle< CompT > getComp() const noexcept;
 private:
 
     mpool::Id64 mId{ mpool::ID64_INVALID };
@@ -105,7 +115,7 @@ public:
     Ecs() noexcept
     : SystemB()
     {
-        mCompArraysByEntityIndex.reserve( mEntityMgr.getCapacity() );
+        mCompArrayByEntityIndex.reserve( mEntityMgr.getCapacity() );
     }
 
     /// \brief Virtual destructor
@@ -121,7 +131,7 @@ public:
             , "MgrT should extend tktk::ecs::CompMgr<CompT> template"
         );
 
-        std::size_t index{ SystemT::regDataType( std::forward< MgrArgsT >( args )... ) };
+        std::size_t index{ SystemT::regDataType< CompT, MgrT >( this, std::forward< MgrArgsT >( args )... ) };
         if ( index >= DT_INDEX_INVALID )
         {
             return ( false );
@@ -141,19 +151,19 @@ public:
         assert( mEntityMgr.isIdValid( id ) && "Newly allocated entity id is invalid" );
 
         // Provide the entity->components mapping consistency
-        if ( mCompArraysByEntityIndex.capacity() < mEntityMgr.getCapacity() )
+        if ( mCompArrayByEntityIndex.capacity() < mEntityMgr.getCapacity() )
         {
-            mCompArraysByEntityIndex.reserve( mEntityMgr.getCapacity() );
+            mCompArrayByEntityIndex.reserve( mEntityMgr.getCapacity() );
         }
-        if ( mCompArraysByEntityIndex.size() == id.index() )
+        if ( mCompArrayByEntityIndex.size() == id.index() )
         {
-            mCompArraysByEntityIndex.resize( id.index() + 1 );
+            mCompArrayByEntityIndex.resize( id.index() + 1 );
         }
-        else if ( mCompArraysByEntityIndex.size() < id.index() ) // just for debug
+        else if ( mCompArrayByEntityIndex.size() < id.index() ) // just for debug
         {
             assert( false && "New entity index isnt accord with entity-component mapping (<)" );
         }
-        mCompArraysByEntityIndex[ id.index() ].fill( mpool::ID64_INVALID );
+        mCompArrayByEntityIndex[ id.index() ].fill( mpool::ID64_INVALID );
 
         EntityHandle handle( id, this );
         return ( handle );
@@ -187,13 +197,40 @@ public:
         return ( mEntityMgr.getDataPtr( id ) );
     }
 
+    template< typename CompT, typename... CompArgsT >
+    CompHandle< CompT > addComp( mpool::Id64 eId, CompArgsT&&... args ) noexcept
+    {
+        assert( isValid( eId ) && "Trying to add comp to invalid entity" );
+
+        const CompHandle< CompT > invalidCH{};
+
+        auto mgrPtr( static_cast< CompMgr< CompT >* >( getMgrPtrForDataType< CompT >() ) );
+        assert( mgrPtr != nullptr && "Processor for given comp type is not registered." );
+
+        mpool::Id64 cId{ mgrPtr->add( eId, std::forward< CompArgsT >( args )... ) };
+
+        mCompArrayByEntityIndex[ eId.index() ][ getDataTypeIndex< CompT >() ] = cId;
+
+        CompHandle< CompT > cH{ eId, this };
+        return ( cH );
+    }
+
+    template< typename CompT >
+    CompHandle< CompT > getComp( mpool::Id64 eId ) noexcept
+    {
+        assert( isValid( eId ) && "Trying to get comp from invalid entity" );
+
+        CompHandle< CompT > cH{ eId, this };
+        return( cH );
+    }
+
     template< typename CompT >
     inline CompT* getCompPtr( mpool::Id64 id ) const noexcept
     {
         assert( isValid( id ) && "Trying to get comp ptr from invalid entity" );
 
         std::size_t cIndex{ getDataTypeIndex< CompT >() };
-        mpool::Id64 cId{ mCompArraysByEntityIndex[ id.index() ][ cIndex ] };
+        mpool::Id64 cId{ mCompArrayByEntityIndex[ id.index() ][ cIndex ] };
 
         CompMgr< CompT >* mgrPtr{ static_cast< CompMgr< CompT >* >( SystemT::getMgrPtr( cIndex ) ) };
         assert( mgrPtr != nullptr && "Trying to get comp ptr of comp type which is not registered." );
@@ -210,7 +247,7 @@ public:
     {
         assert( isValid( id ) && "Trying to check comp validity from invalid entity" );
         std::size_t cIndex{ getDataTypeIndex< CompT >() };
-        mpool::Id64 cId{ mCompArraysByEntityIndex[ id.index() ][ cIndex ] };
+        mpool::Id64 cId{ mCompArrayByEntityIndex[ id.index() ][ cIndex ] };
 
         CompMgr< CompT >* mgrPtr{ static_cast< CompMgr< CompT >* >( getMgrPtr( cIndex ) ) };
         assert( mgrPtr != nullptr && "Trying to check validity of comp which type is not registered." );
@@ -222,15 +259,35 @@ private:
 
     using CompArrayT = std::array< mpool::Id64, TKTK_ECS_CONFIG_COMPS_PER_ENTITY >;
     EntityMgr mEntityMgr;
-    std::vector< CompArrayT > mCompArraysByEntityIndex;
+    std::vector< CompArrayT > mCompArrayByEntityIndex;
 };
 
 //
 // Template-methods realisations
 //
 
+template< typename CompT, typename... CompArgsT >
+inline CompHandle< CompT > EntityHandle::addComp( CompArgsT&&... args ) noexcept
+{
+    if ( !isValid() )
+    {
+        return ( CompHandle< CompT >{} );
+    }
+    return ( mEcs->addComp< CompT >( mId, std::forward< CompArgsT >( args )... ) );
+}
+
 template< typename CompT >
-CompT* CompHandle< CompT >::operator->() noexcept
+inline CompHandle< CompT > EntityHandle::getComp() const noexcept
+{
+    if ( !isValid() )
+    {
+        return ( {  } );
+    }
+    return ( mEcs->getComp< CompT >( mId ) );
+}
+
+template< typename CompT >
+inline CompT* CompHandle< CompT >::operator->() noexcept
 {
     if ( !isValid() )
     {
@@ -240,7 +297,7 @@ CompT* CompHandle< CompT >::operator->() noexcept
 }
 
 template< typename CompT >
-inline bool CompHandle< CompT >::isValid() const noexcept
+bool CompHandle< CompT >::isValid() const noexcept
 {
     return ( mEcs != nullptr && mEcs->isValid( mEId ) && mEcs->isCompValid< CompT >( mEId ) );
 }

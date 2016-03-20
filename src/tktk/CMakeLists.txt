@@ -68,7 +68,7 @@ set(GROUP_SOURCES
     ${CMAKE_SOURCE_DIR}/src/tktk/ecs/Entity.cpp
     ${CMAKE_SOURCE_DIR}/src/tktk/ecs/Component.cpp
     ${CMAKE_SOURCE_DIR}/src/tktk/ecs/Processor.cpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Ecs.hpp
+    ${CMAKE_SOURCE_DIR}/src/tktk/ecs/Ecs.cpp
 )
 source_group("tktk\\ecs" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})
 set(TKTK_LIB_ECS_HEADERS ${TKTK_LIB_ECS_HEADERS} ${GROUP_HEADERS})

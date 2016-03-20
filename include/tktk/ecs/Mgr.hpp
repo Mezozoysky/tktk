@@ -42,7 +42,8 @@ namespace ecs
 {
 
 // Forward declarations
-// class SystemB;
+template< std::size_t V >
+class SystemB;
 
 /// \brief Marker "interface" for storing managers with std containers
 class Manager

@@ -84,9 +84,19 @@ public:
         return ( mPool.getPtr( id ) );
     }
 
+    inline std::size_t getSize() const noexcept
+    {
+        return ( mPool.getSize() );
+    }
+
     inline std::size_t getCapacity() const noexcept
     {
         return ( mPool.getCapacity() );
+    }
+
+    inline void forEach( std::function< void( DataT& data ) > func )
+    {
+        mPool.forEach( func );
     }
 
 private:

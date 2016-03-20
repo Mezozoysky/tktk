@@ -36,17 +36,17 @@ namespace tktk
 namespace ecs
 {
 
-EntityHandle::EntityHandle()
+EntityHandle::EntityHandle() noexcept
 {
 }
 
-EntityHandle::EntityHandle( mpool::Id64 id, Ecs* ecs )
+EntityHandle::EntityHandle( mpool::Id64 id, Ecs* ecs ) noexcept
 : mId{ id }
 , mEcs{ ecs }
 {
 }
 
-void EntityHandle::drop()
+void EntityHandle::drop() noexcept
 {
     if ( isValid() )
     {
@@ -55,12 +55,12 @@ void EntityHandle::drop()
     invalidate();
 }
 
-bool EntityHandle::isValid()
+bool EntityHandle::isValid() const noexcept
 {
     return ( mEcs != nullptr && mEcs->isValid( mId ) );
 }
 
-void EntityHandle::invalidate()
+void EntityHandle::invalidate() noexcept
 {
     mId = mpool::ID64_INVALID;
     mEcs = nullptr;

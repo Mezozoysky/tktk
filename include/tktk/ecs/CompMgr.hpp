@@ -42,18 +42,26 @@ namespace tktk
 namespace ecs
 {
 
+class Ecs;
+
 template < typename CompT >
 class CompMgr
-: protected MPoolBasedMgr< CompT >
+: public MPoolBasedMgr< CompT >
 {
-    CompMgr() noexcept
+public:
+    CompMgr( Ecs* ecs ) noexcept
     : MPoolBasedMgr< CompT >()
+    , mECS{ ecs }
     {
     }
 
     virtual ~CompMgr() noexcept
     {
     }
+
+protected:
+    Ecs* mECS;
+
 };
 
 } //namespace ecs

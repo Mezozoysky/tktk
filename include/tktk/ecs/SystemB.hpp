@@ -48,7 +48,7 @@ namespace ecs
 {
 
 
-template < std::size_t maxDataTypesV = 64 >
+template< std::size_t maxDataTypesV = 64 >
 class SystemB
 {
 public:
@@ -100,7 +100,7 @@ public:
             return ( DT_INDEX_INVALID );
         }
 
-        MgrT* mgrPtr{ new MgrT( this, std::forward< MgrArgsT >( args )... ) };
+        MgrT* mgrPtr{ new MgrT( std::forward< MgrArgsT >( args )... ) };
         assert( mgrPtr != nullptr && "Cant register data type because of constructor failure" );
         if ( mgrPtr == nullptr )
         {
@@ -145,7 +145,7 @@ public:
     }
 
     template< typename DataT >
-    inline std::size_t getDataTypeIndex() noexcept
+    inline std::size_t getDataTypeIndex() const noexcept
     {
         static std::size_t cachedMgrIndex{ DT_INDEX_INVALID };
         if ( cachedMgrIndex >= DT_INDEX_INVALID /*|| shouldRecacheIndices */ )

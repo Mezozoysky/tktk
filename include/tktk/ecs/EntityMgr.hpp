@@ -42,22 +42,26 @@ namespace tktk
 namespace ecs
 {
 
-// Forward declarations
-struct Entity;
 
-using EntityMgr = MPoolBasedMgr< Entity >;
-// class EntityMgr
-// : public MPoolBasedMgr< Entity >
-// {
-//     EntityMgr() noexcept
-//     : MPoolBasedMgr< Entity >
-//     {
-//     }
-// 
-//     virtual ~EntityMgr() noexcept
-//     {
-//     }
-// };
+struct Entity
+{
+    //hmm..
+};
+
+class EntityMgr
+: public MPoolBasedMgr< Entity >
+{
+public:
+
+    EntityMgr() noexcept
+    : MPoolBasedMgr< Entity >()
+    {
+    }
+
+    virtual ~EntityMgr() noexcept
+    {
+    }
+};
 
 } //namespace ecs
 } //namespace tktk
