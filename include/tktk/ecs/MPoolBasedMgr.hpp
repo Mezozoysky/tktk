@@ -35,7 +35,7 @@
 #define TKTK_ECS_MPOOL_BASED_MGR_HPP
 
 #include <tktk/ecs/Config.hpp>
-#include <tktk/ecs/Mgr.hpp>
+#include <tktk/ecs/SystemB.hpp>
 #include <tktk/mpool/MemoryPool.hpp>
 
 namespace tktk

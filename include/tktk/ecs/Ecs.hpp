@@ -36,8 +36,10 @@
 
 #include <tktk/ecs/Config.hpp>
 #include <tktk/ecs/SystemB.hpp>
-#include <tktk/ecs/CompMgr.hpp>
+#include <tktk/ecs/MPoolBasedMgr.hpp>
 #include <tktk/ecs/EntityMgr.hpp>
+#include <tktk/util/Signal.hpp>
+#include <functional>
 
 namespace tktk
 {
@@ -102,6 +104,24 @@ private:
     Ecs* mEcs{ nullptr };
 };
 
+
+template < typename CompT >
+class CompMgr
+: public MPoolBasedMgr< CompT >
+{
+public:
+    CompMgr( Ecs* ecs ) noexcept;
+
+    virtual ~CompMgr() noexcept;
+
+    virtual bool setup() noexcept override;
+    virtual void onUpdate( float deltaTime ) noexcept = 0;
+
+protected:
+    Ecs* mECS;
+};
+
+
 class Ecs
 : protected SystemB< TKTK_ECS_CONFIG_COMPS_PER_ENTITY >
 {
@@ -110,6 +130,8 @@ class Ecs
 public:
 
     static const std::size_t COMPS_PER_ENTITY{ TKTK_ECS_CONFIG_COMPS_PER_ENTITY };
+
+    util::Signal< float > updateSignal;
 
     /// \brief Default constructor
     Ecs() noexcept
@@ -255,6 +277,11 @@ public:
         return ( mgrPtr->isIdValid( cId ) );
     }
 
+    virtual void update( float deltaTime ) noexcept
+    {
+        updateSignal( deltaTime );
+    }
+
 private:
 
     using CompArrayT = std::array< mpool::Id64, TKTK_ECS_CONFIG_COMPS_PER_ENTITY >;
@@ -307,6 +334,26 @@ inline void CompHandle< CompT >::invalidate() noexcept
 {
     mEId = mpool::ID64_INVALID;
     mEcs = nullptr;
+}
+
+
+template< typename CompT >
+CompMgr< CompT >::CompMgr( Ecs* ecs ) noexcept
+: MPoolBasedMgr< CompT >()
+, mECS{ ecs }
+{
+}
+
+template< typename CompT >
+CompMgr< CompT >::~CompMgr() noexcept
+{
+}
+
+template< typename CompT >
+bool CompMgr< CompT >::setup() noexcept
+{
+    mECS->updateSignal.connect( std::bind( &CompMgr::onUpdate, this, std::placeholders::_1 ) );
+    return ( true );
 }
 
 

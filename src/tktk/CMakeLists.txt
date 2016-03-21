@@ -57,10 +57,8 @@ set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Component.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Processor.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/SystemB.hpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Mgr.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/MPoolBasedMgr.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/EntityMgr.hpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/ecs/CompMgr.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Ecs.hpp
 )
 set(GROUP_SOURCES

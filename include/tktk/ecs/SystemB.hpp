@@ -35,7 +35,6 @@
 #define TKTK_ECS_SYSTEM_B_HPP
 
 #include <tktk/ecs/Config.hpp>
-#include <tktk/ecs/Mgr.hpp>
 #include <type_traits>
 #include <cassert>
 #include <memory>
@@ -46,6 +45,54 @@ namespace tktk
 {
 namespace ecs
 {
+
+// Forward declarations
+template< std::size_t V >
+class SystemB;
+
+/// \brief Marker "interface" for storing managers with std containers
+class Manager
+{
+    Manager( const Manager& ) = delete;
+    Manager& operator= ( const Manager& ) = delete;
+
+public:
+    /// \brief Default constructor
+    Manager() noexcept = default;
+    /// \brief Virtual destructor for further inheritance
+    virtual ~Manager() noexcept = default;
+
+    virtual bool setup() noexcept = 0;
+};
+
+template < typename DataT >
+class Mgr
+: public Manager
+{
+public:
+    /// \brief Wraps the managing data type
+    using DataTypeT = DataT;
+
+    /// \brief Default constructor
+    ///
+    /// Does nothing
+    Mgr() noexcept
+    : Manager()
+    {
+    }
+
+    /// \brief Virtual destructor for further inheritance
+    ///
+    /// Does nothing
+    virtual ~Mgr() noexcept
+    {
+    }
+
+    bool setup() noexcept override
+    {
+        return ( true );
+    }
+};
 
 
 template< std::size_t maxDataTypesV = 64 >
@@ -174,6 +221,19 @@ public:
             mgrPtr = static_cast< Mgr< DataT >* >( mMgrs[ dtIndex ] );
         }
         return ( mgrPtr );
+    }
+
+    virtual bool setup() noexcept
+    {
+        auto it = mMgrs.begin();
+        while ( it != mMgrs.end() )
+        {
+            if ( *it != nullptr )
+            {
+                ( *it )->setup();
+            }
+            ++it;
+        }
     }
 
 private:
