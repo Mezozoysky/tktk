@@ -25,16 +25,16 @@
 
 #include "RectShape.hpp"
 #include "Transform.hpp"
-#include <tktk/ecs/System.hpp>
+#include <cassert>
 
 using namespace tktk;
 
-RectShape::RectShape( const mpool::Id64& entityId )
+RectShape::RectShape( mpool::Id64 entityId )
 : BaseTypeT( entityId )
 {
 }
 
-RectShape::RectShape(const mpool::Id64& entityId, float width, float height, const SDL_Color& color, bool centered)
+RectShape::RectShape(mpool::Id64 entityId, float width, float height, const SDL_Color& color, bool centered)
 : Comp< RectShape >(entityId)
 , width{ width }
 , height{ height }
@@ -43,27 +43,34 @@ RectShape::RectShape(const mpool::Id64& entityId, float width, float height, con
 {
 }
 
-RectShape::~RectShape()
-{
-}
+// RectShape::~RectShape()
+// {
+// }
 
-RectShapeProc::RectShapeProc( ecs::System* systemPtr, SDL_Renderer* renderer )
-: Proc< RectShape >( systemPtr )
+RectShapeMgr::RectShapeMgr( ECS* ecs, SDL_Renderer* renderer )
+: CompMgr< RectShape >( ecs )
 , mRenderer{ renderer }
 {
 }
 
-void RectShapeProc::setup()
+bool RectShapeMgr::setup() noexcept
 {
-    mSystemPtr->updateSignal.connect( std::bind( &RectShapeProc::onUpdate, this, std::placeholders::_1 ) );
+    auto ecs( getECS() );
+    assert( ecs != nullptr && "GRIEEEEF" );
+    ecs->updateSignal.connect( std::bind( &RectShapeMgr::onUpdate, this, std::placeholders::_1 ) );
+    return ( true );
 }
 
-void RectShapeProc::onUpdate( float deltaTime )
+void RectShapeMgr::shutdown() noexcept
 {
-    mPool.forEach(
+}
+
+void RectShapeMgr::onUpdate( float deltaTime ) noexcept
+{
+    forEach(
         [&] ( RectShape& shape )
         {
-            auto t( mSystemPtr->getComp< Transform >( shape.getEntityId() ) );
+            auto t( getECS()->getComp< Transform >( shape.getEntityId() ) );
             SDL_Rect rect;
             rect.w = shape.width;
             rect.h = shape.height;

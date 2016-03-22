@@ -145,9 +145,11 @@ public:
         mPool.forEach( func );
     }
 
-private:
+protected:
 
     using PoolTypeT = mpool::MemoryPool<CompT>;
+
+private:
 
     PoolTypeT mPool;
 };

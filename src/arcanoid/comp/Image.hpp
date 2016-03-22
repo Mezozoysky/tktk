@@ -24,41 +24,41 @@
  *        source distribution.
  */
 
-#include "SpriteSheet.hpp"
-#include <iostream>
-#include <tktk/ecs/System.hpp>
+#ifndef ARCANOID_COMP_IMAGE_HPP
+#define ARCANOID_COMP_IMAGE_HPP
+
+#include <tktk/ecs/Component.hpp>
+#include <arcanoid/ECS.hpp>
+#include <arcanoid/render/Texture.hpp>
+#include <SDL.h>
 
 using namespace tktk;
 
 
-SpriteSheet::SpriteSheet( const mpool::Id64& entityId )
-: BaseTypeT( entityId )
+struct Image
+: public ecs::Comp< Image >
 {
-}
+    explicit Image( mpool::Id64 eId ) noexcept;
+    explicit Image( mpool::Id64 eId, Texture::VPtr texture, bool centered = false ) noexcept;
+//     virtual ~Image();
 
-SpriteSheet::~SpriteSheet()
-{
-}
+    Texture::VPtr texture{ nullptr };
+    bool centered{ false };
+};
 
-SpriteSheetProc::SpriteSheetProc(ecs::System* systemPtr)
-: Proc< SpriteSheet >(systemPtr)
-{
-}
 
-void SpriteSheetProc::setup()
+class ImageMgr
+: public CompMgr< Image >
 {
-    mSystemPtr->updateSignal.connect( std::bind( &SpriteSheetProc::onUpdate, this, std::placeholders::_1 ) );
-}
+public:
+    ImageMgr( ECS* ecs, SDL_Renderer* renderer );
+    virtual bool setup() noexcept override;
+    virtual void shutdown() noexcept override;
 
-void SpriteSheetProc::onUpdate( float deltaTime )
-{
-    mPool.forEach(
-        [&] ( SpriteSheet& sheet )
-        {
-//             ll_debug( "Updating SpriteSheet comp;"
-//                 << " texture=" << sheet.texture
-//                 << ", centered=" << std::to_string( sheet.centered )
-//             );
-        }
-    );
-}
+    virtual void onUpdate( float deltaTime ) noexcept;
+
+private:
+    SDL_Renderer* mRenderer{ nullptr };
+};
+
+#endif /* end of include guard: ARCANOID_COMP_IMAGE_HPP */

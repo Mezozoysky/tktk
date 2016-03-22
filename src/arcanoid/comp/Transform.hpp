@@ -28,7 +28,7 @@
 #define ARCANOID_COMP_TRANSFORM_HPP
 
 #include <tktk/ecs/Component.hpp>
-#include <tktk/ecs/Processor.hpp>
+#include <arcanoid/ECS.hpp>
 
 using namespace tktk;
 
@@ -52,20 +52,23 @@ struct Transform
         }
     };
     explicit Transform( const mpool::Id64& entityId, Vector2f position = Vector2f{} );
-    virtual ~Transform();
 
     Vector2f position{};
 };
 
 
-class TransformProc
-: public ecs::Proc< Transform >
+class TransformMgr
+: public CompMgr< Transform >
 {
 public:
-    TransformProc( ecs::System* systemPtr );
+    TransformMgr( ECS* ecs );
+    virtual ~TransformMgr();
 
-    virtual void setup() override;
-    virtual void onUpdate( float deltaTime );
+    virtual bool setup() noexcept override;
+    virtual void shutdown() noexcept override;
+
+    virtual void onUpdate( float deltaTime ) noexcept;
+
 };
 
 #endif /* end of include guard: ARCANOID_COMP_TRANSFORM_HPP */

@@ -131,7 +131,7 @@ public:
     }
 
     template< typename CompT, typename MgrT, typename... MgrArgsT >
-    bool regCompType( MgrArgsT&&... args ) noexcept
+    MgrT* regCompType( MgrArgsT&&... args ) noexcept
     {
         static_assert(
             std::is_base_of< CompMgr< CompT >, MgrT >::value
@@ -141,12 +141,22 @@ public:
         std::size_t index{ mCompSystem.regCompType< CompT, MgrT >( std::forward< MgrArgsT >( args )... ) };
         if ( index >= CompSystemT::MAX_DATA_TYPES )
         {
-            return ( false );
+            return ( nullptr );
         }
-        return ( true );
+        return ( static_cast< MgrT* >( mCompSystem.getMgrPtr( index ) ) );
     }
 
+    template< typename MgrT >
+    inline MgrT* getMgr() const noexcept
+    {
+        return ( static_cast< MgrT* >( mCompSystem.getMgrPtr< typename MgrT::CompTypeT >() ) );
+    }
 
+    template< typename CompT >
+    inline CompMgr< CompT >* getMgrForCompT() const noexcept
+    {
+        return ( mCompSystem.getMgrPtr< CompT >() );
+    }
 
     /// \brief Adds 'new' entity
     /// \returns The handle for added entity.
@@ -262,10 +272,27 @@ public:
         return ( mgrPtr->isIdValid( cId ) );
     }
 
-private:
+protected:
+
     using CompSystemT = CompSystem< TKTK_ECS_CONFIG_COMPS_PER_ENTITY >;
     using CompArrayT = std::array< mpool::Id64, TKTK_ECS_CONFIG_COMPS_PER_ENTITY >;
 
+    inline EntityMgr& entityMgr() noexcept
+    {
+        return ( mEntityMgr );
+    }
+
+    inline CompSystemT& compSystem() noexcept
+    {
+        return ( mCompSystem );
+    }
+
+    inline std::vector< CompArrayT >& compArrayByEntityIndex() noexcept
+    {
+        return ( mCompArrayByEntityIndex );
+    }
+
+private:
     EntityMgr mEntityMgr;
     std::vector< CompArrayT > mCompArrayByEntityIndex;
     CompSystemT mCompSystem;

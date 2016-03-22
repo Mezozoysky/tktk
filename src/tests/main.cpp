@@ -31,7 +31,8 @@
 #include <tktk/util/TypeMask.hpp>
 #include <tktk/mpool/MemoryPool.hpp>
 #include <tktk/util/Signal.hpp>
-#include <tktk/ecs/System.hpp>
+#include <tktk/ecs/Ecs.hpp>
+#include <tktk/ecs/Component.hpp>
 #include <string>
 #include <iostream>
 
@@ -190,6 +191,15 @@ TEST_CASE( "Signal correctness", "[signal]" )
 
 TEST_CASE( "ECS correctness", "[tktk-ecs]" )
 {
+
+    class ECS
+    : public ecs::Ecs
+    {
+    public:
+        util::Signal< float > updateSignal;
+    };
+
+
     class Comp1
     : public ecs::Comp< Comp1 >
     {
@@ -204,27 +214,27 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     };
 
     class Proc1
-    : public ecs::Proc< Comp1 >
+    : public ecs::CompMgr< Comp1 >
     {
     public:
-        Proc1(ecs::System* systemPtr)
-        : ecs::Proc< Comp1 >( systemPtr )
+        Proc1()
+        : ecs::CompMgr< Comp1 >()
         {
         }
 
-        virtual void setup() override
+        virtual bool setup() noexcept override
         {
-            mSystemPtr->updateSignal.connect( std::bind( &Proc1::onUpdate, this, std::placeholders::_1 ) );
+            return ( true );
+        }
+
+        virtual void shutdown() noexcept override
+        {
         }
 
         virtual void onUpdate( float deltaTime )
         {
             std::cout << "Proc1::onUpdate: " << deltaTime << std::endl;
-//             for ( int i{ 0 }; i < mPool.getSize(); ++i )
-//             {
-//                 std::cout << mPool.getPtr( i )->name << std::endl;
-//             }
-            mPool.forEach(
+            forEach(
                 [&] ( Comp1& c )
                 {
                     std::cout << c.name << std::endl;
@@ -238,8 +248,8 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     : public ecs::Comp< Comp2 >
     {
     public:
-        Comp2( const mpool::Id64& entityId )
-        : BaseTypeT{ entityId }
+        Comp2( mpool::Id64 entityId )
+        : BaseTypeT( entityId )
         {
         }
 
@@ -248,27 +258,27 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     };
 
     class Proc2
-    : public ecs::Proc< Comp2 >
+    : public ecs::CompMgr< Comp2 >
     {
     public:
-        Proc2(ecs::System* systemPtr)
-        : ecs::Proc< Comp2 >( systemPtr )
+        Proc2()
+        : ecs::CompMgr< Comp2 >()
         {
         }
 
-        virtual void setup() override
+        virtual bool setup() noexcept override
         {
-            mSystemPtr->updateSignal.connect( std::bind( &Proc2::onUpdate, this, std::placeholders::_1 ) );
+            return ( true );
+        }
+
+        virtual void shutdown() noexcept override
+        {
         }
 
         virtual void onUpdate( float deltaTime )
         {
             std::cout << "Proc2::onUpdate: " << deltaTime << std::endl;
-//             for ( int i{ 0 }; i < mPool.getSize(); ++i )
-//             {
-//                 std::cout << mPool.getPtr( i )->number << std::endl;
-//             }
-            mPool.forEach(
+            forEach(
                 [&] ( Comp2& c )
                 {
                     std::cout << c.number << std::endl;
@@ -278,20 +288,19 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
     };
 
 
-    ecs::System ecs;
+    ECS ecs;
 
-    ecs.registerProc< Proc1 >();
-    ecs.registerProc< Proc2 >();
+    Proc1* proc1( ecs.regCompType< Comp1, Proc1 >() );
+    auto proc2( ecs.regCompType< Comp2, Proc2 >() );
 
     ecs.setup();
+    ecs.updateSignal.connect( std::bind( &Proc1::onUpdate, proc1, std::placeholders::_1 ) );
+    ecs.updateSignal.connect( std::bind( &Proc2::onUpdate, proc2, std::placeholders::_1 ) );
 
-    Proc1* proc1{ ecs.getProc< Proc1 >() };
-    auto proc2( ecs.getProc< Proc2 >() );
+    ecs::EntityHandle e1{ ecs.add() };
 
-    ecs::Entity::Handle e1{ ecs.addEntity() };
-
-    Comp1::Handle c1( proc1->addComp( e1.getId() ) );
-    auto c2( proc2->addComp( e1.getId() ) );
+    ecs::CompHandle<Comp1> c1( e1.addComp< Comp1 >() );
+    auto c2( e1.addComp< Comp2 >() );
 
     float timeStep{ 0.05f };
     float time{ 0.0f };
@@ -302,8 +311,9 @@ TEST_CASE( "ECS correctness", "[tktk-ecs]" )
             c1->name = "somename";
             c2->number = 8;
         }
-        ecs.update( timeStep );
+        ecs.updateSignal( timeStep );
         time += timeStep;
     }
     std::cout << "LOOP FINISHED" << std::endl;
+    ecs.shutdown();
 }

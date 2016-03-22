@@ -26,7 +26,7 @@
 #define ARCANOID_COMP_RECT_SHAPE_HPP
 
 #include <tktk/ecs/Component.hpp>
-#include <tktk/ecs/Processor.hpp>
+#include <arcanoid/ECS.hpp>
 #include <SDL.h>
 
 using namespace tktk;
@@ -35,9 +35,9 @@ using namespace tktk;
 struct RectShape
 : public ecs::Comp< RectShape >
 {
-    explicit RectShape( const mpool::Id64& entityId );
-    explicit RectShape( const mpool::Id64& entityId, float width, float height, const SDL_Color& color, bool centered = false );
-    virtual ~RectShape();
+    explicit RectShape( mpool::Id64 entityId );
+    explicit RectShape( mpool::Id64 entityId, float width, float height, const SDL_Color& color, bool centered = false );
+//     virtual ~RectShape();
 
     float width;
     float height;
@@ -45,15 +45,15 @@ struct RectShape
     bool centered{ false };
 };
 
-
-class RectShapeProc
-: public ecs::Proc< RectShape >
+class RectShapeMgr
+: public CompMgr< RectShape >
 {
 public:
-    RectShapeProc( ecs::System* systemPtr, SDL_Renderer* renderer );
-    virtual void setup() override;
-    virtual void onUpdate( float deltaTime );
-    
+    RectShapeMgr( ECS* ecs, SDL_Renderer* renderer );
+    virtual bool setup() noexcept;
+    virtual void shutdown() noexcept;
+    virtual void onUpdate( float deltaTime ) noexcept;
+
 private:
     SDL_Renderer* mRenderer{ nullptr };
 };

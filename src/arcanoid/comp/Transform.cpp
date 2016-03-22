@@ -25,7 +25,7 @@
 */
 
 #include "Transform.hpp"
-#include <tktk/ecs/System.hpp>
+#include <arcanoid/ECS.hpp>
 #include <iostream>
 
 using namespace tktk;
@@ -36,29 +36,41 @@ Transform::Transform( const mpool::Id64& entityId, Vector2f position )
     this->position = position;
 }
 
-Transform::~Transform()
+// Transform::~Transform()
+// {
+// }
+
+
+TransformMgr::TransformMgr( ECS* ecs )
+: CompMgr< Transform >( ecs )
 {
 }
 
-TransformProc::TransformProc(ecs::System* systemPtr)
-: Proc< Transform >( systemPtr )
+TransformMgr::~TransformMgr()
 {
 }
 
-void TransformProc::setup()
+bool TransformMgr::setup() noexcept
 {
-    mSystemPtr->updateSignal.connect( std::bind( &TransformProc::onUpdate, this, std::placeholders::_1 ) );
+    auto ecs( getECS() );
+    ecs->updateSignal.connect( std::bind( &TransformMgr::onUpdate, this, std::placeholders::_1 ) );
+
+    return ( true );
 }
 
-void TransformProc::onUpdate( float deltaTime )
+void TransformMgr::shutdown() noexcept
 {
-    mPool.forEach(
+}
+
+void TransformMgr::onUpdate( float deltaTime ) noexcept
+{
+    forEach(
         [&]( Transform& transform )
         {
-//             ll_debug(
-//                 "Updating Transform comp;"
-//                 << " position=(" << std::to_string( transform.position.x ) << ", " << std::to_string( transform.position.y ) << ")"
-//             );
+            ll_debug(
+                "Updating Transform comp;"
+                << " position=(" << std::to_string( transform.position.x ) << ", " << std::to_string( transform.position.y ) << ")"
+            );
         }
     );
 }

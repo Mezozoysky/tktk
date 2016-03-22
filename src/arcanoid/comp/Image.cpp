@@ -24,45 +24,52 @@
  *        source distribution.
  */
 
-#include "StaticSprite.hpp"
+#include "Image.hpp"
 #include "Transform.hpp"
-#include <tktk/ecs/System.hpp>
+#include <arcanoid/ECS.hpp>
 
 using namespace tktk;
 
-StaticSprite::StaticSprite( const mpool::Id64& entityId )
-: BaseTypeT( entityId )
+Image::Image(mpool::Id64 eId ) noexcept
+: BaseTypeT( eId )
 {
 }
 
-StaticSprite::StaticSprite( const mpool::Id64& entityId, Texture::VPtr texture, bool centered )
-: BaseTypeT( entityId )
+Image::Image( mpool::Id64 eId, Texture::VPtr texture, bool centered ) noexcept
+: BaseTypeT( eId )
 , texture{ texture }
 , centered{ centered }
 {
 }
 
-StaticSprite::~StaticSprite()
-{
-}
+// StaticSprite::~StaticSprite()
+// {
+// }
 
-StaticSpriteProc::StaticSpriteProc( ecs::System* systemPtr, SDL_Renderer* renderer )
-: Proc< StaticSprite >( systemPtr )
+ImageMgr::ImageMgr( ECS* ecs, SDL_Renderer* renderer )
+: CompMgr< Image >( ecs )
 , mRenderer{ renderer }
 {
 }
 
-void StaticSpriteProc::setup()
+bool ImageMgr::setup() noexcept
 {
-    mSystemPtr->updateSignal.connect( std::bind( &StaticSpriteProc::onUpdate, this, std::placeholders::_1 ) );
+    auto ecs( getECS() );
+    assert( ecs != nullptr && "GRIEEEEF" );
+    ecs->updateSignal.connect( std::bind( &ImageMgr::onUpdate, this, std::placeholders::_1 ) );
+    return ( true );
 }
 
-void StaticSpriteProc::onUpdate( float deltaTime )
+void ImageMgr::shutdown() noexcept
 {
-    mPool.forEach(
-        [&] ( StaticSprite& ss )
+}
+
+void ImageMgr::onUpdate( float deltaTime ) noexcept
+{
+    forEach(
+        [&] ( Image& im )
         {
-            auto texture( ss.texture );
+            auto texture( im.texture );
             if ( !texture )
             {
                 ll_error( "StaticSprite update: empty texture!" );
@@ -72,8 +79,8 @@ void StaticSpriteProc::onUpdate( float deltaTime )
             auto rawTexture( texture->getRawTexture() );
             SDL_QueryTexture( rawTexture, NULL, NULL, &w, &h );
             SDL_Rect srcRect{ 0, 0, w, h };
-            auto t( mSystemPtr->getComp< Transform >( ss.getEntityId() ) );
-            SDL_Rect dstRect{ int(t->position.x), int(t->position.y), w, h };
+            auto t( getECS()->getComp< Transform >( im.getEntityId() ) );
+            SDL_Rect dstRect{ int( t->position.x ), int( t->position.y ), w, h };
             SDL_RenderCopy( mRenderer, rawTexture, &srcRect, &dstRect);
 //             ll_debug( "Updating StaticSprite comp;"
 //                 << " texture=" << ss.texture

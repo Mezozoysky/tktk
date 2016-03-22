@@ -53,18 +53,13 @@ set(TKTK_LIB_ECS_SOURCES "")
 # ======================
 set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Config.hpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/ecs/System.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Component.hpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Processor.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/CompSystem.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/EntityMgr.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/ecs/Ecs.hpp
 )
 set(GROUP_SOURCES
-    ${CMAKE_SOURCE_DIR}/src/tktk/ecs/System.cpp
-    ${CMAKE_SOURCE_DIR}/src/tktk/ecs/Entity.cpp
     ${CMAKE_SOURCE_DIR}/src/tktk/ecs/Component.cpp
-    ${CMAKE_SOURCE_DIR}/src/tktk/ecs/Processor.cpp
     ${CMAKE_SOURCE_DIR}/src/tktk/ecs/Ecs.cpp
 )
 source_group("tktk\\ecs" FILES ${GROUP_HEADERS} ${GROUP_SOURCES})

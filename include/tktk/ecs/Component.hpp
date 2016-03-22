@@ -43,77 +43,9 @@ namespace tktk
 namespace ecs
 {
 
-// forward declarations
-class Processor;
-
-template < typename T >
-class Proc;
-
-
-/// \brief Plain base class for Comp<Compt> template
+/// \brief Plain base class for Comp<CompT> template
 struct Component
 {
-    /// \brief Component value-type handle for copying and passing away
-    struct Handle
-    {
-        /// \brief Default constructor constructs an invalide handle
-        Handle() noexcept;
-
-        /// \brief Constructor from proc and id
-        Handle( const mpool::Id64& cId, Processor* procPtr ) noexcept;
-
-        bool operator ==( const Component::Handle& rhs  ) const noexcept
-        {
-            if ( mProcPtr == rhs.mProcPtr )
-            {
-                if ( mId == rhs.mId )
-                {
-                    return ( true );
-                }
-            }
-            return ( false );
-        }
-        bool operator !=( const Component::Handle& rhs ) const noexcept
-        {
-            return ( !( *this == rhs ) );
-        }
-
-        /// \brief Access to handling component via pointer
-        /// \returns The handling component pointer if handle is valid, nullptr othervise
-        /// Behaves like an std smart pointers operator->()
-        /// \code
-        /// ecs::System ecSystem;
-        /// auto e( ecSystem.addEntity() );
-        /// auto c( e.addComp< SomeCompType >() );
-        /// if ( c->isValid() )   // here
-        /// {
-        ///     // do something this component
-        /// }
-        /// \endcode
-        Component* operator ->() const noexcept;
-
-        /// \brief Returns handling component id
-        inline mpool::Id64 getId() const noexcept
-        {
-            return ( mId );
-        }
-
-        /// \brief Returns the corresponding proc pointer
-        inline Processor* getProc() const noexcept
-        {
-            return ( mProcPtr );
-        }
-
-        /// \brief Returns true if component is valid, false othervise
-        bool isValid() const noexcept;
-        /// \brief Makes handle invalid
-        void invalidate() noexcept;
-
-    private:
-        mpool::Id64 mId { mpool::ID64_INVALID }; ///< \brief Handling component's id; invalid by default
-        Processor* mProcPtr{ nullptr }; ///< \brief Pointer to the according processor
-    };
-
     /// \brief Explitit constructor from entity id
     explicit Component( const mpool::Id64& entityId ) noexcept;
 
@@ -141,67 +73,6 @@ struct Comp
     /// \brief Wrapper for base component type
     using BaseTypeT = Comp< CompTypeT >;
 
-    /// typed Comp<CompT>::Handle
-    struct Handle
-    {
-        /// \brief Default constructor constructs an invalid handle
-        Handle() noexcept;
-
-        /// \brief Constructor from untyped Component::Handle
-        Handle( const Component::Handle& ucHandle ) noexcept;
-
-        /// \brief Constructor from id and processor pointer
-        Handle( const mpool::Id64& cId, Processor* procPtr ) noexcept;
-
-        /// \brief Access to handling component via pointer
-        /// \returns The handling component pointer if handle is valid, nullptr othervise
-        /// Behaves like an std smart pointers operator->()
-        /// \code
-        /// ecs::System ecSystem;
-        /// auto e( ecSystem.addEntity() );
-        /// auto trform( e.addComp< Transform >() );
-        /// trform->x = 8   // here
-        /// trform->y = 16  // and here
-        /// \endcode
-        inline CompTypeT* operator ->() const noexcept
-        {
-            return ( static_cast< CompTypeT* >( mUntypedCHandle.operator->() ) );
-        }
-
-        /// \brief Returns the id of the handling component
-        inline mpool::Id64 getId() const noexcept
-        {
-            return ( mUntypedCHandle.getId() );
-        }
-
-        /// \brief Returns pointer to the processor, which created this handle
-        inline Proc< CompTypeT >* getProc() const noexcept
-        {
-            return ( static_cast< Proc< CompTypeT >* >( mUntypedCHandle.getProc() ) );
-        }
-
-        /// \brief Returns true if handle is valid ("points" to alive component), false othervise
-        inline bool isValid() const noexcept
-        {
-            return ( mUntypedCHandle.isValid() );
-        }
-
-        /// \brief Makes handle invalid
-        inline void invalidate() noexcept
-        {
-            mUntypedCHandle.invalidate();
-        }
-
-        /// \brief Returns inner untyped handle
-        inline Component::Handle getUntyped() const noexcept
-        {
-            return ( mUntypedCHandle );
-        }
-
-    private:
-        Component::Handle mUntypedCHandle{ mpool::ID64_INVALID, nullptr }; ///< Plain component handle
-    };
-
     /// \brief Excplicit constructor from entity id
     explicit Comp( const mpool::Id64& entityId ) noexcept;
 
@@ -225,25 +96,6 @@ Comp< CompT >::Comp( const mpool::Id64& entityId ) noexcept
 // Comp< CompT >::~Comp() noexcept
 // {
 // }
-
-// Comp<CompT>::Handle
-
-template < typename CompT >
-Comp< CompT >::Handle::Handle() noexcept
-{
-}
-
-template < typename CompT >
-Comp< CompT >::Handle::Handle( const Component::Handle& ucHandle ) noexcept
-: mUntypedCHandle{ ucHandle }
-{
-}
-
-template < typename CompT >
-Comp< CompT >::Handle::Handle( const mpool::Id64& cId, Processor* procPtr ) noexcept
-: mUntypedCHandle{ cId, procPtr }
-{
-}
 
 
 } //namespace ecs

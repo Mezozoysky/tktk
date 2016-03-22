@@ -25,7 +25,6 @@
 */
 
 #include <tktk/ecs/Component.hpp>
-#include <tktk/ecs/Processor.hpp>
 
 namespace tktk
 {
@@ -44,51 +43,6 @@ Component::Component( const mpool::Id64& entityId ) noexcept
 // Component::~Component() noexcept
 // {
 // }
-
-
-//
-// Component::Handle
-//
-
-Component::Handle::Handle() noexcept
-: mId{ mpool::ID64_INVALID }
-, mProcPtr{ nullptr }
-{
-}
-
-Component::Handle::Handle( const mpool::Id64& cId, Processor* procPtr ) noexcept
-: mId{ cId }
-, mProcPtr{ procPtr }
-{
-}
-
-bool Component::Handle::isValid() const noexcept
-{
-//     return ( mProcPtr != nullptr && mProcPtr->isIdValid( mId ) );
-    if ( mProcPtr != NULL )
-    {
-        if ( mProcPtr->isIdValid( mId ) )
-        {
-            return ( true );
-        }
-    }
-    return ( false );
-}
-
-void Component::Handle::invalidate() noexcept
-{
-    mId = mpool::ID64_INVALID;
-    mProcPtr = nullptr;
-}
-
-Component* Component::Handle::operator ->() const noexcept
-{
-    if ( !isValid() )
-    {
-        return ( nullptr );
-    }
-    return ( mProcPtr->getCompPtr( mId ) );
-}
 
 
 } //namespace ecs

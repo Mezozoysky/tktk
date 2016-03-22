@@ -26,8 +26,7 @@
 
 #include "Game.hpp"
 #include "comp/Transform.hpp"
-#include "comp/StaticSprite.hpp"
-#include "comp/SpriteSheet.hpp"
+#include "comp/Image.hpp"
 #include "comp/RectShape.hpp"
 #include "asset/TextureMgr.hpp"
 #include "asset/JsonMgr.hpp"
@@ -62,13 +61,13 @@ void Game::run()
             std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CONTENTS: name -> \"" << jsName << "\", description -> \"" << jsDesc << "\"" << std::endl;
         }
 
-        auto e( mECS.addEntity() );
+        auto e( mECS.add() );
         auto tfPaddle( e.addComp< Transform >( Transform::Vector2f( 200.0f, 700.0f ) ) );
         e.addComp< RectShape >( 100.0f, 30.0f, SDL_Color{ 0x55, 0x55, 0xaa, 0xff } );
 
-        e = mECS.addEntity();
+        e = mECS.add();
         e.addComp< Transform >( Transform::Vector2f( 100.0f, 100.0f ) );
-        e.addComp< StaticSprite >( texture );
+        e.addComp< Image >( texture );
 
 
         for ( int x = 0; x < 13; ++x )
@@ -77,7 +76,7 @@ void Game::run()
             {
                 if ( (int)x % 2 == 0 || (int)y % 2 == 0 )
                 {
-                    e = mECS.addEntity();
+                    e = mECS.add();
                     e.addComp< Transform >( Transform::Vector2f( 0.0f + x * 40.0f + x * 2, 0.0f + y * 30.0f + y * 2 ) );
                     if ( (int)y % 2 == 0 )
                     {
@@ -183,7 +182,7 @@ void Game::run()
             }
 // */
             tfPaddle->position.x += speed;
-            mECS.update( 1 /*secondsElapsed*/ );
+            mECS.updateSignal( 1 /*secondsElapsed*/ );
 
             SDL_RenderPresent( mRenderer );
             //std::cout << "FPS: " << std::to_string( 1.0f / secondsElapsed ) << std::endl;
@@ -223,10 +222,9 @@ bool Game::setup()
     mAssetS.registerMgr< TextureMgr >( mRenderer );
     mAssetS.registerMgr< JsonMgr >();
 
-    mECS.registerProc< TransformProc >();
-    mECS.registerProc< StaticSpriteProc >( mRenderer );
-    mECS.registerProc< SpriteSheetProc >();
-    mECS.registerProc< RectShapeProc >( mRenderer );
+    mECS.regCompType< Transform, TransformMgr >();
+    mECS.regCompType< Image, ImageMgr >( mRenderer );
+    mECS.regCompType< RectShape, RectShapeMgr >( mRenderer );
     mECS.setup();
 
     mAssetS.load< Texture >( "texture0.png" );
