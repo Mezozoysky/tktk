@@ -35,7 +35,7 @@
 #define TKTK_ECS_ENTITY_MGR_HPP
 
 #include <tktk/ecs/Config.hpp>
-#include <tktk/ecs/MPoolBasedMgr.hpp>
+#include <tktk/mpool/MemoryPool.hpp>
 
 namespace tktk
 {
@@ -49,12 +49,12 @@ struct Entity
 };
 
 class EntityMgr
-: public MPoolBasedMgr< Entity >
+: public mpool::MemoryPool< Entity >
 {
 public:
 
     EntityMgr() noexcept
-    : MPoolBasedMgr< Entity >()
+    : mpool::MemoryPool< Entity >()
     {
     }
 

@@ -35,10 +35,8 @@
 #define TKTK_ECS_ECS_HPP
 
 #include <tktk/ecs/Config.hpp>
-#include <tktk/ecs/SystemB.hpp>
-#include <tktk/ecs/MPoolBasedMgr.hpp>
+#include <tktk/ecs/CompSystem.hpp>
 #include <tktk/ecs/EntityMgr.hpp>
-#include <tktk/util/Signal.hpp>
 #include <functional>
 
 namespace tktk
@@ -105,37 +103,14 @@ private:
 };
 
 
-template < typename CompT >
-class CompMgr
-: public MPoolBasedMgr< CompT >
-{
-public:
-    CompMgr( Ecs* ecs ) noexcept;
-
-    virtual ~CompMgr() noexcept;
-
-    virtual bool setup() noexcept override;
-    virtual void onUpdate( float deltaTime ) noexcept = 0;
-
-protected:
-    Ecs* mECS;
-};
-
-
 class Ecs
-: protected SystemB< TKTK_ECS_CONFIG_COMPS_PER_ENTITY >
 {
-    using SystemT = SystemB< TKTK_ECS_CONFIG_COMPS_PER_ENTITY >;
-
 public:
 
-    static const std::size_t COMPS_PER_ENTITY{ TKTK_ECS_CONFIG_COMPS_PER_ENTITY };
-
-    util::Signal< float > updateSignal;
+    static constexpr std::size_t COMPS_PER_ENTITY{ TKTK_ECS_CONFIG_COMPS_PER_ENTITY };
 
     /// \brief Default constructor
     Ecs() noexcept
-    : SystemB()
     {
         mCompArrayByEntityIndex.reserve( mEntityMgr.getCapacity() );
     }
@@ -143,6 +118,16 @@ public:
     /// \brief Virtual destructor
     virtual ~Ecs() noexcept
     {
+    }
+
+    virtual bool setup() noexcept
+    {
+        return ( mCompSystem.setup() );
+    }
+
+    virtual void shutdown() noexcept
+    {
+        mCompSystem.shutdown();
     }
 
     template< typename CompT, typename MgrT, typename... MgrArgsT >
@@ -153,8 +138,8 @@ public:
             , "MgrT should extend tktk::ecs::CompMgr<CompT> template"
         );
 
-        std::size_t index{ SystemT::regDataType< CompT, MgrT >( this, std::forward< MgrArgsT >( args )... ) };
-        if ( index >= DT_INDEX_INVALID )
+        std::size_t index{ mCompSystem.regCompType< CompT, MgrT >( std::forward< MgrArgsT >( args )... ) };
+        if ( index >= CompSystemT::MAX_DATA_TYPES )
         {
             return ( false );
         }
@@ -169,7 +154,7 @@ public:
     /// If there is no 'dead' entities in the memory the new entity will be created, othervise first of the 'dead' entities will be reused.
     EntityHandle add() noexcept
     {
-        mpool::Id64 id{ mEntityMgr.add() };
+        mpool::Id64 id{ mEntityMgr.alloc() };
         assert( mEntityMgr.isIdValid( id ) && "Newly allocated entity id is invalid" );
 
         // Provide the entity->components mapping consistency
@@ -198,7 +183,7 @@ public:
     /// \note Unless you are modifying the tktk-ecs library you should not use this method, use `Entity::Handle::remove()` instead.
     inline void drop( mpool::Id64 id  ) noexcept
     {
-        mEntityMgr.drop( id );
+        mEntityMgr.free( id );
     }
 
     /// \brief Tests if entity id is valid
@@ -216,7 +201,7 @@ public:
     /// \note Unless you are modifying the tktk-ecs library you should not use this method, use `Entity::Handle::operator->()` instead.
     inline Entity* getPtr( mpool::Id64 id ) const noexcept
     {
-        return ( mEntityMgr.getDataPtr( id ) );
+        return ( mEntityMgr.getPtr( id ) );
     }
 
     template< typename CompT, typename... CompArgsT >
@@ -226,12 +211,12 @@ public:
 
         const CompHandle< CompT > invalidCH{};
 
-        auto mgrPtr( static_cast< CompMgr< CompT >* >( getMgrPtrForDataType< CompT >() ) );
+        auto mgrPtr( static_cast< CompMgr< CompT >* >( mCompSystem.getMgrPtrForCompType< CompT >() ) );
         assert( mgrPtr != nullptr && "Processor for given comp type is not registered." );
 
         mpool::Id64 cId{ mgrPtr->add( eId, std::forward< CompArgsT >( args )... ) };
 
-        mCompArrayByEntityIndex[ eId.index() ][ getDataTypeIndex< CompT >() ] = cId;
+        mCompArrayByEntityIndex[ eId.index() ][ mCompSystem.getCompTypeIndex< CompT >() ] = cId;
 
         CompHandle< CompT > cH{ eId, this };
         return ( cH );
@@ -251,10 +236,10 @@ public:
     {
         assert( isValid( id ) && "Trying to get comp ptr from invalid entity" );
 
-        std::size_t cIndex{ getDataTypeIndex< CompT >() };
+        std::size_t cIndex{ mCompSystem.getCompTypeIndex< CompT >() };
         mpool::Id64 cId{ mCompArrayByEntityIndex[ id.index() ][ cIndex ] };
 
-        CompMgr< CompT >* mgrPtr{ static_cast< CompMgr< CompT >* >( SystemT::getMgrPtr( cIndex ) ) };
+        CompMgr< CompT >* mgrPtr{ static_cast< CompMgr< CompT >* >( mCompSystem.getMgrPtr( cIndex ) ) };
         assert( mgrPtr != nullptr && "Trying to get comp ptr of comp type which is not registered." );
 
         if ( !mgrPtr->isIdValid( cId ) )
@@ -268,25 +253,22 @@ public:
     inline bool isCompValid( mpool::Id64 id ) const noexcept
     {
         assert( isValid( id ) && "Trying to check comp validity from invalid entity" );
-        std::size_t cIndex{ getDataTypeIndex< CompT >() };
+        std::size_t cIndex{ mCompSystem.getCompTypeIndex< CompT >() };
         mpool::Id64 cId{ mCompArrayByEntityIndex[ id.index() ][ cIndex ] };
 
-        CompMgr< CompT >* mgrPtr{ static_cast< CompMgr< CompT >* >( getMgrPtr( cIndex ) ) };
+        CompMgr< CompT >* mgrPtr{ static_cast< CompMgr< CompT >* >( mCompSystem.getMgrPtr( cIndex ) ) };
         assert( mgrPtr != nullptr && "Trying to check validity of comp which type is not registered." );
 
         return ( mgrPtr->isIdValid( cId ) );
     }
 
-    virtual void update( float deltaTime ) noexcept
-    {
-        updateSignal( deltaTime );
-    }
-
 private:
-
+    using CompSystemT = CompSystem< TKTK_ECS_CONFIG_COMPS_PER_ENTITY >;
     using CompArrayT = std::array< mpool::Id64, TKTK_ECS_CONFIG_COMPS_PER_ENTITY >;
+
     EntityMgr mEntityMgr;
     std::vector< CompArrayT > mCompArrayByEntityIndex;
+    CompSystemT mCompSystem;
 };
 
 //
@@ -336,25 +318,12 @@ inline void CompHandle< CompT >::invalidate() noexcept
     mEcs = nullptr;
 }
 
-
-template< typename CompT >
-CompMgr< CompT >::CompMgr( Ecs* ecs ) noexcept
-: MPoolBasedMgr< CompT >()
-, mECS{ ecs }
-{
-}
-
-template< typename CompT >
-CompMgr< CompT >::~CompMgr() noexcept
-{
-}
-
-template< typename CompT >
-bool CompMgr< CompT >::setup() noexcept
-{
-    mECS->updateSignal.connect( std::bind( &CompMgr::onUpdate, this, std::placeholders::_1 ) );
-    return ( true );
-}
+// template< typename CompT >
+// bool CompMgr< CompT >::setup() noexcept
+// {
+//     mECS->updateSignal.connect( std::bind( &CompMgr::onUpdate, this, std::placeholders::_1 ) );
+//     return ( true );
+// }
 
 
 } //namespace ecs

@@ -27,26 +27,84 @@
 #ifndef ARCANOID_ECS_HPP
 #define ARCANOID_ECS_HPP
 
-#include <tktk/ecs/System.hpp>
 #include <tktk/ecs/Ecs.hpp>
+#include <tktk/util/Signal.hpp>
 
 using namespace tktk;
 
-class myEcs
-: public ecs::Ecs
-{
-};
+class ECS;
 
-class ECS
-: public ecs::System
+template< typename CompT >
+class CompMgr
+: public ecs::CompMgr< CompT >
 {
 public:
 
-    ECS() noexcept
-    : ecs::System()
+    CompMgr( ECS* ecs ) noexcept
+    : ecs::CompMgr< CompT >()
+    , mECS{ ecs }
     {
     }
-    virtual ~ECS() = default;
+
+    virtual bool setup() noexcept
+    {
+        //stub
+        return ( false );
+    }
+
+    virtual void shutdown() noexcept
+    {
+        //stub
+    }
+
+    inline ECS* getECS() const noexcept
+    {
+//         return ( static_cast< ECS* >( ecs::CompMgr< CompT >::getEcs() ) );
+        return ( mECS );
+    }
+
+private:
+
+    ECS* mECS;
+};
+
+class ECS
+: public ecs::Ecs
+{
+public:
+
+    util::Signal< float > updateSignal{};
+
+    ECS() noexcept
+    : ecs::Ecs()
+    {
+    }
+
+    virtual ~ECS() noexcept
+    {
+    }
+
+    virtual bool setup() noexcept override
+    {
+        bool res{ ecs::Ecs::setup() };
+        return ( res );
+    }
+
+    virtual void shutdown() noexcept override
+    {
+        ecs::Ecs::shutdown();
+    }
+
+    template< typename CompT, typename MgrT, typename... MgrArgsT >
+    bool regCompType( MgrArgsT&&... args ) noexcept
+    {
+        static_assert(
+            std::is_base_of< CompMgr< CompT >, MgrT >::value
+            , "MgrT should extend CompMgr<CompT> template"
+        );
+
+        return ( tktk::ecs::Ecs::regCompType< CompT, MgrT >( this, std::forward< MgrArgsT >( args )... ) );
+    }
 
 };
 
