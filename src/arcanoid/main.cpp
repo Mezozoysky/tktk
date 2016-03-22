@@ -26,6 +26,10 @@
 
 #include "Game.hpp"
 
+// extern "C" needs for SDL main wrapper on Windows/iOS/etc
+#ifdef __cplusplus
+extern "C"
+#endif
 int main( int argc, char* argv[] )
 {
     ll_info( "arcanoid" );
