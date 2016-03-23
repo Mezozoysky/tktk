@@ -51,6 +51,13 @@ else(SDL2_IMAGE_FOUND)
     message(FATAL_ERROR "-- ${CMAKE_PROJECT_NAME} -- No SDL2_image found!")
 endif(SDL2_IMAGE_FOUND)
 
+find_package(SDL2_ttf REQUIRED)
+if(SDL2_TTF_FOUND)
+    include_directories(${SDL2_TTF_INCLUDE_DIR})
+else(SDL2_TTF_FOUND)
+    message(FATAL_ERROR "-- ${CMAKE_PROJECT_NAME} -- No SDL2_ttf found!")
+endif(SDL2_TTF_FOUND)
+
 find_package(OpenGL)
 if(OPENGL_FOUND)
     include_directories(${OPENGL_INCLUDE_DIR})
@@ -147,6 +154,7 @@ add_executable(arcanoid WIN32 MACOSX_BUNDLE
 set_target_properties(arcanoid PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(arcanoid tktk-ecs tktk-asset)
+target_link_libraries(arcanoid ${SDL2_TTF_LIBRARY})
 target_link_libraries(arcanoid ${SDL2_IMAGE_LIBRARY})
 target_link_libraries(arcanoid ${SDL2_LIBRARY})
 target_link_libraries(arcanoid ${OPENGL_LIBRARIES})
