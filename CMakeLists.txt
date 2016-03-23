@@ -82,7 +82,7 @@ add_subdirectory(src)
 
 # Little help
 message(STATUS "")
-message(STATUS "Your options now:")
+message(STATUS "Your options to build:")
 message(STATUS "    make         # To build")
 message(STATUS "    make install # To install")
 message(STATUS "")
