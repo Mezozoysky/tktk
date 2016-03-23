@@ -34,6 +34,7 @@
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 
 using namespace tktk;
 
@@ -216,7 +217,13 @@ bool Game::setup()
 
     if ( ( IMG_Init( IMG_INIT_PNG ) & IMG_INIT_PNG ) != IMG_INIT_PNG )
     {
-        ll_error( "IMG_Init error: " << SDL_GetError() );
+        ll_error( "IMG_Init error: " << IMG_GetError() );
+        return ( false );
+    }
+
+    if ( TTF_Init() == -1 )
+    {
+        ll_error( "TTF_Init error: " << TTF_GetError() );
         return ( false );
     }
 
@@ -237,6 +244,7 @@ bool Game::setup()
 
 void Game::cleanup()
 {
+    TTF_Quit();
     IMG_Quit();
     SDL_DestroyRenderer( mRenderer );
     SDL_DestroyWindow( mWindow );
