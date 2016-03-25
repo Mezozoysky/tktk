@@ -5,37 +5,36 @@ use strict;
 use warnings;
 
 use FindBin;
-use lib "$FindBin::Bin/lib";
+use lib "$FindBin::Bin/../lib";
 
-#$Carp::Verbose = 1;
+$Carp::Verbose = 1;
 
-use DepsControl;
 use OptArgs;
-use Path::Tiny;
+use DepsControl;
 
 sub main
 {
-    say( "$0 starts" );
+    say( "$0 starts\n" );
 
-    arg url =>
+    arg remote =>
     (
         isa => 'Str',
         required => 1,
-        comment => 'remote repository url to clone;'
+        comment => 'remote url to download;'
     );
 
-    arg dir =>
+    arg local =>
     (
         isa => 'Str',
         required => 1,
-        comment => 'name for the new directory which to clone into;',
+        comment => 'local file name to save downloaded file as;',
     );
 
     opt prefix =>
     (
         isa => 'Str',
         alias => 'p',
-        comment => 'base directory to clone repo within; "." by default;',
+        comment => 'base directory to save the file within; "." by default;',
     );
 
     my $oa = optargs();
@@ -53,13 +52,10 @@ sub main
         croak( "'$prefixPath' is not a directory." );
     }
 
-    #my $repoPath = path( $prefixPath, $oa->{ dir } )->realpath();
+    my $localPath = DepsControl::fetchFile( $oa->{ remote }, $oa->{ local }, $prefixPath );
+    say( "local path: $localPath" );
 
-    my $repo = DepsControl::cloneRepo( $oa->{ url }, $oa->{ dir }, $prefixPath );
-    say( 'GIT VERSION: ', $repo->version() );
-    say( 'repo path: ', $repo->work_tree() );
-
-    say( "$0 is done" );
+    print( "$0 is done" );
     return ( 1 );
 }
 
