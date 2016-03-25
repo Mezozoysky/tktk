@@ -11,7 +11,7 @@ $Carp::Verbose = 1;
 
 use Carp;
 use OptArgs;
-use JSON::Tiny qw( decode_json );
+use JSON::PP;
 use Path::Tiny;
 use Data::Dumper::Simple;
 use DepsControl;
@@ -35,7 +35,8 @@ sub main
         $jsonString = $inputFile->slurp_utf8();
     }
 
-    my $dep = decode_json( $jsonString );
+    my $jpp = JSON::PP->new()->utf8()->relaxed();
+    my $dep = $jpp->decode( $jsonString );
     say( 'loaded dep: ', Dumper( $dep ) );
 
     print( "$0 is done" );

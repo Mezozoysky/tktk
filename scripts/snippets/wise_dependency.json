@@ -1,5 +1,6 @@
+# Comment and dangling commas allowed only in relaxed mode
 {
     "name" : "Wise Dependecy",
     "version" : "0.0.1",
-    "type" : "git"
+    "type" : "git",
 }
