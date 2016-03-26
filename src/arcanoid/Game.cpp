@@ -30,6 +30,7 @@
 #include "comp/RectShape.hpp"
 #include "asset/TextureMgr.hpp"
 #include "asset/JsonMgr.hpp"
+#include "asset/FontMgr.hpp"
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -54,14 +55,17 @@ void Game::run()
     {
         auto texture( mAssetS.get< Texture >( "texture0.png" ) );
         auto json( mAssetS.get< JSON >( "json0.json" ) );
-
         if ( json != nullptr )
         {
             auto jsName( json->getDocument()[ "name" ].GetString() );
             auto jsDesc( json->getDocument()[ "description" ].GetString() );
             std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CONTENTS: name -> \"" << jsName << "\", description -> \"" << jsDesc << "\"" << std::endl;
         }
-
+        auto font( mAssetS.get< Font >( "PRAVDAFP.ttf:42" ) );
+        if ( font != nullptr )
+        {
+            std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! we have font!" << std::endl;
+        }
         auto e( mECS.add() );
         auto tfPaddle( e.addComp< Transform >( Transform::Vector2f( 200.0f, 700.0f ) ) );
         e.addComp< RectShape >( 100.0f, 30.0f, SDL_Color{ 0x55, 0x55, 0xaa, 0xff } );
@@ -94,11 +98,20 @@ void Game::run()
         }
 
 
+        float speed{ 0.0f };
         mIsRunning = true;
         SDL_Event event;
-        float speed{ 0.0f };
+        std::uint32_t frameCount{ 0 };
+        std::uint32_t msecElapsed{ 0 };
+        double secElapsed{ 0.0 };
+        double fps{ 0 };
+        std::uint32_t msecStart{ SDL_GetTicks() };
         while ( mIsRunning )
         {
+            ++frameCount;
+            msecElapsed = SDL_GetTicks() - msecStart;
+            secElapsed = msecElapsed / 1000.0;
+            fps = frameCount / secElapsed;
             while ( SDL_PollEvent( &event ) )
             {
                 switch ( event.type )
@@ -185,8 +198,18 @@ void Game::run()
             tfPaddle->position.x += speed;
             mECS.updateSignal( 1 /*secondsElapsed*/ );
 
+            SDL_Surface* fpsSurface{ TTF_RenderUTF8_Blended( font->getRawFont(), std::to_string( fps )/*std::string( "" )*/.c_str(), { 0xff, 0xff, 0xff, 0x55 } ) };
+            SDL_Texture* fpsTexture{ SDL_CreateTextureFromSurface( mRenderer, fpsSurface ) };
+            SDL_FreeSurface( fpsSurface );
+            SDL_Rect srcRect{ 0, 0, 0, 0 };
+            SDL_QueryTexture( fpsTexture, NULL, NULL, &(srcRect.w), &(srcRect.h) );
+            SDL_Rect dstRect{ 0, 0, srcRect.w, srcRect.h };
+            SDL_GetWindowSize( mWindow, &(dstRect.x), &(dstRect.y) );
+            dstRect.x -= srcRect.w;
+            dstRect.y -= srcRect.h;
+            SDL_RenderCopy(mRenderer, fpsTexture, &srcRect, &dstRect );
+            SDL_DestroyTexture( fpsTexture );
             SDL_RenderPresent( mRenderer );
-            //std::cout << "FPS: " << std::to_string( 1.0f / secondsElapsed ) << std::endl;
         }
     }
     cleanup();
@@ -228,6 +251,7 @@ bool Game::setup()
 
     mAssetS.registerMgr< TextureMgr >( mRenderer );
     mAssetS.registerMgr< JsonMgr >();
+    mAssetS.registerMgr< FontMgr >( mRenderer );
 
     mECS.regCompType< Transform, TransformMgr >();
     mECS.regCompType< Image, ImageMgr >( mRenderer );
@@ -236,6 +260,7 @@ bool Game::setup()
 
     mAssetS.load< Texture >( "texture0.png" );
     mAssetS.load< JSON >( "json0.json" );
+    mAssetS.load< Font >( "PRAVDAFP.ttf:42" );
 
     return ( true );
 }
