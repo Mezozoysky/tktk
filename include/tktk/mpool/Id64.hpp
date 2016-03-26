@@ -31,6 +31,7 @@
 /// \copyright tktk is released under the terms of zlib/png license; see full license text at https://opensource.org/licenses/Zlib
 
 #include <cstddef>
+#include <cstdint>
 
 #ifndef TKTK_MPOOL_ID64_HPP
 #define TKTK_MPOOL_ID64_HPP

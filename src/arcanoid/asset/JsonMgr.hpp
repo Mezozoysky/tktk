@@ -30,6 +30,7 @@
 #include <rapidjson/reader.h>
 #include <rapidjson/filereadstream.h>
 #include <cstdio>
+#include <iostream>
 
 using namespace tktk;
 
