@@ -38,6 +38,7 @@
 #include <type_traits>
 #include <cassert>
 #include <memory>
+#include <array>
 #include <cstdint>
 #include <tktk/util/TypeMap.hpp>
 #include <tktk/mpool/MemoryPool.hpp>
