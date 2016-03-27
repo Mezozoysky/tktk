@@ -55,12 +55,18 @@ public:
         if ( mRawFont != nullptr )
         {
             TTF_CloseFont( mRawFont );
+            mRawFont = nullptr;
         }
     }
 
     inline TTF_Font* getRawFont() const noexcept
     {
         return ( mRawFont );
+    }
+
+    inline int getPtSize() const noexcept
+    {
+        return ( mPtSize );
     }
 
 private:
