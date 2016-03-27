@@ -70,7 +70,7 @@ public:
         std::string ptStr{ ++fit, name.end() };
         int ptSize{ std::stoi( ptStr ) };
 
-        TTF_Font* rawFont{ TTF_OpenFont( fileName.c_str(), ptSize ) };
+        TTF_Font* rawFont{ TTF_OpenFontIndex( fileName.c_str(), ptSize, 0 ) };
         if ( rawFont == nullptr )
         {
             //TODO: some logging lib needed
