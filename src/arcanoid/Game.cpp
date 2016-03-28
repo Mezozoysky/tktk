@@ -177,13 +177,27 @@ void Game::run()
                             }
                             break;
                             default:
+                            {
+                            }
                             break;
                         }
                     }
                     break;
-                    case SDL_WINDOWEVENT_RESIZED:
+                    case SDL_WINDOWEVENT:
                     {
-                        SDL_GetWindowSize( mWindow, &mWindowWidth, &mWindowHeight );
+                        switch ( event.window.event )
+                        {
+                        case SDL_WINDOWEVENT_RESIZED:
+                        {
+                            SDL_GetWindowSize( mWindow, &mWindowWidth, &mWindowHeight );
+                            std::cout << "RESIZED!" << std::endl;
+                        }
+                        break;
+                        default:
+                        {
+                        }
+                        break;
+                        };
                     }
                     break;
                     default:
@@ -203,9 +217,9 @@ void Game::run()
                 };
                 SDL_Rect rect{ 0, 0, 8, 8 };
                 int i;
-                for ( int y = 0; y < 768; y += rect.h)
+                for ( int y = 0; y < mWindowHeight; y += rect.h)
                 {
-                    for ( int x = 0; x < 1024; x += rect.w)
+                    for ( int x = 0; x < mWindowWidth; x += rect.w)
                     {
                         i = (((x ^ y) >> 3) & 1);
                         SDL_SetRenderDrawColor(mRenderer, colors[i].r, colors[i].g, colors[i].b, colors[i].a);
@@ -244,7 +258,7 @@ bool Game::setup()
         return ( false );
     }
 
-    mWindow = SDL_CreateWindow( "Hello!", 100, 100, 800, 600, SDL_WINDOW_SHOWN );
+    mWindow = SDL_CreateWindow( "Hello!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mWindowWidth, mWindowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE );
     if ( mWindow == nullptr )
     {
         ll_error( "SDL_CreateWindow ERROR: " << SDL_GetError() );
@@ -253,7 +267,7 @@ bool Game::setup()
 
     SDL_GetWindowSize( mWindow, &mWindowWidth, &mWindowHeight );
 
-    mRenderer = SDL_CreateRenderer( mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+    mRenderer = SDL_CreateRenderer( mWindow, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC*/ );
     if ( mRenderer == nullptr )
     {
         ll_error( "SDL_CreateRenderer Error: " << SDL_GetError() );
