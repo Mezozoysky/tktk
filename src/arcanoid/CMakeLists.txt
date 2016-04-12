@@ -37,6 +37,8 @@ endif(TKTK_OS_WINDOWS)
 # Packages & dependencies
 #
 
+include_directories(${CMAKE_SOURCE_DIR}/third-party/include)
+
 find_package(SDL2 REQUIRED)
 if(SDL2_FOUND)
     include_directories(${SDL2_INCLUDE_DIR})
