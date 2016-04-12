@@ -207,7 +207,7 @@ bool Game::setup()
         return ( false );
     }
 
-    mRenderer = SDL_CreateRenderer( mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+    mRenderer = SDL_CreateRenderer( mWindow, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC*/ );
     if ( mRenderer == nullptr )
     {
         ll_error( "SDL_CreateRenderer Error: " << SDL_GetError() );
