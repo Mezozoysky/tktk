@@ -63,7 +63,8 @@ void Game::run()
             std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CONTENTS: name -> \"" << jsName << "\", description -> \"" << jsDesc << "\"" << std::endl;
         }
 
-        auto font( mAssetS.get< Font >( "PRAVDAFP.ttf:42" ) );
+        auto font( mAssetS.get< Font >( "pt_mono_regular.ttf:42" ) );
+
         if ( font != nullptr )
         {
             std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! we have font!" << std::endl;
@@ -264,7 +265,7 @@ bool Game::setup()
 
     mAssetS.load< Texture >( "texture0.png" );
     mAssetS.load< JSON >( "json0.json" );
-    mAssetS.load< Font >( "PRAVDAFP.ttf:42" );
+    mAssetS.load< Font >( "pt_mono_regular.ttf:42" );
 
     return ( true );
 }
