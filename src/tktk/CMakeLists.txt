@@ -37,6 +37,7 @@ set(TKTK_LIB_MPOOL_SOURCES "")
 set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/include/tktk/mpool/Config.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/mpool/Id64.hpp
+    ${CMAKE_SOURCE_DIR}/include/tktk/mpool/AMemoryPool.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/mpool/MemoryPool.hpp
 )
 set(GROUP_SOURCES

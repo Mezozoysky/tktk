@@ -33,6 +33,7 @@
 #define TKTK_MPOOL_MEMORY_POOL_HPP
 
 #include <tktk/mpool/Config.hpp>
+#include <tktk/mpool/AMemoryPool.hpp>
 #include <tktk/mpool/Id64.hpp>
 #include <vector>
 #include <cassert>
@@ -44,27 +45,6 @@ namespace tktk
 {
 namespace mpool
 {
-
-/// \brief Abstract base for MemoryPool
-class MemoryPoolBase
-{
-public:
-    MemoryPoolBase() = default;
-    virtual ~MemoryPoolBase() = default;
-
-    virtual std::uint32_t getSize() const noexcept = 0;
-    virtual std::uint32_t getCapacity() const noexcept = 0;
-    virtual std::uint32_t getChunksNumber() const noexcept = 0;
-    virtual std::uint32_t getChunkCapacity() const noexcept = 0;
-    virtual std::uint32_t getFreeSize() const noexcept = 0;
-    virtual std::size_t getElementSize() const noexcept = 0;
-
-    virtual void clear() noexcept = 0;
-    virtual void reserve( std::uint32_t cap ) noexcept = 0;
-
-    virtual bool isAlive( std::uint32_t index ) const noexcept = 0;
-};
-
 
 /// \brief Pool for contiguous managed memory allocation
 /// \tparam ValueT The data type to manage memory for
@@ -91,7 +71,7 @@ public:
 /// \endcode
 template < typename ValueT, std::uint32_t chunkSizeV = 256 >
 class MemoryPool
-: public MemoryPoolBase
+: public AMemoryPool
 {
 public:
 
