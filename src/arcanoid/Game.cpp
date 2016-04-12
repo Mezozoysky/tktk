@@ -43,6 +43,8 @@ Game::Game()
 : mIsRunning{ false }
 , mWindow{ nullptr }
 , mRenderer{ nullptr }
+, mWindowWidth{ 800 }
+, mWindowHeight{ 600 }
 {
 }
 
@@ -69,32 +71,42 @@ void Game::run()
         {
             std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! we have font!" << std::endl;
         }
-        auto e( mECS.addEntity() );
 
-        auto tfPaddle( e.addComp< Transform >( Transform::Vector2f( 200.0f, 700.0f ) ) );
-        e.addComp< RectShape >( 100.0f, 30.0f, SDL_Color{ 0x55, 0x55, 0xaa, 0xff } );
+        auto e( mECS.addEntity() );
+        auto tfPaddle( e.addComp< Transform >( Transform::Vector2f( ( mWindowWidth - 128.0f ) / 2.0f, mWindowHeight - 44.0f ) ) );
+        e.addComp< RectShape >( 128.0f, 24.0f, SDL_Color{ 0x3f, 0x7f, 0xff, 0xff } );
 
         e = mECS.addEntity();
-        e.addComp< Transform >( Transform::Vector2f( 100.0f, 100.0f ) );
+        e.addComp< Transform >( Transform::Vector2f( ( mWindowWidth - 30.0f ) / 2.0f, ( mWindowHeight - 30.0f ) / 2.0f ) );
         e.addComp< StaticSprite >( texture );
 
-
-        for ( int x = 0; x < 13; ++x )
+        int cols{ 13 };
+        int rows{ 4 };
+        float brickW{ 59.0f };
+        float brickH{ 24.0f };
+        float marginW{ 2 };
+        float marginH{ 4 };
+        float totalW{ cols * ( brickW + marginW ) + marginW };
+//         float totalH{ rows * ( brickH + marginH ) + marginH };
+        float offsetX{ (int)(( mWindowWidth - totalW ) / 2.0f + 0.5f) + marginW };
+        float offsetY{ marginH };
+        for ( int x = 0; x < cols; ++x )
         {
-            for ( int y = 0; y < 4; ++y )
+            for ( int y = 0; y < rows; ++y )
             {
                 if ( (int)x % 2 == 0 || (int)y % 2 == 0 )
                 {
                     e = mECS.addEntity();
-                    e.addComp< Transform >( Transform::Vector2f( 0.0f + x * 40.0f + x * 2, 0.0f + y * 30.0f + y * 2 ) );
+                    e.addComp< Transform >( Transform::Vector2f( offsetX + x * ( brickW + marginW ), offsetY + y * ( brickH + marginH ) ) );
+
                     if ( (int)y % 2 == 0 )
                     {
-                        e.addComp< RectShape >( 40.0f, 30.0f, SDL_Color{ 0x55, 0xaa, 0x55, 0xff } );
+                        e.addComp< RectShape >( brickW, brickH, SDL_Color{ 0x3f, 0xff, 0x7f, 0xff } );
                         //e.addComp< HPCounter >( 1 );
                     }
                     else
                     {
-                        e.addComp< RectShape >( 40.0f, 30.0f, SDL_Color{ 0xaa, 0x55, 0x55, 0xff } );
+                        e.addComp< RectShape >( brickW, brickH, SDL_Color{ 0xff, 0x3f, 0x7f, 0xff } );
                         //e.addComp< HPCounter >( 3 );
                     }
                 }
@@ -148,6 +160,11 @@ void Game::run()
                     {
                         switch ( event.key.keysym.sym )
                         {
+                            case SDLK_ESCAPE:
+                            {
+                                mIsRunning = false;
+                            }
+                            break;
                             case SDLK_LEFT:
                             {
                                 if ( speed < 0.0f )
@@ -169,7 +186,14 @@ void Game::run()
                         }
                     }
                     break;
+                    case SDL_WINDOWEVENT_RESIZED:
+                    {
+                        SDL_GetWindowSize( mWindow, &mWindowWidth, &mWindowHeight );
+                    }
+                    break;
                     default:
+                    {
+                    }
                     break;
                 }
             }
@@ -200,17 +224,16 @@ void Game::run()
             }
 // */
             tfPaddle->position.x += speed;
-            mECS.update( 1 /*secondsElapsed*/ );
 
-            SDL_Surface* fpsSurface{ TTF_RenderUTF8_Blended( font->getRawFont(), std::to_string( fps )/*std::string( "" )*/.c_str(), { 0xff, 0xff, 0xff, 0x55 } ) };
+            mECS.updateSignal( secElapsed );
+
+            SDL_Surface* fpsSurface{ TTF_RenderUTF8_Blended( font->getRawFont(), std::to_string( fps ).c_str() , { 0xff, 0xff, 0x7f, 0xff } ) };
             SDL_Texture* fpsTexture{ SDL_CreateTextureFromSurface( mRenderer, fpsSurface ) };
+            SDL_SetTextureAlphaMod( fpsTexture, 0x9f );
             SDL_FreeSurface( fpsSurface );
             SDL_Rect srcRect{ 0, 0, 0, 0 };
             SDL_QueryTexture( fpsTexture, NULL, NULL, &(srcRect.w), &(srcRect.h) );
-            SDL_Rect dstRect{ 0, 0, srcRect.w, srcRect.h };
-            SDL_GetWindowSize( mWindow, &(dstRect.x), &(dstRect.y) );
-            dstRect.x -= srcRect.w;
-            dstRect.y -= srcRect.h;
+            SDL_Rect dstRect{ mWindowWidth - srcRect.w, mWindowHeight - srcRect.h, srcRect.w, srcRect.h };
             SDL_RenderCopy(mRenderer, fpsTexture, &srcRect, &dstRect );
             SDL_DestroyTexture( fpsTexture );
             SDL_RenderPresent( mRenderer );
@@ -227,14 +250,17 @@ bool Game::setup()
         return ( false );
     }
 
-    mWindow = SDL_CreateWindow( "Hello!", 100, 100, 1024, 768, SDL_WINDOW_SHOWN );
+    mWindow = SDL_CreateWindow( "Hello!", 100, 100, 800, 600, SDL_WINDOW_SHOWN );
     if ( mWindow == nullptr )
     {
         ll_error( "SDL_CreateWindow ERROR: " << SDL_GetError() );
         return ( false );
     }
 
+    SDL_GetWindowSize( mWindow, &mWindowWidth, &mWindowHeight );
+
     mRenderer = SDL_CreateRenderer( mWindow, -1, SDL_RENDERER_ACCELERATED /*| SDL_RENDERER_PRESENTVSYNC*/ );
+
     if ( mRenderer == nullptr )
     {
         ll_error( "SDL_CreateRenderer Error: " << SDL_GetError() );

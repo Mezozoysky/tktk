@@ -54,8 +54,10 @@ private:
 
     asset::System mAssetS;
 
-    SDL_Window* mWindow;
-    SDL_Renderer* mRenderer;
+    SDL_Window* mWindow{ nullptr };
+    SDL_Renderer* mRenderer{ nullptr };
+    int mWindowWidth{ 1 };
+    int mWindowHeight{ 1 };
 
     ECS mECS;
 };
