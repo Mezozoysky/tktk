@@ -47,7 +47,7 @@ public:
     {
     }
 
-    virtual SharedAssetTypeT loadAsset( const std::string& name ) noexcept override // TODO: Should be pure virtual
+    virtual SharedAssetTypeT loadAsset( const std::string& name ) noexcept override
     {
         SharedAssetTypeT shared;
 
