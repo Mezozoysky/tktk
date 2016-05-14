@@ -24,19 +24,19 @@
 
 
 /// \file
-/// \brief This file provides configuration defines for tktk-util library
+/// \brief This file provides configuration defines for tktk-typec library
 /// \author Stanislav Demyanovich <stan@angrybubo.com>
 /// \date 2016
 /// \copyright tktk is released under the terms of zlib/png license; see full license text at https://opensource.org/licenses/Zlib
 
-/// \namespace util
-/// \brief Namespace for all the names of tktk-util library
+/// \namespace typec
+/// \brief Namespace for all the names of tktk-typec library
 ///
-/// Description stub for `namespace util`
+/// Description stub for `namespace typec`
 
-#ifndef TKTK_UTIL_CONFIG_HPP
-#define TKTK_UTIL_CONFIG_HPP
+#ifndef TKTK_TYPEC_CONFIG_HPP
+#define TKTK_TYPEC_CONFIG_HPP
 
 #include <tktk/Config.hpp>
 
-#endif // TKTK_UTIL_CONFIG_HPP
+#endif // TKTK_TYPEC_CONFIG_HPP

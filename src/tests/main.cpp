@@ -27,8 +27,8 @@
 #define CATCH_CONFIG_MAIN
 #include <Catch/catch.hpp>
 
-#include <tktk/util/TypeMap.hpp>
-#include <tktk/util/TypeMask.hpp>
+#include <tktk/typec/TypeMap.hpp>
+#include <tktk/typec/TypeMask.hpp>
 #include <tktk/mpool/MemoryPool.hpp>
 #include <tktk/util/Signal.hpp>
 #include <tktk/ecs/System.hpp>
@@ -78,7 +78,7 @@ TEST_CASE( "TypeMap correctness", "[typemap]" )
 {
     using Value = std::string;
 
-    util::TypeMap< Value > typeMap;
+    typec::TypeMap< Value > typeMap;
     typeMap.insert< int >( "integer type" );
 
     CHECK( typeMap.find< int >()->second == "integer type" );
@@ -86,7 +86,7 @@ TEST_CASE( "TypeMap correctness", "[typemap]" )
 
 TEST_CASE( "TypeMask correctness", "[typemask]" )
 {
-    util::TypeMask< 2 > typeSet;
+    typec::TypeMask< 2 > typeSet;
     typeSet.reset().set< int >().set< std::string >();
 
     CHECK( typeSet.test< int >() == true );
@@ -94,7 +94,7 @@ TEST_CASE( "TypeMask correctness", "[typemask]" )
     typeSet.reset< int >();
     CHECK( typeSet.test< int >() == false );
 
-    util::TypeMask< 2 > typeSet2;
+    typec::TypeMask< 2 > typeSet2;
     typeSet2.reset().set< unsigned long >().set< char[] >();
 
     CHECK( typeSet2.test< unsigned long >() == true );

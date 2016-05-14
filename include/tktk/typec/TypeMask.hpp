@@ -29,16 +29,16 @@
 /// \date 2016
 /// \copyright tktk is released under the terms of zlib/png license; see full license text at https://opensource.org/licenses/Zlib
 
-#ifndef TKTK_UTIL_TYPE_MASK_HPP
-#define TKTK_UTIL_TYPE_MASK_HPP
+#ifndef TKTK_TYPEC_TYPE_MASK_HPP
+#define TKTK_TYPEC_TYPE_MASK_HPP
 
-#include <tktk/util/Config.hpp>
+#include <tktk/typec/Config.hpp>
 #include <bitset>
 #include <cstddef>
 
 namespace tktk
 {
-namespace util
+namespace typec
 {
 
 template < std::size_t sizeV = 64 >
@@ -116,8 +116,8 @@ private:
 };
 
 
-} // namespace util
+} // namespace typec
 } // namespace tktk
 
 
-#endif // TKTK_UTIL_TYPE_MASK_HPP
+#endif // TKTK_TYPEC_TYPE_MASK_HPP

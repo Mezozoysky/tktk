@@ -24,10 +24,10 @@
         source distribution.
 */
 
-#ifndef TKTK_UTIL_TYPE_MAP_HPP
-#define TKTK_UTIL_TYPE_MAP_HPP
+#ifndef TKTK_TYPEC_TYPE_MAP_HPP
+#define TKTK_TYPEC_TYPE_MAP_HPP
 
-#include <tktk/util/Config.hpp>
+#include <tktk/typec/Config.hpp>
 #include <cstdint>
 #include <atomic>
 #include <unordered_map>
@@ -35,7 +35,7 @@
 
 namespace tktk
 {
-namespace util
+namespace typec
 {
 
 template < typename ValueTypeT >
@@ -155,7 +155,7 @@ template< typename ValueTypeT >
 std::atomic_size_t TypeMap< ValueTypeT >::mNextTypeId{ 0 };
 
 
-} //namespace util
+} //namespace typec
 } //namespace tktk
 
-#endif /* end of include guard: TKTK_UTIL_TYPE_MAP_HPP */
+#endif /* end of include guard: TKTK_TYPEC_TYPE_MAP_HPP */

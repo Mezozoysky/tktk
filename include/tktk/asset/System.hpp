@@ -36,7 +36,7 @@
 
 #include <tktk/asset/Config.hpp>
 #include <tktk/asset/Manager.hpp>
-#include <tktk/util/TypeMap.hpp>
+#include <tktk/typec/TypeMap.hpp>
 #include <cassert>
 #include <type_traits>
 
@@ -184,7 +184,7 @@ public:
     }
 
 protected:
-    util::TypeMap< Manager* > mManagers;
+    typec::TypeMap< Manager* > mManagers;
 };
 
 } //namespace asset

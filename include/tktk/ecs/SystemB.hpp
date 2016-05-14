@@ -40,7 +40,7 @@
 #include <cassert>
 #include <memory>
 #include <cstdint>
-#include <tktk/util/TypeMap.hpp>
+#include <tktk/typec/TypeMap.hpp>
 
 namespace tktk
 {
@@ -179,7 +179,7 @@ public:
 private:
     std::array< Manager*, maxDataTypesV > mMgrs; ///< Registered managers in registering order
     std::size_t mNextTypeIndex{ 0 };
-    util::TypeMap< std::size_t > mMgrsByType; ///< Managers' indexes by accoding component types map
+    typec::TypeMap< std::size_t > mMgrsByType; ///< Managers' indexes by accoding component types map
 };
 
 //

@@ -1,3 +1,7 @@
+set(TKTK_BUILD_AND_EXPORT_LIB_TYPEC ON)
+if(${TKTK_BUILD_AND_EXPORT_LIB_TYPEC})
+    add_subdirectory(typec)
+endif(${TKTK_BUILD_AND_EXPORT_LIB_TYPEC})
 
 set(TKTK_CONFIG_HEADERS "")
 #===================
@@ -18,8 +22,6 @@ set(TKTK_LIB_UTIL_SOURCES "")
 # =======================
 set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/include/tktk/util/Config.hpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/util/TypeMap.hpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/util/TypeMask.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/util/Signal.hpp
 )
 set(GROUP_SOURCES
@@ -125,13 +127,6 @@ if(${TKTK_BUILD_MPOOL})
         DESTINATION include/tktk/mpool
     )
 endif(${TKTK_BUILD_MPOOL})
-
-if(${TKTK_BUILD_TYPEMAP})
-    install(
-        FILES ${TKTK_LIB_TYPEMAP_HEADERS}
-        DESTINATION include/tktk/typemap
-    )
-endif(${TKTK_BUILD_TYPEMAP})
 
 if(${TKTK_BUILD_UTIL})
     install(

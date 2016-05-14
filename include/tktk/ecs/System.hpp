@@ -40,7 +40,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <tktk/ecs/Processor.hpp>
-#include <tktk/util/TypeMap.hpp>
+#include <tktk/typec/TypeMap.hpp>
 #include <tktk/util/Signal.hpp>
 #include <tktk/mpool/MemoryPool.hpp>
 #include <tktk/ecs/Component.hpp>
@@ -137,7 +137,7 @@ struct Entity
 
     /// \brief Map for added components: untyped component handles by component types
     /// \todo make it more efficient and more friendly
-    util::TypeMap< Component::Handle > map;
+    typec::TypeMap< Component::Handle > map;
 };
 
 
@@ -437,7 +437,7 @@ protected:
     PoolTypeT mEntityPool; ///< Memory pool for storing entities
 
     std::vector< Processor* > mProcessors; ///< Registered processors in registering order
-    util::TypeMap< std::size_t > mProcsByType; ///< Processors' indexes by accoding component types map
+    typec::TypeMap< std::size_t > mProcsByType; ///< Processors' indexes by accoding component types map
 };
 
 //
