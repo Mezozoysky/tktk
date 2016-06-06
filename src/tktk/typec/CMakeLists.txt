@@ -7,7 +7,6 @@ set(GROUP_HEADERS
     ${CMAKE_SOURCE_DIR}/include/tktk/typec/Config.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/typec/TypeMap.hpp
     ${CMAKE_SOURCE_DIR}/include/tktk/typec/TypeMask.hpp
-    ${CMAKE_SOURCE_DIR}/include/tktk/typec/TypeArray.hpp
 )
 set(GROUP_SOURCES
 	${CMAKE_SOURCE_DIR}/src/tktk/typec/fake.cpp
