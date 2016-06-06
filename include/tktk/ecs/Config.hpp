@@ -30,7 +30,7 @@
 /// \copyright tktk is released under the terms of zlib/png license; see full license text at https://opensource.org/licenses/Zlib
 
 /// \namespace ecs
-/// \brief Namespace for all the names of ecs-asset library
+/// \brief Namespace for all the names of tktk-ecs library
 ///
 /// Description stub for `namespace ecs`
 
