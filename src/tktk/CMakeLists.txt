@@ -3,6 +3,11 @@ if(${TKTK_BUILD_AND_EXPORT_LIB_TYPEC})
     add_subdirectory(typec)
 endif(${TKTK_BUILD_AND_EXPORT_LIB_TYPEC})
 
+set(TKTK_BUILD_AND_EXPORT_LIB_MCECS ON)
+if(${TKTK_BUILD_AND_EXPORT_LIB_MCECS})
+    add_subdirectory(mcecs)
+endif(${TKTK_BUILD_AND_EXPORT_LIB_MCECS})
+
 set(TKTK_CONFIG_HEADERS "")
 #===================
 # === tktk group ===
